@@ -1,0 +1,48 @@
+package com.villa.im.server;
+
+import com.villa.im.handler.CoreHandler;
+import com.villa.im.handler.WebSocketHandler;
+import com.villa.im.model.ProtoType;
+import io.netty.bootstrap.ServerBootstrap;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.socket.SocketChannel;
+import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.codec.http.HttpObjectAggregator;
+import io.netty.handler.codec.http.HttpServerCodec;
+import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
+
+/**
+ * netty-ws服务器 tcp/udp/ws(wss) 三种协议可以同时存在
+ * @作者 微笑い一刀
+ * @bbs_url https://blog.csdn.net/u012169821
+ */
+public class WSServer extends BaseServer{
+    private CoreHandler coreHandler;
+    //饿汉单例
+    private static WSServer server = new WSServer();
+    private WSServer(){
+        setProtoType(ProtoType.WS);
+        //如果是wss协议 需要在这里加载证书
+    }
+    public static WSServer getInstance(CoreHandler coreHandler){
+        server.coreHandler = coreHandler;
+        return server;
+    }
+    protected void init(){
+        super.init();
+        //异步的服务器端 UDP Socket 连接
+        getBootstrap().channel(NioServerSocketChannel.class);
+    }
+    protected void initChildChannelHandler() {
+        ((ServerBootstrap)getBootstrap()).childHandler(new ChannelInitializer<SocketChannel>() {
+            protected void initChannel(SocketChannel channel) {
+                //编解码器
+                channel.pipeline().addLast(new HttpServerCodec())
+                .addLast(new HttpObjectAggregator(1024*64))
+                .addLast(new WebSocketServerProtocolHandler("/"))
+                //装载核心处理器
+                .addLast(new WebSocketHandler(new CoreHandler()));
+            }
+        });
+    }
+}
