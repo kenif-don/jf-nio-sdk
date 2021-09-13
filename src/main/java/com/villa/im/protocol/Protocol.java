@@ -14,14 +14,44 @@ public class Protocol {
     private String to;
     //消息的实际内容 可以是json字符串 可以是普通字符串
     private String data;
+    //ack 1-ack应答包  -1 代表此消息包不是ack应答包 而是携带了消息内容
+    private int ack = -1;
+    //消息唯一编号 注意这个只是客户端生成的一个唯一值，uuid或者时间戳+六位随机数都可以  并不代表消息唯一主键 也不会存进数据库 只是用来做消息补偿
+    private String msg_no;
     public Protocol(){
 
     }
+
+    /**
+     * 实例化一个ack应答包
+     * @param type
+     */
+    public Protocol(int type) {
+        this.type = type;
+        this.ack = 1;
+    }
+
     public Protocol(int type, String from, String to, String data) {
         this.type = type;
         this.from = from;
         this.to = to;
         this.data = data;
+    }
+
+    public int getAck() {
+        return ack;
+    }
+
+    public void setAck(int ack) {
+        this.ack = ack;
+    }
+
+    public String getMsg_no() {
+        return msg_no;
+    }
+
+    public void setMsg_no(String msg_no) {
+        this.msg_no = msg_no;
     }
 
     public int getType() {

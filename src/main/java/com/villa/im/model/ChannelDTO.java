@@ -4,7 +4,6 @@ import io.netty.channel.Channel;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * 客户端连接的包装类
@@ -14,22 +13,12 @@ import java.util.Set;
  */
 public class ChannelDTO {
     private Map<ProtoType, Channel> channels = new HashMap<>();
-    //群聊状态下 按照协定的udp>tcp>ws规则获取客户端连接对象
+    //按照协定的udp>tcp>ws规则获取客户端连接对象
     public Channel getChannelUDPFirst(){
         if(channels.containsKey(ProtoType.UDP)){
             return channels.get(ProtoType.UDP);
         }else if(channels.containsKey(ProtoType.TCP)){
             return channels.get(ProtoType.TCP);
-        }else{
-            return channels.get(ProtoType.WS);
-        }
-    }
-    //1对1聊天状态下 按照协定的tcp>udp>ws规则获取客户端连接对象
-    public Channel getChannelTCPFirst(){
-        if(channels.containsKey(ProtoType.TCP)){
-            return channels.get(ProtoType.TCP);
-        }else if(channels.containsKey(ProtoType.UDP)){
-            return channels.get(ProtoType.UDP);
         }else{
             return channels.get(ProtoType.WS);
         }

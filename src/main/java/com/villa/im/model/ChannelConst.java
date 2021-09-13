@@ -12,7 +12,7 @@ public class ChannelConst {
     //每个客户端连接对应的唯一标识符  值自定义 可以是用户表的唯一主键
     public static AttributeKey CHANNEL_ID = AttributeKey.newInstance("channel_id");
 
-    //-----------------客户端发送到服务器的消息--------------------------
+    //-----------------消息协议--------------------------
     //客户端登录
     public static final int CHANNEL_LOGIN = 0;
     //客户端消息交互
@@ -23,11 +23,4 @@ public class ChannelConst {
     public static final int CHANNEL_HEART = 3;
     //客户端正常退出
     public static final int CHANNEL_LOGOUT = 9;
-
-    //------------------服务器发送到的客户端消息-------------------------
-    //------------------服务器处理时的错误码 从10000起计步---------------
-    //登录时需要传的唯一标识符未传
-    public static final int S2C_SUCCESS = 200;
-    //登录时需要传的唯一标识符未传
-    public static final int S2C_CHANNEL_ID_EMPTY = 10000;
 }

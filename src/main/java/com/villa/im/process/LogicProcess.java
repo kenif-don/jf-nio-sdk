@@ -1,5 +1,7 @@
 package com.villa.im.process;
 
+import com.villa.im.protocol.Protocol;
+
 import java.util.List;
 
 /**
@@ -15,4 +17,10 @@ public interface LogicProcess {
      * 如果这条消息不应该发送 那么请在实现中返回0的数字字符串
      */
     List<String> getTargets(String toId);
+
+    /**
+     * 将消息存到数据库
+     * @param protocol
+     */
+    void addMessage(Protocol protocol);
 }

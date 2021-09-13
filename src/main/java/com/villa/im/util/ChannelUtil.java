@@ -1,9 +1,6 @@
 package com.villa.im.util;
 
-import com.villa.im.model.ChannelConst;
 import com.villa.im.model.ChannelDTO;
-import com.villa.im.protocol.CallBackAction;
-import com.villa.im.protocol.ProtocolAction;
 import io.netty.channel.Channel;
 
 import java.util.concurrent.ConcurrentHashMap;
@@ -83,24 +80,10 @@ public class ChannelUtil {
             channels.remove(channelId);
         }
         if(channel.isOpen()){
-            //关闭客户端链接 关闭之前先通知客户端 已退出登录
-            ProtocolAction.sendOkACK(channel, ChannelConst.CHANNEL_LOGOUT, new CallBackAction() {
-                @Override
-                public void callBack(boolean success, Channel channel, Object protocol) {
-                    if(success){
-                        channel.close();
-                    }
-                }
-            });
+            channel.close();
         }
         Log.log(String.format("客户端[%s]被踢下线", channelId));
         printOlineCount();
-    }
-    /**
-     * 获取单聊优先级最高的协议
-     */
-    public Channel getChannelTCPFirst(String channelId){
-        return channels.get(channelId).getChannelTCPFirst();
     }
     /**
      * 获取群聊优先级最高的协议

@@ -1,5 +1,7 @@
 package com.villa.im.process;
 
+import com.villa.im.protocol.Protocol;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,5 +17,10 @@ public class DefaultLogicProcessImpl implements LogicProcess {
         List<String> list = new ArrayList<>();
         list.add(toId);
         return list;
+    }
+
+    @Override
+    public void addMessage(Protocol protocol) {
+
     }
 }

@@ -5,14 +5,10 @@ import com.villa.im.model.ChannelConst;
 import com.villa.im.process.LogicProcess;
 import com.villa.im.protocol.Protocol;
 import com.villa.im.protocol.ProtocolAction;
-import com.villa.im.protocol.PrototolSate;
-import com.villa.im.protocol.SimpleProtocol;
 import com.villa.im.util.ChannelUtil;
 import com.villa.im.util.Log;
 import com.villa.im.util.Util;
 import io.netty.channel.ChannelHandlerContext;
-
-import java.util.List;
 
 /**
  * TCP/UDP/WS 统一的处理器
@@ -31,7 +27,9 @@ public class CoreHandler {
                 String channelId = protocol.getFrom();
                 if(!Util.isNotEmpty(channelId)){
                     //发送消息给客户端,需要连接标识符
-                    ProtocolAction.send(ctx.channel(),new SimpleProtocol(ChannelConst.CHANNEL_LOGIN,ChannelConst.S2C_CHANNEL_ID_EMPTY),null);
+                    Protocol resultProto = new Protocol(ChannelConst.CHANNEL_LOGIN);
+                    resultProto.setData("登录失败，未携带连接标志符");
+                    ProtocolAction.send(ctx.channel(),resultProto,null);
                     return;
                 }
                 //将连接标识符存入连接属性中
@@ -39,7 +37,7 @@ public class CoreHandler {
                 //将连接保存
                 ChannelUtil.getInstance().addChannel(ctx.channel());
                 //发送请求结果给客户端
-                ProtocolAction.sendOkACK(ctx.channel(), ChannelConst.CHANNEL_LOGIN, null);
+                ProtocolAction.sendOkACK(ctx.channel(), ChannelConst.CHANNEL_LOGIN);
                 break;
             //客户端退出登录
             case ChannelConst.CHANNEL_LOGOUT:
@@ -48,22 +46,14 @@ public class CoreHandler {
                 break;
             //心跳应答
             case ChannelConst.CHANNEL_HEART:
-                ProtocolAction.sendOkACK(ctx.channel(),ChannelConst.CHANNEL_HEART,null);
+                ProtocolAction.sendOkACK(ctx.channel(),ChannelConst.CHANNEL_HEART);
                 break;
             //客户端发送消息
             case ChannelConst.CHANNEL_MSG:
-                //获取发送目标
-                //通过业务处理器获取多个目标
-                List<String> targets = logicProcess.getTargets(protocol.getTo());
-                if (targets.size()==1){
-                    sendMsg(targets,protocol, PrototolSate.ONE,targets.get(0));
-                }
-                targets.forEach(target->{
-                    //放到线程中去 快一些（需要测试）
-                    new Thread(()->{
-                        ProtocolAction.sendMsg(targets,protocol,PrototolSate.N,target);
-                    }).start();
-                });
+                ProtocolAction.sendMsg(ctx.channel(),protocol,logicProcess);
+                break;
+            case ChannelConst.CHANNEL_ACK:
+                ProtocolAction.ack(ctx.channel(),protocol);
                 break;
         }
     }
@@ -78,7 +68,11 @@ public class CoreHandler {
      * 连接断开的时候触发
      */
     public void handlerRemoved(ChannelHandlerContext ctx) {
-        ChannelUtil.getInstance().kickChannel(ctx.channel());
+        String channelId = Util.getChannelId(ctx.channel());
+        //登录过才踢 否则不做任何处理，因为本身也没有进行保存
+        if(Util.isNotEmpty(channelId)){
+            ChannelUtil.getInstance().kickChannel(ctx.channel());
+        }
         Log.log("有连接断开,当前连接数:"+--channelCount);
     }
 
@@ -86,7 +80,11 @@ public class CoreHandler {
      * 出现异常时候触发,关闭当前连接
      */
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-        Log.log(String.format("连接[%s]发生异常:%s",(String) ctx.channel().attr(ChannelConst.CHANNEL_ID).get(),cause.getMessage()));
+        String channelId = Util.getChannelId(ctx.channel());
+        if(Util.isNotEmpty(channelId)){
+            throw new RuntimeException(String.format("[%s]连接发送异常：%s",channelId,cause.getMessage()));
+        }
+        System.out.println("报错了");
     }
 
     /**

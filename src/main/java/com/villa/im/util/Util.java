@@ -6,6 +6,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 
 import java.io.UnsupportedEncodingException;
+import java.util.UUID;
 
 /**
  * 统一工具类
@@ -35,7 +36,11 @@ public class Util {
      * 简单的封装 从客户端连接中获取客户端的标识符
      */
     public static String getChannelId(Channel channel){
-        return channel.attr(ChannelConst.CHANNEL_ID).get().toString();
+        Object attr = channel.attr(ChannelConst.CHANNEL_ID).get();
+        if(attr==null){
+            return null;
+        }
+        return attr.toString();
     }
 
     /**
@@ -56,5 +61,12 @@ public class Util {
      */
     public static void putChannelProtoType(Channel channel,ProtoType protoType){
         channel.attr(ChannelConst.PROTO_TYPE).set(protoType);
+    }
+
+    /**
+     * 获取随机字符串 通过uuid生成
+     */
+    public static String getRandomStr(){
+        return UUID.randomUUID().toString();
     }
 }
