@@ -14,11 +14,9 @@ public class Server {
     private static Server server = new Server();
     //核心处理器 同样是单例
     private CoreHandler coreHandler;
-    //逻辑业务器 当前框架只负责接口 具体实现需要使用者实现LogicProcess接口
-    private LogicProcess logicProcess;
-
     public void initLogicProcess(LogicProcess logicProcess){
-        this.logicProcess = logicProcess;
+        System.out.println(logicProcess);
+        this.coreHandler.setLogicProcess(logicProcess);
     }
     private Server(){
         this.coreHandler = new CoreHandler();
@@ -34,21 +32,21 @@ public class Server {
     }
     public void startupTCP(int port){
         try {
-            TCPServer.getInstance(coreHandler).startup(4002);
+            TCPServer.getInstance(coreHandler).startup(port);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
     public void startupUDP(int port){
         try {
-            UDPServer.getInstance(coreHandler).startup(4003);
+            UDPServer.getInstance(coreHandler).startup(port);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
     public void startupWS(int port){
         try {
-            WSServer.getInstance(coreHandler).startup(4001);
+            WSServer.getInstance(coreHandler).startup(port);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

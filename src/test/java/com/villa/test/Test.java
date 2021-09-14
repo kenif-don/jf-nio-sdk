@@ -13,5 +13,9 @@ public class Test {
         Server.getInstance().startupAll(4001,4002,4003);
         //2. 填充业务处理器
         Server.getInstance().initLogicProcess(new DefaultLogicProcessImpl());
+        /**
+         *  {type:0,from:001}
+         *  {type:1,from:001,to:002,data:123,msg_no:001}
+         */
     }
 }

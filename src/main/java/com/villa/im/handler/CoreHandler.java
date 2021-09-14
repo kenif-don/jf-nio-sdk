@@ -84,7 +84,7 @@ public class CoreHandler {
         if(Util.isNotEmpty(channelId)){
             throw new RuntimeException(String.format("[%s]连接发送异常：%s",channelId,cause.getMessage()));
         }
-        System.out.println("报错了");
+        System.out.println(cause.getMessage());
     }
 
     /**

@@ -19,7 +19,9 @@ public class DefaultLogicProcessImpl implements LogicProcess {
         return list;
     }
 
-    @Override
+    /**
+     * demo实现 将消息记录存到数据库
+     */
     public void addMessage(Protocol protocol) {
 
     }
