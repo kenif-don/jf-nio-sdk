@@ -3,6 +3,7 @@ package com.villa.im.protocol;
 import com.alibaba.fastjson.JSON;
 import com.villa.im.model.ChannelConst;
 import com.villa.im.model.MsgDTO;
+import com.villa.im.model.Protocol;
 import com.villa.im.process.LogicProcess;
 import com.villa.im.util.ChannelUtil;
 import com.villa.im.util.Util;
@@ -37,7 +38,7 @@ public class ProtocolAction {
                         send(realChannel, msgDTO.getProtocol(),null);
                     }else{
                         //如果不在线  就将当前待发消息直接删除 等到下一次客户端上线时，自己去拉消息记录即可
-                        msgs.remove(msgDTO.getProtocol().getMsg_no());
+                        msgs.remove(msgDTO.getProtocol().getMsgNo());
                     }
                 }
             }
@@ -49,9 +50,9 @@ public class ProtocolAction {
     /**
      * 接收到客户端回执
      */
-    public static void ack(Channel channel, Protocol protocol) {
+    public static void ack(Protocol protocol) {
         //只需要删除对应的待发消息就行了--消息补偿流程就结束了
-        msgs.remove(protocol.getMsg_no());
+        msgs.remove(protocol.getMsgNo());
     }
     /**
      * 统一的消息转发
@@ -61,7 +62,7 @@ public class ProtocolAction {
         ProtocolAction.sendOkACK(channel,ChannelConst.CHANNEL_MSG);
         //判断是否已经存在待发送消息
         //判断这条消息是否已存在，如果已存在不做任何处理，否则会出现消息重复
-        if(msgs.contains(protocol.getMsg_no())){
+        if(msgs.contains(protocol.getMsgNo())){
             return;
         }
         //不管是否在线 而且不管是否转发成功  都需要  --存到消息记录中
@@ -75,7 +76,7 @@ public class ProtocolAction {
          *     而客户端回执的这个消息又会与 需转发客户端的回执一样，服务器也就采用同样的处理，进行消息删除
          * 2。 对于需转发客户端来说，消息编号会新生成一个，与接收到的不同，而且不同的客户端生成不同的消息编号，与客户端对应
          */
-        msgs.put(protocol.getMsg_no(),new MsgDTO(Util.getChannelId(channel),protocol));
+        msgs.put(protocol.getMsgNo(),new MsgDTO(Util.getChannelId(channel),protocol));
 
         //------------------------处理转发逻辑-----------------
         //获取发送目标
@@ -97,7 +98,7 @@ public class ProtocolAction {
             //将待转发消息存起来 给每个客户端对应当前消息生成一个唯一消息编号
             String new_msg_no = Util.getRandomStr();
             //将新的消息编号设置到消息中，替换原来的消息编号  原来的消息编号只与发送它的客户端对应
-            protocol.setMsg_no(new_msg_no);
+            protocol.setMsgNo(new_msg_no);
             msgs.put(new_msg_no,new MsgDTO(channelId,protocol));
             //获取优先级最高的协议
             Channel realChannel = ChannelUtil.getInstance().getChannelUDPFirst(channelId);

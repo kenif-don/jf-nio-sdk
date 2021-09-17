@@ -3,16 +3,24 @@ package com.villa.im.server;
 import com.alibaba.fastjson.JSON;
 import com.villa.im.handler.CoreHandler;
 import com.villa.im.handler.TCPHandler;
+import com.villa.im.model.ChannelConst;
+import com.villa.im.model.DataProtoType;
+import com.villa.im.model.ProtoBuf;
 import com.villa.im.model.ProtoType;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
+import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.MessageToByteEncoder;
 import io.netty.handler.codec.json.JsonObjectDecoder;
+import io.netty.handler.codec.protobuf.ProtobufDecoder;
+import io.netty.handler.codec.protobuf.ProtobufEncoder;
+import io.netty.handler.codec.protobuf.ProtobufVarint32FrameDecoder;
+import io.netty.handler.codec.protobuf.ProtobufVarint32LengthFieldPrepender;
 
 /**
  * netty-tcp服务器 tcp/udp/ws(wss) 三种协议可以同时存在
@@ -20,15 +28,13 @@ import io.netty.handler.codec.json.JsonObjectDecoder;
  * @bbs_url https://blog.csdn.net/u012169821
  */
 public class TCPServer extends BaseServer{
-    private CoreHandler coreHandler;
     //饿汉单例
     private static TCPServer server = new TCPServer();
     private TCPServer(){
         //设置协议类型
         setProtoType(ProtoType.TCP);
     }
-    public static TCPServer getInstance(CoreHandler coreHandler){
-        server.coreHandler = coreHandler;
+    public static TCPServer getInstance(){
         return server;
     }
     public void init() {
@@ -56,16 +62,30 @@ public class TCPServer extends BaseServer{
     protected void initChildChannelHandler() {
         ((ServerBootstrap)getBootstrap()).childHandler(new ChannelInitializer<SocketChannel>() {
             protected void initChannel(SocketChannel  channel) {
-            //jSON解码器
-            channel.pipeline().addLast(new JsonObjectDecoder())
-            //JSON编码器
-            .addLast(new MessageToByteEncoder<Object>() {
-                protected void encode(ChannelHandlerContext channel, Object in, ByteBuf out) throws Exception {
-                    out.writeBytes(JSON.toJSONBytes(in));
+                ChannelPipeline pipeline = channel.pipeline();
+                switch (ChannelConst.DATA_PROTO_TYPE){
+                    case JSON://如果使用json协议的编解码器
+                        //jSON解码器
+                        pipeline.addLast(new JsonObjectDecoder());
+                        //JSON编码器
+                        pipeline.addLast(new MessageToByteEncoder<Object>() {
+                            protected void encode(ChannelHandlerContext channel, Object in, ByteBuf out) throws Exception {
+                                out.writeBytes(JSON.toJSONBytes(in));
+                            }
+                        });
+                        break;
+                    case PROTOBUF://如果使用protobuf的编解码器
+                        pipeline.addLast(new MessageToByteEncoder<ProtoBuf.proto_my>() {
+                            //编码器
+                            protected void encode(ChannelHandlerContext channelHandlerContext, ProtoBuf.proto_my in, ByteBuf out) throws Exception {
+                                out.writeBytes(in.toByteArray());
+                            }
+                        });
+                        break;
                 }
-            })
-            //装载核心处理器
-            .addLast(new TCPHandler(coreHandler));
+
+                //装载核心处理器
+                pipeline.addLast(new TCPHandler(CoreHandler.newInstance()));
             }
         });
     }

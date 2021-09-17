@@ -1,13 +1,10 @@
 package com.villa.im.handler;
 
-import com.alibaba.fastjson.JSON;
 import com.villa.im.model.ChannelConst;
 import com.villa.im.model.ProtoType;
-import com.villa.im.protocol.Protocol;
 import com.villa.im.util.Util;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
 
 /**
@@ -43,12 +40,7 @@ public class WebSocketHandler extends SimpleChannelInboundHandler<WebSocketFrame
     /**
      * ws收到消息 将消息(转换为json)传递给CoreHandler处理
      */
-    protected void channelRead0(ChannelHandlerContext ctx, WebSocketFrame frame) {
-        if(frame instanceof TextWebSocketFrame){
-            String proto = ((TextWebSocketFrame)frame).text();
-            if(Util.isNotEmpty(proto)){
-                coreHandler.channelRead0(ctx,JSON.parseObject(proto, Protocol.class));
-            }
-        }
+    protected void channelRead0(ChannelHandlerContext ctx, WebSocketFrame content) {
+        Util.channelRead(ctx,coreHandler,content.content());
     }
 }

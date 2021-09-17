@@ -1,4 +1,4 @@
-package com.villa.im.protocol;
+package com.villa.im.model;
 
 /**
  * 交互的消息协议对象
@@ -13,7 +13,7 @@ public class Protocol {
     //消息到哪里去
     private String to;
     //消息的实际内容 可以是json字符串 可以是普通字符串
-    private String data;
+    private String dataContent;
     //ack 1-ack应答包  -1 代表此消息包不是ack应答包 而是携带了消息内容
     private int ack;
     /**
@@ -21,42 +21,27 @@ public class Protocol {
      * 消息唯一编号 注意这个只是客户端生成的一个唯一值，uuid或者时间戳+六位随机数都可以
      * 并不代表消息唯一主键 也不会存进数据库 只是用来做消息补偿
      */
-    private String msg_no;
+    private String msgNo;
     public Protocol(){
 
     }
 
     /**
      * 实例化一个ack应答包
-     * @param type
+     * @param type 对应类型的应答包
      */
     public Protocol(int type) {
         this.type = type;
         this.ack = 1;
     }
 
-    public Protocol(int type, String from, String to, String data) {
+    public Protocol(int type, String from, String to, String dataContent, int ack, String msgNo) {
         this.type = type;
         this.from = from;
         this.to = to;
-        this.data = data;
-        this.ack = -1;
-    }
-
-    public int getAck() {
-        return ack;
-    }
-
-    public void setAck(int ack) {
+        this.dataContent = dataContent;
         this.ack = ack;
-    }
-
-    public String getMsg_no() {
-        return msg_no;
-    }
-
-    public void setMsg_no(String msg_no) {
-        this.msg_no = msg_no;
+        this.msgNo = msgNo;
     }
 
     public int getType() {
@@ -83,11 +68,27 @@ public class Protocol {
         this.to = to;
     }
 
-    public String getData() {
-        return data;
+    public String getDataContent() {
+        return dataContent;
     }
 
-    public void setData(String data) {
-        this.data = data;
+    public void setDataContent(String dataContent) {
+        this.dataContent = dataContent;
+    }
+
+    public int getAck() {
+        return ack;
+    }
+
+    public void setAck(int ack) {
+        this.ack = ack;
+    }
+
+    public String getMsgNo() {
+        return msgNo;
+    }
+
+    public void setMsgNo(String msgNo) {
+        this.msgNo = msgNo;
     }
 }

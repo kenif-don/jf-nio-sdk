@@ -2,6 +2,7 @@ package com.villa.im.server;
 
 import com.villa.im.handler.CoreHandler;
 import com.villa.im.handler.WebSocketHandler;
+import com.villa.im.model.DataProtoType;
 import com.villa.im.model.ProtoType;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelInitializer;
@@ -17,15 +18,13 @@ import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
  * @bbs_url https://blog.csdn.net/u012169821
  */
 public class WSServer extends BaseServer{
-    private CoreHandler coreHandler;
     //饿汉单例
     private static WSServer server = new WSServer();
     private WSServer(){
         setProtoType(ProtoType.WS);
         //如果是wss协议 需要在这里加载证书
     }
-    public static WSServer getInstance(CoreHandler coreHandler){
-        server.coreHandler = coreHandler;
+    public static WSServer getInstance(){
         return server;
     }
     protected void init(){
@@ -41,7 +40,7 @@ public class WSServer extends BaseServer{
                 .addLast(new HttpObjectAggregator(1024*64))
                 .addLast(new WebSocketServerProtocolHandler("/"))
                 //装载核心处理器
-                .addLast(new WebSocketHandler(new CoreHandler()));
+                .addLast(new WebSocketHandler(CoreHandler.newInstance()));
             }
         });
     }

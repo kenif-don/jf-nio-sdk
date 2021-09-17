@@ -23,5 +23,11 @@
             <artifactId>fastjson</artifactId>
             <version>1.2.68</version>
         </dependency>
+<!--        netty+protobuf的包-->
+        <dependency>
+            <groupId>com.google.protobuf</groupId>
+            <artifactId>protobuf-java</artifactId>
+            <version>3.17.3</version>
+        </dependency>
     </dependencies>
 </project>

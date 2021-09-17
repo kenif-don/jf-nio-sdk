@@ -3,6 +3,7 @@ package com.villa.im.server;
 import com.alibaba.fastjson.JSON;
 import com.villa.im.handler.CoreHandler;
 import com.villa.im.handler.UDPHandler;
+import com.villa.im.model.DataProtoType;
 import com.villa.im.model.ProtoType;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
@@ -20,14 +21,12 @@ import io.netty.handler.codec.json.JsonObjectDecoder;
  * @bbs_url https://blog.csdn.net/u012169821
  */
 public class UDPServer extends BaseServer{
-    private CoreHandler coreHandler;
     //饿汉单例
     private static UDPServer server = new UDPServer();
     private UDPServer(){
         setProtoType(ProtoType.UDP);
     }
-    public static UDPServer getInstance(CoreHandler coreHandler){
-        server.coreHandler = coreHandler;
+    public static UDPServer getInstance(){
         return server;
     }
     protected void init(){
@@ -49,7 +48,7 @@ public class UDPServer extends BaseServer{
                     }
                 })
                 //装载核心处理器
-                .addLast(new UDPHandler(coreHandler));
+                .addLast(new UDPHandler(CoreHandler.newInstance()));
             }
         });
     }

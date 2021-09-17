@@ -2,8 +2,7 @@ package com.villa.im.handler;
 
 import com.alibaba.fastjson.JSON;
 import com.villa.im.model.ChannelConst;
-import com.villa.im.process.LogicProcess;
-import com.villa.im.protocol.Protocol;
+import com.villa.im.model.Protocol;
 import com.villa.im.protocol.ProtocolAction;
 import com.villa.im.util.ChannelUtil;
 import com.villa.im.util.Log;
@@ -17,8 +16,14 @@ import io.netty.channel.ChannelHandlerContext;
  */
 public class CoreHandler {
     private static int channelCount = 0;
-    private LogicProcess logicProcess;
-    protected void channelRead0(ChannelHandlerContext ctx, Protocol protocol) {
+    private static CoreHandler coreHandler = new CoreHandler();
+    private CoreHandler(){
+
+    }
+    public static CoreHandler newInstance(){
+        return coreHandler;
+    }
+    public void channelRead0(ChannelHandlerContext ctx, Protocol protocol) {
         Log.log("接收到客户端消息:"+JSON.toJSONString(protocol));
         switch (protocol.getType()){
             //客户端登录
@@ -28,7 +33,7 @@ public class CoreHandler {
                 if(!Util.isNotEmpty(channelId)){
                     //发送消息给客户端,需要连接标识符
                     Protocol resultProto = new Protocol(ChannelConst.CHANNEL_LOGIN);
-                    resultProto.setData("登录失败，未携带连接标志符");
+                    resultProto.setDataContent("登录失败，未携带连接标志符");
                     ProtocolAction.send(ctx.channel(),resultProto,null);
                     return;
                 }
@@ -50,10 +55,10 @@ public class CoreHandler {
                 break;
             //客户端发送消息
             case ChannelConst.CHANNEL_MSG:
-                ProtocolAction.sendMsg(ctx.channel(),protocol,logicProcess);
+                ProtocolAction.sendMsg(ctx.channel(),protocol,ChannelConst.LOGIC_PROCESS);
                 break;
             case ChannelConst.CHANNEL_ACK:
-                ProtocolAction.ack(ctx.channel(),protocol);
+                ProtocolAction.ack(protocol);
                 break;
         }
     }
@@ -82,15 +87,9 @@ public class CoreHandler {
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         String channelId = Util.getChannelId(ctx.channel());
         if(Util.isNotEmpty(channelId)){
-            throw new RuntimeException(String.format("[%s]连接发送异常：%s",channelId,cause.getMessage()));
+            throw new RuntimeException(String.format("[%s]连接发生异常：%s",channelId,cause.getMessage()));
+        }else{
+            throw new RuntimeException(String.format("未登录的连接发生异常：%s",cause.getMessage()));
         }
-        System.out.println(cause.getMessage());
-    }
-
-    /**
-     * 设置逻辑业务处理器
-     */
-    public void setLogicProcess(LogicProcess logicProcess) {
-        this.logicProcess = logicProcess;
     }
 }

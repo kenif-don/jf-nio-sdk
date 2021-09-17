@@ -1,6 +1,8 @@
 package com.villa.im;
 
 import com.villa.im.handler.CoreHandler;
+import com.villa.im.model.ChannelConst;
+import com.villa.im.model.DataProtoType;
 import com.villa.im.process.LogicProcess;
 import com.villa.im.server.TCPServer;
 import com.villa.im.server.UDPServer;
@@ -12,14 +14,15 @@ import com.villa.im.server.WSServer;
  */
 public class Server {
     private static Server server = new Server();
-    //核心处理器 同样是单例
-    private CoreHandler coreHandler;
-    public void initLogicProcess(LogicProcess logicProcess){
-        System.out.println(logicProcess);
-        this.coreHandler.setLogicProcess(logicProcess);
+    public Server initLogicProcess(LogicProcess logicProcess){
+        ChannelConst.LOGIC_PROCESS = logicProcess;
+        return server;
+    }
+    public Server initDataProtoType(DataProtoType dataProtoType){
+        ChannelConst.DATA_PROTO_TYPE = dataProtoType;
+        return server;
     }
     private Server(){
-        this.coreHandler = new CoreHandler();
     }
     public static Server getInstance(){
         return server;
@@ -32,21 +35,25 @@ public class Server {
     }
     public void startupTCP(int port){
         try {
-            TCPServer.getInstance(coreHandler).startup(port);
+            //初始化tcp协议/消息协议类型
+            TCPServer tcpServer = TCPServer.getInstance();
+            tcpServer.startup(port);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
     public void startupUDP(int port){
         try {
-            UDPServer.getInstance(coreHandler).startup(port);
+            UDPServer udpServer = UDPServer.getInstance();
+            udpServer.startup(port);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
     public void startupWS(int port){
         try {
-            WSServer.getInstance(coreHandler).startup(port);
+            WSServer wsServer = WSServer.getInstance();
+            wsServer.startup(port);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

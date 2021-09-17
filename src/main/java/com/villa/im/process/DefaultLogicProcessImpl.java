@@ -1,6 +1,6 @@
 package com.villa.im.process;
 
-import com.villa.im.protocol.Protocol;
+import com.villa.im.model.Protocol;
 
 import java.util.ArrayList;
 import java.util.List;

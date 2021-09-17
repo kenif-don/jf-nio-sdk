@@ -1,7 +1,5 @@
 package com.villa.im.model;
 
-import com.villa.im.protocol.Protocol;
-
 /**
  * 暂存消息的包装类
  * @作者 微笑い一刀

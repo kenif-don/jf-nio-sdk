@@ -1,6 +1,6 @@
 package com.villa.im.server;
 
-import com.villa.im.handler.CoreHandler;
+import com.villa.im.model.DataProtoType;
 import com.villa.im.model.ProtoType;
 import io.netty.bootstrap.AbstractBootstrap;
 import io.netty.bootstrap.Bootstrap;
@@ -24,9 +24,9 @@ public abstract class BaseServer {
     //netty的核心工厂  引导器
     private AbstractBootstrap bootstrap;
     //boss线程组 类似包工头 监听parent channel管理child channel的
-    protected final EventLoopGroup bossGroup = new NioEventLoopGroup(1);
+    private final EventLoopGroup bossGroup = new NioEventLoopGroup(1);
     //work线程 搬砖的 监听child channel 每个客户端对应一个channel 一个channel一个线程
-    protected final EventLoopGroup workGroup = new NioEventLoopGroup();
+    private final EventLoopGroup workGroup = new NioEventLoopGroup();
     //服务端
     protected Channel serverChannel;
     protected void init(){

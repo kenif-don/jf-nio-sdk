@@ -1,5 +1,7 @@
 package com.villa.im.model;
 
+import com.villa.im.process.DefaultLogicProcessImpl;
+import com.villa.im.process.LogicProcess;
 import io.netty.util.AttributeKey;
 
 /**
@@ -7,6 +9,11 @@ import io.netty.util.AttributeKey;
  * @bbs_url https://blog.csdn.net/u012169821
  */
 public class ChannelConst {
+    //需要业务处定义的业务处理器 --默认实现
+    public static LogicProcess LOGIC_PROCESS = new DefaultLogicProcessImpl();
+    //消息类型的协议类型 --默认json格式
+    public static DataProtoType DATA_PROTO_TYPE = DataProtoType.JSON;
+
     //协议类型key  值有tcp/udp/ws枚举
     public static AttributeKey PROTO_TYPE = AttributeKey.newInstance("proto_type");
     //每个客户端连接对应的唯一标识符  值自定义 可以是用户表的唯一主键
