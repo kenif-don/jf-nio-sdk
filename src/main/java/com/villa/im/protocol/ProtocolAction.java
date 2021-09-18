@@ -5,7 +5,7 @@ import com.villa.im.model.ChannelConst;
 import com.villa.im.model.MsgDTO;
 import com.villa.im.model.Protocol;
 import com.villa.im.process.LogicProcess;
-import com.villa.im.util.ChannelUtil;
+import com.villa.im.handler.ChannelHandler;
 import com.villa.im.util.Util;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -33,8 +33,8 @@ public class ProtocolAction {
                 while (iterator.hasNext()){
                     MsgDTO msgDTO = iterator.next();
                     //如果在线就发送待发消息
-                    if(ChannelUtil.getInstance().isOnline(msgDTO.getChannelId())){
-                        Channel realChannel = ChannelUtil.getInstance().getChannelUDPFirst(msgDTO.getChannelId());;
+                    if(ChannelHandler.getInstance().isOnline(msgDTO.getChannelId())){
+                        Channel realChannel = ChannelHandler.getInstance().getChannelUDPFirst(msgDTO.getChannelId());;
                         send(realChannel, msgDTO.getProtocol(),null);
                     }else{
                         //如果不在线  就将当前待发消息直接删除 等到下一次客户端上线时，自己去拉消息记录即可
@@ -94,14 +94,14 @@ public class ProtocolAction {
     }
     private static void sendMsg(String channelId,Protocol protocol){
         //判断目标是否在线
-        if(ChannelUtil.getInstance().isOnline(channelId)){
+        if(ChannelHandler.getInstance().isOnline(channelId)){
             //将待转发消息存起来 给每个客户端对应当前消息生成一个唯一消息编号
             String new_msg_no = Util.getRandomStr();
             //将新的消息编号设置到消息中，替换原来的消息编号  原来的消息编号只与发送它的客户端对应
             protocol.setMsgNo(new_msg_no);
             msgs.put(new_msg_no,new MsgDTO(channelId,protocol));
             //获取优先级最高的协议
-            Channel realChannel = ChannelUtil.getInstance().getChannelUDPFirst(channelId);
+            Channel realChannel = ChannelHandler.getInstance().getChannelUDPFirst(channelId);
             //直接发送 这里如果发送失败，会有补偿机制去做重发  成功不需要做什么操作
             send(realChannel, protocol,null);
         }

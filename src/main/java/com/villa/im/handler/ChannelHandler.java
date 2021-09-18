@@ -1,6 +1,8 @@
-package com.villa.im.util;
+package com.villa.im.handler;
 
 import com.villa.im.model.ChannelDTO;
+import com.villa.im.util.Log;
+import com.villa.im.util.Util;
 import io.netty.channel.Channel;
 
 import java.util.concurrent.ConcurrentHashMap;
@@ -13,8 +15,8 @@ import java.util.concurrent.ConcurrentMap;
  * @作者 微笑い一刀
  * @bbs_url https://blog.csdn.net/u012169821
  */
-public class ChannelUtil {
-    private static ChannelUtil channelUtil = new ChannelUtil();
+public class ChannelHandler {
+    private static ChannelHandler channelHandler = new ChannelHandler();
     /**
      * 所有在线的客户端连接
      */
@@ -79,9 +81,7 @@ public class ChannelUtil {
             //就把channels中的也进行删除
             channels.remove(channelId);
         }
-        if(channel.isOpen()){
-            channel.close();
-        }
+        //客户端连接被T掉后并不去关闭连接，因为客户端可能是因为更换账号等操作  连接不关闭 只是换绑定id
         Log.log(String.format("客户端[%s]被踢下线", channelId));
         printOlineCount();
     }
@@ -117,10 +117,10 @@ public class ChannelUtil {
         ChannelDTO channelDTO = channels.get(channelId);
         return Util.isNotEmpty(channelId)&&channelDTO!=null&&channelDTO.getChannels().size()>0;
     }
-    private ChannelUtil(){
+    private ChannelHandler(){
 
     }
-    public static ChannelUtil getInstance(){
-        return channelUtil;
+    public static ChannelHandler getInstance(){
+        return channelHandler;
     }
 }

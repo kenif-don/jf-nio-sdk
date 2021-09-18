@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSON;
 import com.villa.im.model.ChannelConst;
 import com.villa.im.model.Protocol;
 import com.villa.im.protocol.ProtocolAction;
-import com.villa.im.util.ChannelUtil;
 import com.villa.im.util.Log;
 import com.villa.im.util.Util;
 import io.netty.channel.ChannelHandlerContext;
@@ -40,14 +39,14 @@ public class CoreHandler {
                 //将连接标识符存入连接属性中
                 Util.putChannelId(ctx.channel(), channelId);
                 //将连接保存
-                ChannelUtil.getInstance().addChannel(ctx.channel());
+                ChannelHandler.getInstance().addChannel(ctx.channel());
                 //发送请求结果给客户端
                 ProtocolAction.sendOkACK(ctx.channel(), ChannelConst.CHANNEL_LOGIN);
                 break;
             //客户端退出登录
             case ChannelConst.CHANNEL_LOGOUT:
                 //踢掉客户端
-                ChannelUtil.getInstance().kickChannel(ctx.channel());
+                ChannelHandler.getInstance().kickChannel(ctx.channel());
                 break;
             //心跳应答
             case ChannelConst.CHANNEL_HEART:
@@ -76,7 +75,7 @@ public class CoreHandler {
         String channelId = Util.getChannelId(ctx.channel());
         //登录过才踢 否则不做任何处理，因为本身也没有进行保存
         if(Util.isNotEmpty(channelId)){
-            ChannelUtil.getInstance().kickChannel(ctx.channel());
+            ChannelHandler.getInstance().kickChannel(ctx.channel());
         }
         Log.log("有连接断开,当前连接数:"+--channelCount);
     }
