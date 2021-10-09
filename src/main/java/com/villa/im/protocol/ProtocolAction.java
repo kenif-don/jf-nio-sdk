@@ -92,7 +92,7 @@ public class ProtocolAction {
             }).start();
         });
     }
-    private static void sendMsg(String channelId,Protocol protocol){
+    public static void sendMsg(String channelId,Protocol protocol){
         //判断目标是否在线
         if(ChannelHandler.getInstance().isOnline(channelId)){
             //将待转发消息存起来 给每个客户端对应当前消息生成一个唯一消息编号
@@ -128,9 +128,8 @@ public class ProtocolAction {
             case WS:
                 return channel.writeAndFlush(new TextWebSocketFrame(JSON.toJSONString(protocol)));
             case TCP:
-                return channel.writeAndFlush(protocol);
             case UDP:
-                break;
+                return channel.writeAndFlush(protocol);
         }
         return null;
     }

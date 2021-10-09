@@ -15,6 +15,8 @@ import io.netty.channel.ChannelOption;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
+import io.netty.handler.codec.LengthFieldPrepender;
 import io.netty.handler.codec.MessageToByteEncoder;
 import io.netty.handler.codec.json.JsonObjectDecoder;
 import io.netty.handler.codec.protobuf.ProtobufDecoder;
@@ -63,6 +65,9 @@ public class TCPServer extends BaseServer{
         ((ServerBootstrap)getBootstrap()).childHandler(new ChannelInitializer<SocketChannel>() {
             protected void initChannel(SocketChannel  channel) {
                 ChannelPipeline pipeline = channel.pipeline();
+                //通过将消息分为消息头和消息体来处理沾包半包问题
+                pipeline.addLast("frameDecoder", new LengthFieldBasedFrameDecoder(6*1024+4, 0, 4, 0, 4));
+                pipeline.addLast("frameEncoder", new LengthFieldPrepender(4));
                 switch (ChannelConst.DATA_PROTO_TYPE){
                     case JSON://如果使用json协议的编解码器
                         //jSON解码器
