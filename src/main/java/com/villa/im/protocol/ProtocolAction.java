@@ -85,13 +85,14 @@ public class ProtocolAction {
         if (targets.size()==1){
             ProtocolAction.sendMsg(targets.get(0),protocol);
         }
-        targets.forEach(target->{
-            //放到线程中去 快一些（需要测试）
-            new Thread(()->{
-                ProtocolAction.sendMsg(target,protocol);
-            }).start();
-        });
+        sendMsg(targets,protocol);
     }
+
+    /**
+     * 给单个客户端发送消息
+     * @param channelId
+     * @param protocol
+     */
     public static void sendMsg(String channelId,Protocol protocol){
         //判断目标是否在线
         if(ChannelHandler.getInstance().isOnline(channelId)){
@@ -105,6 +106,19 @@ public class ProtocolAction {
             //直接发送 这里如果发送失败，会有补偿机制去做重发  成功不需要做什么操作
             send(realChannel, protocol,null);
         }
+    }
+    /**
+     * 给单个客户端发送消息
+     * @param targets   多个发送目标
+     * @param protocol  发送的消息
+     */
+    public static void sendMsg(List<String> targets,Protocol protocol){
+        targets.forEach(target->{
+            //放到线程中去 快一些（需要测试）
+            new Thread(()->{
+                ProtocolAction.sendMsg(target,protocol);
+            }).start();
+        });
     }
     /**
      * 通用的发送数据方法
