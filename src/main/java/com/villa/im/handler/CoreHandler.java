@@ -31,9 +31,7 @@ public class CoreHandler {
                 String channelId = protocol.getFrom();
                 if(!Util.isNotEmpty(channelId)){
                     //发送消息给客户端,需要连接标识符
-                    Protocol resultProto = new Protocol(ChannelConst.CHANNEL_LOGIN);
-                    resultProto.setDataContent("登录失败，未携带连接标志符");
-                    ProtocolAction.send(ctx.channel(),resultProto,null);
+                    ProtocolAction.sendMsg(ctx.channel(), "401",ChannelConst.CHANNEL_LOGIN);
                     return;
                 }
                 //将连接标识符存入连接属性中
@@ -41,7 +39,8 @@ public class CoreHandler {
                 //将连接保存
                 ChannelHandler.getInstance().addChannel(ctx.channel());
                 //发送请求结果给客户端
-                ProtocolAction.sendOkACK(ctx.channel(), ChannelConst.CHANNEL_LOGIN);
+
+                ProtocolAction.sendMsg(ctx.channel(), "200",ChannelConst.CHANNEL_LOGIN);
                 break;
             //客户端退出登录
             case ChannelConst.CHANNEL_LOGOUT:

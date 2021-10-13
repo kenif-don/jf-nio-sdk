@@ -87,7 +87,15 @@ public class ProtocolAction {
         }
         sendMsg(targets,protocol);
     }
-
+    /**
+     * 统一的消息转发
+     */
+    public static void sendMsg(Channel channel, String dataContent, int type){
+        Protocol protocol = new Protocol();
+        protocol.setType(type);
+        protocol.setDataContent(dataContent);
+        send(channel,protocol,null);
+    }
     /**
      * 给单个客户端发送消息
      * @param channelId
