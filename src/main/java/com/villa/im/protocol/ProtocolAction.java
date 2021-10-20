@@ -3,6 +3,7 @@ package com.villa.im.protocol;
 import com.alibaba.fastjson.JSON;
 import com.villa.im.model.ChannelConst;
 import com.villa.im.model.MsgDTO;
+import com.villa.im.model.ProtoType;
 import com.villa.im.model.Protocol;
 import com.villa.im.process.LogicProcess;
 import com.villa.im.handler.ChannelHandler;
@@ -42,7 +43,7 @@ public class ProtocolAction {
                     }
                 }
             }
-        },2*1000);
+        },500,2*1000);
     }
     //待转发的消息集合
     private static ConcurrentHashMap<String, MsgDTO> msgs = new ConcurrentHashMap<>();
@@ -58,6 +59,11 @@ public class ProtocolAction {
      * 统一的消息转发
      */
     public static void sendMsg(Channel channel, Protocol protocol, LogicProcess logicProcess){
+        //聊天消息必须携带一个消息ID 如果没有就回执报错
+        if(!Util.isNotEmpty(protocol.getMsgNo())){
+            ProtocolAction.sendAck(channel,ChannelConst.MESSAGE_NO_ID, ChannelConst.CHANNEL_MSG);
+            return;
+        }
         //先给发送方一个消息回执，代表服务器收到了消息
         ProtocolAction.sendOkACK(channel,ChannelConst.CHANNEL_MSG);
         //判断是否已经存在待发送消息
@@ -87,15 +93,7 @@ public class ProtocolAction {
         }
         sendMsg(targets,protocol);
     }
-    /**
-     * 统一的消息转发
-     */
-    public static void sendMsg(Channel channel, String dataContent, int type){
-        Protocol protocol = new Protocol();
-        protocol.setType(type);
-        protocol.setDataContent(dataContent);
-        send(channel,protocol,null);
-    }
+
     /**
      * 给单个客户端发送消息
      * @param channelId
@@ -161,5 +159,23 @@ public class ProtocolAction {
      */
     public static void sendOkACK(Channel channel,int type){
         baseSend(channel,new Protocol(type));
+    }
+    /**
+     * 统一回复客户端的应答方法
+     * @param channelId 目标ID
+     * @param type 那个指令的应答
+     */
+    public static void sendOkACK(String channelId,int type){
+        baseSend(ChannelHandler.getInstance().getChannelUDPFirst(channelId),new Protocol(type));
+    }
+    /**
+     * 统一的带小修的ack应答
+     */
+    public static void sendAck(Channel channel, String dataContent, int type){
+        Protocol protocol = new Protocol();
+        protocol.setType(type);
+        protocol.setDataContent(dataContent);
+        protocol.setAck(1);
+        send(channel,protocol,null);
     }
 }

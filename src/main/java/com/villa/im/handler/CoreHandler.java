@@ -23,15 +23,16 @@ public class CoreHandler {
         return coreHandler;
     }
     public void channelRead0(ChannelHandlerContext ctx, Protocol protocol) {
-        Log.log("接收到客户端消息:"+JSON.toJSONString(protocol));
+        Log.log("---------------------------------------------------------------------------------------");
         switch (protocol.getType()){
             //客户端登录
             case ChannelConst.CHANNEL_LOGIN:
+                Log.log("接收到客户端登录请求:"+JSON.toJSONString(protocol));
                 //获取连接标识符
                 String channelId = protocol.getFrom();
                 if(!Util.isNotEmpty(channelId)){
                     //发送消息给客户端,需要连接标识符
-                    ProtocolAction.sendMsg(ctx.channel(), "401",ChannelConst.CHANNEL_LOGIN);
+                    ProtocolAction.sendAck(ctx.channel(), ChannelConst.NOT_LOGIN_ID,ChannelConst.CHANNEL_LOGIN);
                     return;
                 }
                 //将连接标识符存入连接属性中
@@ -39,8 +40,7 @@ public class CoreHandler {
                 //将连接保存
                 ChannelHandler.getInstance().addChannel(ctx.channel());
                 //发送请求结果给客户端
-
-                ProtocolAction.sendMsg(ctx.channel(), "200",ChannelConst.CHANNEL_LOGIN);
+                ProtocolAction.sendAck(ctx.channel(), ChannelConst.SUCCESS,ChannelConst.CHANNEL_LOGIN);
                 break;
             //客户端退出登录
             case ChannelConst.CHANNEL_LOGOUT:
@@ -53,6 +53,7 @@ public class CoreHandler {
                 break;
             //客户端发送消息
             case ChannelConst.CHANNEL_MSG:
+                Log.log("接收到客户端消息:"+JSON.toJSONString(protocol));
                 ProtocolAction.sendMsg(ctx.channel(),protocol,ChannelConst.LOGIC_PROCESS);
                 break;
             case ChannelConst.CHANNEL_ACK:

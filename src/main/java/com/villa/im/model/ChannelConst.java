@@ -30,4 +30,11 @@ public class ChannelConst {
     public static final int CHANNEL_HEART = 3;
     //客户端正常退出
     public static final int CHANNEL_LOGOUT = 9;
+    //------------------------------前后端交互错误码------------------------------------------------------
+    //登录未携带连接标志符
+    public static final String NOT_LOGIN_ID = "401";
+    //处理成功
+    public static final String SUCCESS = "200";
+    //消息未携带消息ID
+    public static final String MESSAGE_NO_ID = "1001";
 }
