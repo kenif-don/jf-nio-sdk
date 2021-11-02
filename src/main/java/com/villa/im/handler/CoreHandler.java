@@ -3,7 +3,7 @@ package com.villa.im.handler;
 import com.alibaba.fastjson.JSON;
 import com.villa.im.model.ChannelConst;
 import com.villa.im.model.Protocol;
-import com.villa.im.protocol.ProtocolAction;
+import com.villa.im.manager.ProtocolManager;
 import com.villa.im.util.Log;
 import com.villa.im.util.Util;
 import io.netty.channel.ChannelHandlerContext;
@@ -23,16 +23,17 @@ public class CoreHandler {
         return coreHandler;
     }
     public void channelRead0(ChannelHandlerContext ctx, Protocol protocol) {
-        Log.log("---------------------------------------------------------------------------------------");
         switch (protocol.getType()){
             //客户端登录
             case ChannelConst.CHANNEL_LOGIN:
-                Log.log("接收到客户端登录请求:"+JSON.toJSONString(protocol));
+                if(!ChannelConst.LOGIC_PROCESS.loginBefore(ctx.channel(), protocol)){
+                    return;
+                }
                 //获取连接标识符
                 String channelId = protocol.getFrom();
                 if(!Util.isNotEmpty(channelId)){
                     //发送消息给客户端,需要连接标识符
-                    ProtocolAction.sendAck(ctx.channel(), ChannelConst.NOT_LOGIN_ID,ChannelConst.CHANNEL_LOGIN);
+                    ProtocolManager.sendAck(ctx.channel(), ChannelConst.NOT_LOGIN_ID,ChannelConst.CHANNEL_LOGIN);
                     return;
                 }
                 //将连接标识符存入连接属性中
@@ -40,24 +41,33 @@ public class CoreHandler {
                 //将连接保存
                 ChannelHandler.getInstance().addChannel(ctx.channel());
                 //发送请求结果给客户端
-                ProtocolAction.sendAck(ctx.channel(), ChannelConst.SUCCESS,ChannelConst.CHANNEL_LOGIN);
+                ProtocolManager.sendAck(ctx.channel(), ChannelConst.SUCCESS,ChannelConst.CHANNEL_LOGIN);
                 break;
             //客户端退出登录
             case ChannelConst.CHANNEL_LOGOUT:
+                if(!ChannelConst.LOGIC_PROCESS.logoutBefore(ctx.channel(), protocol)){
+                    return;
+                }
                 //踢掉客户端
                 ChannelHandler.getInstance().kickChannel(ctx.channel());
                 break;
             //心跳应答
             case ChannelConst.CHANNEL_HEART:
-                ProtocolAction.sendOkACK(ctx.channel(),ChannelConst.CHANNEL_HEART);
+                ProtocolManager.sendOkACK(ctx.channel(),ChannelConst.CHANNEL_HEART);
                 break;
             //客户端发送消息
             case ChannelConst.CHANNEL_MSG:
-                Log.log("接收到客户端消息:"+JSON.toJSONString(protocol));
-                ProtocolAction.sendMsg(ctx.channel(),protocol,ChannelConst.LOGIC_PROCESS);
+                if(!ChannelConst.LOGIC_PROCESS.sendMsgBefore(ctx.channel(), protocol)){
+                    return;
+                }
+                ProtocolManager.sendMsg(ctx.channel(),protocol);
                 break;
             case ChannelConst.CHANNEL_ACK:
-                ProtocolAction.ack(protocol);
+                ProtocolManager.ack(protocol);
+                break;
+            //业务层自定义的消息协议
+            default:
+                ChannelConst.LOGIC_PROCESS.customProtocolHandler(ctx.channel(),protocol);
                 break;
         }
     }
@@ -72,11 +82,7 @@ public class CoreHandler {
      * 连接断开的时候触发
      */
     public void handlerRemoved(ChannelHandlerContext ctx) {
-        String channelId = Util.getChannelId(ctx.channel());
-        //登录过才踢 否则不做任何处理，因为本身也没有进行保存
-        if(Util.isNotEmpty(channelId)){
-            ChannelHandler.getInstance().kickChannel(ctx.channel());
-        }
+        ChannelHandler.getInstance().kickChannel(ctx.channel());
         Log.log("有连接断开,当前连接数:"+--channelCount);
     }
 

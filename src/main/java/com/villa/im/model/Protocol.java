@@ -22,6 +22,10 @@ public class Protocol {
      * 并不代表消息唯一主键 也不会存进数据库 只是用来做消息补偿
      */
     private String msgNo;
+    /**
+     * 连接签名 可用做
+     */
+    private String sign;
     public Protocol(){
 
     }

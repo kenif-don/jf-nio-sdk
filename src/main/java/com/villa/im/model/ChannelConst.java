@@ -19,7 +19,7 @@ public class ChannelConst {
     //每个客户端连接对应的唯一标识符  值自定义 可以是用户表的唯一主键
     public static AttributeKey CHANNEL_ID = AttributeKey.newInstance("channel_id");
 
-    //-----------------消息协议(100内保留给当前SDK做系统指令，自定义指令请使用101以上)--------------------------
+    //-----------------消息协议类型(100内保留给当前SDK做系统指令，自定义指令请使用101以上)--------------------------
     //客户端登录
     public static final int CHANNEL_LOGIN = 0;
     //客户端消息交互
