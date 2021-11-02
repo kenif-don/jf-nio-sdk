@@ -33,6 +33,8 @@ public class ChannelConst {
     //------------------------------前后端交互错误码------------------------------------------------------
     //登录未携带连接标志符
     public static final String NOT_LOGIN_ID = "401";
+    /** 客户端未登录 */
+    public static final String NO_LOGIN = "403";
     //处理成功
     public static final String SUCCESS = "200";
     //消息未携带消息ID

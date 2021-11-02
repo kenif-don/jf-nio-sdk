@@ -23,9 +23,18 @@ public class CoreHandler {
         return coreHandler;
     }
     public void channelRead0(ChannelHandlerContext ctx, Protocol protocol) {
+        //如果当前请求不是登录 则都需要判断登录
+        if(protocol.getType()!=ChannelConst.CHANNEL_LOGIN){
+            //未登录
+            if(!ChannelHandler.getInstance().isOnline(ctx.channel())){
+                ProtocolManager.sendAck(ctx.channel(), ChannelConst.NO_LOGIN,ChannelConst.CHANNEL_MSG);
+                return;
+            }
+        }
         switch (protocol.getType()){
             //客户端登录
             case ChannelConst.CHANNEL_LOGIN:
+                //login前置
                 if(!ChannelConst.LOGIC_PROCESS.loginBefore(ctx.channel(), protocol)){
                     return;
                 }
@@ -45,6 +54,7 @@ public class CoreHandler {
                 break;
             //客户端退出登录
             case ChannelConst.CHANNEL_LOGOUT:
+                //logout前置
                 if(!ChannelConst.LOGIC_PROCESS.logoutBefore(ctx.channel(), protocol)){
                     return;
                 }
@@ -57,6 +67,7 @@ public class CoreHandler {
                 break;
             //客户端发送消息
             case ChannelConst.CHANNEL_MSG:
+                //sendMag前置
                 if(!ChannelConst.LOGIC_PROCESS.sendMsgBefore(ctx.channel(), protocol)){
                     return;
                 }
