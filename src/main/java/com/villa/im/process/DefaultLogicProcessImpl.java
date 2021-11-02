@@ -41,8 +41,16 @@ public class DefaultLogicProcessImpl implements LogicProcess {
         Log.log("【客户端消息】："+ JSON.toJSONString(protocol));
         return true;
     }
-    public void sendFailCallBack(Protocol protocol) {}
-    public void sendSuccessCallBack(Protocol protocol) {}
-    public void sendCallBack(Object protocol) {}
-    public void customProtocolHandler(Channel channel, Protocol protocol) {}
+    public void sendFailCallBack(Protocol protocol) {
+        Log.log("【客户端消息转发失败】："+JSON.toJSONString(protocol));
+    }
+    public void sendSuccessCallBack(Protocol protocol) {
+        Log.log("【客户端消息转发成功】："+JSON.toJSONString(protocol));
+    }
+    public void sendCallBack(Object protocol) {
+        Log.log("【客户端已转发消息,但结果未知】："+JSON.toJSONString(protocol));
+    }
+    public void customProtocolHandler(Channel channel, Protocol protocol) {
+        Log.log("【客户端接收到自定义协议消息】："+JSON.toJSONString(protocol));
+    }
 }
