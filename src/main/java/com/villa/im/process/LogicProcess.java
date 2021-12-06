@@ -62,6 +62,7 @@ public interface LogicProcess {
      * 发送数据的回调
      * 发送了一次数据的回调(成功则成功,失败则会走qos),并不意味着成功或者失败。
      * 每条消息,每个接收者只触发一次
+     * TODO...udp协议无法监听成功与失败(虽然这里无需成功和失败的状态,但是还需要再次测试udp是否能监听到发送成功)
      */
     void sendCallBack(Object protocol);
     /**

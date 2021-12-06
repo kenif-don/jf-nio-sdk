@@ -13,22 +13,27 @@ public class Protocol {
     //消息到哪里去
     private String to;
     //消息的实际内容 可以是json字符串 可以是普通字符串
-    private String dataContent;
-    //ack 1-ack应答包  -1 代表此消息包不是ack应答包 而是携带了消息内容
+    private String data;
+    //ack 1-ack应答包  -1 代表此消息包不是ack应答包 而是携带了消息内容  99-代表此消息,需要服务器给个回执 100-代表此消息需要qos支持 101-代表需要客户端给服务器一个回执
     private int ack;
     /**
      * 普通消息必传
      * 消息唯一编号 注意这个只是客户端生成的一个唯一值，uuid或者时间戳+六位随机数都可以
      * 并不代表消息唯一主键 也不会存进数据库 只是用来做消息补偿
      */
-    private String msgNo;
+    private String id;
     /**
-     * 连接签名 可用做
+     * String类型的扩展字段
      */
-    private String sign;
-    public Protocol(){
-
-    }
+    private String ext1;
+    private String ext2;
+    private String ext3;
+    /**
+     * Integer类型的扩展字段 不使用基本类型,是因为转json可以通过设置将为null值不输出,但是int则不行
+     */
+    private Integer ext4;
+    private Integer ext5;
+    public Protocol(){}
 
     /**
      * 实例化一个ack应答包
@@ -39,13 +44,13 @@ public class Protocol {
         this.ack = 1;
     }
 
-    public Protocol(int type, String from, String to, String dataContent, int ack, String msgNo) {
+    public Protocol(int type, String from, String to, String dataContent, int ack, String id) {
         this.type = type;
         this.from = from;
         this.to = to;
-        this.dataContent = dataContent;
+        this.data = dataContent;
         this.ack = ack;
-        this.msgNo = msgNo;
+        this.id = id;
     }
 
     public int getType() {
@@ -72,12 +77,12 @@ public class Protocol {
         this.to = to;
     }
 
-    public String getDataContent() {
-        return dataContent;
+    public String getData() {
+        return data;
     }
 
-    public void setDataContent(String dataContent) {
-        this.dataContent = dataContent;
+    public void setData(String data) {
+        this.data = data;
     }
 
     public int getAck() {
@@ -88,11 +93,51 @@ public class Protocol {
         this.ack = ack;
     }
 
-    public String getMsgNo() {
-        return msgNo;
+    public String getId() {
+        return id;
     }
 
-    public void setMsgNo(String msgNo) {
-        this.msgNo = msgNo;
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getExt1() {
+        return ext1;
+    }
+
+    public void setExt1(String ext1) {
+        this.ext1 = ext1;
+    }
+
+    public String getExt2() {
+        return ext2;
+    }
+
+    public void setExt2(String ext2) {
+        this.ext2 = ext2;
+    }
+
+    public String getExt3() {
+        return ext3;
+    }
+
+    public void setExt3(String ext3) {
+        this.ext3 = ext3;
+    }
+
+    public Integer getExt4() {
+        return ext4;
+    }
+
+    public void setExt4(Integer ext4) {
+        this.ext4 = ext4;
+    }
+
+    public Integer getExt5() {
+        return ext5;
+    }
+
+    public void setExt5(Integer ext5) {
+        this.ext5 = ext5;
     }
 }

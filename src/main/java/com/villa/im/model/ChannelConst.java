@@ -9,6 +9,10 @@ import io.netty.util.AttributeKey;
  * @bbs_url https://blog.csdn.net/u012169821
  */
 public class ChannelConst {
+    /**
+     * qos发送延迟
+     */
+    public static int QOS_DELAY = 2*1000;
     //需要业务处定义的业务处理器 --默认实现
     public static LogicProcess LOGIC_PROCESS = new DefaultLogicProcessImpl();
     //消息类型的协议类型 --默认json格式

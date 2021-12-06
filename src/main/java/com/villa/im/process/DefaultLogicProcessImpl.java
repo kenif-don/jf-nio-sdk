@@ -1,6 +1,7 @@
 package com.villa.im.process;
 
 import com.alibaba.fastjson.JSON;
+import com.villa.im.manager.ProtocolManager;
 import com.villa.im.model.ChannelConst;
 import com.villa.im.model.Protocol;
 import com.villa.im.util.Log;
@@ -30,27 +31,29 @@ public class DefaultLogicProcessImpl implements LogicProcess {
      */
     public void addMessage(Protocol protocol) {}
     public boolean loginBefore(Channel channel, Protocol protocol) {
-        Log.log("【客户端登录】："+ JSON.toJSONString(protocol));
+//        Log.log("【客户端登录】："+ JSON.toJSONString(protocol));
         return true;
     }
     public boolean logoutBefore(Channel channel, Protocol protocol) {
-        Log.log("【客户端登出】："+ JSON.toJSONString(protocol));
+//        Log.log("【客户端登出】："+ JSON.toJSONString(protocol));
         return true;
     }
     public boolean sendMsgBefore(Channel channel, Protocol protocol) {
-        Log.log("【客户端消息】："+ JSON.toJSONString(protocol));
+//        Log.log("【客户端消息】："+ JSON.toJSONString(protocol));
         return true;
     }
     public void sendFailCallBack(Protocol protocol) {
-        Log.log("【客户端消息转发失败】："+JSON.toJSONString(protocol));
+//        Log.log("【客户端消息转发失败】："+JSON.toJSONString(protocol));
     }
     public void sendSuccessCallBack(Protocol protocol) {
-        Log.log("【客户端消息转发成功】："+JSON.toJSONString(protocol));
+
+//        Log.log("【客户端消息转发成功】："+JSON.toJSONString(protocol));
     }
     public void sendCallBack(Object protocol) {
-        Log.log("【客户端已转发消息,但结果未知】："+JSON.toJSONString(protocol));
+
+//        Log.log("【客户端已转发消息,但结果未知】："+JSON.toJSONString(protocol));
     }
     public void customProtocolHandler(Channel channel, Protocol protocol) {
-        Log.log("【客户端接收到自定义协议消息】："+JSON.toJSONString(protocol));
+        ProtocolManager.sendMsg(channel,protocol);
     }
 }

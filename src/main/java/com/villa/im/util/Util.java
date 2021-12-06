@@ -40,7 +40,7 @@ public class Util {
         buf.readBytes(data);
         try {
             ProtoBuf.proto_my proto_my = ProtoBuf.proto_my.parseFrom(data);
-            return new Protocol(proto_my.getType(),proto_my.getFrom(),proto_my.getTo(),proto_my.getDataContent(),proto_my.getAck(),proto_my.getMsgNo());
+            return new Protocol(proto_my.getType(),proto_my.getFrom(),proto_my.getTo(),proto_my.getData(),proto_my.getAck(),proto_my.getId());
         } catch (InvalidProtocolBufferException e) {
             e.printStackTrace();
         }

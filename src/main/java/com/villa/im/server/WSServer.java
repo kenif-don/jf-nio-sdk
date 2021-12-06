@@ -2,7 +2,6 @@ package com.villa.im.server;
 
 import com.villa.im.handler.CoreHandler;
 import com.villa.im.handler.WebSocketHandler;
-import com.villa.im.model.DataProtoType;
 import com.villa.im.model.ProtoType;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelInitializer;

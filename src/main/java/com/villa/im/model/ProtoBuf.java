@@ -73,40 +73,40 @@ public final class ProtoBuf {
      *消息体
      * </pre>
      *
-     * <code>string dataContent = 4;</code>
-     * @return The dataContent.
+     * <code>string data = 4;</code>
+     * @return The data.
      */
-    String getDataContent();
+    String getData();
     /**
      * <pre>
      *消息体
      * </pre>
      *
-     * <code>string dataContent = 4;</code>
-     * @return The bytes for dataContent.
+     * <code>string data = 4;</code>
+     * @return The bytes for data.
      */
     com.google.protobuf.ByteString
-        getDataContentBytes();
+        getDataBytes();
 
     /**
      * <pre>
      *消息编号
      * </pre>
      *
-     * <code>string msgNo = 5;</code>
-     * @return The msgNo.
+     * <code>string id = 5;</code>
+     * @return The id.
      */
-    String getMsgNo();
+    String getId();
     /**
      * <pre>
      *消息编号
      * </pre>
      *
-     * <code>string msgNo = 5;</code>
-     * @return The bytes for msgNo.
+     * <code>string id = 5;</code>
+     * @return The bytes for id.
      */
     com.google.protobuf.ByteString
-        getMsgNoBytes();
+        getIdBytes();
 
     /**
      * <pre>
@@ -117,6 +117,54 @@ public final class ProtoBuf {
      * @return The ack.
      */
     int getAck();
+
+    /**
+     * <code>string ext1 = 7;</code>
+     * @return The ext1.
+     */
+    String getExt1();
+    /**
+     * <code>string ext1 = 7;</code>
+     * @return The bytes for ext1.
+     */
+    com.google.protobuf.ByteString
+        getExt1Bytes();
+
+    /**
+     * <code>string ext2 = 8;</code>
+     * @return The ext2.
+     */
+    String getExt2();
+    /**
+     * <code>string ext2 = 8;</code>
+     * @return The bytes for ext2.
+     */
+    com.google.protobuf.ByteString
+        getExt2Bytes();
+
+    /**
+     * <code>string ext3 = 9;</code>
+     * @return The ext3.
+     */
+    String getExt3();
+    /**
+     * <code>string ext3 = 9;</code>
+     * @return The bytes for ext3.
+     */
+    com.google.protobuf.ByteString
+        getExt3Bytes();
+
+    /**
+     * <code>int32 ext4 = 10;</code>
+     * @return The ext4.
+     */
+    int getExt4();
+
+    /**
+     * <code>int32 ext5 = 11;</code>
+     * @return The ext5.
+     */
+    int getExt5();
   }
   /**
    * Protobuf type {@code com.villa.im.model.proto_my}
@@ -133,8 +181,11 @@ public final class ProtoBuf {
     private proto_my() {
       from_ = "";
       to_ = "";
-      dataContent_ = "";
-      msgNo_ = "";
+      data_ = "";
+      id_ = "";
+      ext1_ = "";
+      ext2_ = "";
+      ext3_ = "";
     }
 
     @Override
@@ -187,18 +238,46 @@ public final class ProtoBuf {
             case 34: {
               String s = input.readStringRequireUtf8();
 
-              dataContent_ = s;
+              data_ = s;
               break;
             }
             case 42: {
               String s = input.readStringRequireUtf8();
 
-              msgNo_ = s;
+              id_ = s;
               break;
             }
             case 48: {
 
               ack_ = input.readInt32();
+              break;
+            }
+            case 58: {
+              String s = input.readStringRequireUtf8();
+
+              ext1_ = s;
+              break;
+            }
+            case 66: {
+              String s = input.readStringRequireUtf8();
+
+              ext2_ = s;
+              break;
+            }
+            case 74: {
+              String s = input.readStringRequireUtf8();
+
+              ext3_ = s;
+              break;
+            }
+            case 80: {
+
+              ext4_ = input.readInt32();
+              break;
+            }
+            case 88: {
+
+              ext5_ = input.readInt32();
               break;
             }
             default: {
@@ -340,26 +419,26 @@ public final class ProtoBuf {
       }
     }
 
-    public static final int DATACONTENT_FIELD_NUMBER = 4;
-    private volatile Object dataContent_;
+    public static final int DATA_FIELD_NUMBER = 4;
+    private volatile Object data_;
     /**
      * <pre>
      *消息体
      * </pre>
      *
-     * <code>string dataContent = 4;</code>
-     * @return The dataContent.
+     * <code>string data = 4;</code>
+     * @return The data.
      */
     @Override
-    public String getDataContent() {
-      Object ref = dataContent_;
+    public String getData() {
+      Object ref = data_;
       if (ref instanceof String) {
         return (String) ref;
       } else {
         com.google.protobuf.ByteString bs = 
             (com.google.protobuf.ByteString) ref;
         String s = bs.toStringUtf8();
-        dataContent_ = s;
+        data_ = s;
         return s;
       }
     }
@@ -368,44 +447,44 @@ public final class ProtoBuf {
      *消息体
      * </pre>
      *
-     * <code>string dataContent = 4;</code>
-     * @return The bytes for dataContent.
+     * <code>string data = 4;</code>
+     * @return The bytes for data.
      */
     @Override
     public com.google.protobuf.ByteString
-        getDataContentBytes() {
-      Object ref = dataContent_;
+        getDataBytes() {
+      Object ref = data_;
       if (ref instanceof String) {
         com.google.protobuf.ByteString b = 
             com.google.protobuf.ByteString.copyFromUtf8(
                 (String) ref);
-        dataContent_ = b;
+        data_ = b;
         return b;
       } else {
         return (com.google.protobuf.ByteString) ref;
       }
     }
 
-    public static final int MSGNO_FIELD_NUMBER = 5;
-    private volatile Object msgNo_;
+    public static final int ID_FIELD_NUMBER = 5;
+    private volatile Object id_;
     /**
      * <pre>
      *消息编号
      * </pre>
      *
-     * <code>string msgNo = 5;</code>
-     * @return The msgNo.
+     * <code>string id = 5;</code>
+     * @return The id.
      */
     @Override
-    public String getMsgNo() {
-      Object ref = msgNo_;
+    public String getId() {
+      Object ref = id_;
       if (ref instanceof String) {
         return (String) ref;
       } else {
         com.google.protobuf.ByteString bs = 
             (com.google.protobuf.ByteString) ref;
         String s = bs.toStringUtf8();
-        msgNo_ = s;
+        id_ = s;
         return s;
       }
     }
@@ -414,18 +493,18 @@ public final class ProtoBuf {
      *消息编号
      * </pre>
      *
-     * <code>string msgNo = 5;</code>
-     * @return The bytes for msgNo.
+     * <code>string id = 5;</code>
+     * @return The bytes for id.
      */
     @Override
     public com.google.protobuf.ByteString
-        getMsgNoBytes() {
-      Object ref = msgNo_;
+        getIdBytes() {
+      Object ref = id_;
       if (ref instanceof String) {
         com.google.protobuf.ByteString b = 
             com.google.protobuf.ByteString.copyFromUtf8(
                 (String) ref);
-        msgNo_ = b;
+        id_ = b;
         return b;
       } else {
         return (com.google.protobuf.ByteString) ref;
@@ -445,6 +524,142 @@ public final class ProtoBuf {
     @Override
     public int getAck() {
       return ack_;
+    }
+
+    public static final int EXT1_FIELD_NUMBER = 7;
+    private volatile Object ext1_;
+    /**
+     * <code>string ext1 = 7;</code>
+     * @return The ext1.
+     */
+    @Override
+    public String getExt1() {
+      Object ref = ext1_;
+      if (ref instanceof String) {
+        return (String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        String s = bs.toStringUtf8();
+        ext1_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string ext1 = 7;</code>
+     * @return The bytes for ext1.
+     */
+    @Override
+    public com.google.protobuf.ByteString
+        getExt1Bytes() {
+      Object ref = ext1_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (String) ref);
+        ext1_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int EXT2_FIELD_NUMBER = 8;
+    private volatile Object ext2_;
+    /**
+     * <code>string ext2 = 8;</code>
+     * @return The ext2.
+     */
+    @Override
+    public String getExt2() {
+      Object ref = ext2_;
+      if (ref instanceof String) {
+        return (String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        String s = bs.toStringUtf8();
+        ext2_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string ext2 = 8;</code>
+     * @return The bytes for ext2.
+     */
+    @Override
+    public com.google.protobuf.ByteString
+        getExt2Bytes() {
+      Object ref = ext2_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (String) ref);
+        ext2_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int EXT3_FIELD_NUMBER = 9;
+    private volatile Object ext3_;
+    /**
+     * <code>string ext3 = 9;</code>
+     * @return The ext3.
+     */
+    @Override
+    public String getExt3() {
+      Object ref = ext3_;
+      if (ref instanceof String) {
+        return (String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        String s = bs.toStringUtf8();
+        ext3_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string ext3 = 9;</code>
+     * @return The bytes for ext3.
+     */
+    @Override
+    public com.google.protobuf.ByteString
+        getExt3Bytes() {
+      Object ref = ext3_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (String) ref);
+        ext3_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int EXT4_FIELD_NUMBER = 10;
+    private int ext4_;
+    /**
+     * <code>int32 ext4 = 10;</code>
+     * @return The ext4.
+     */
+    @Override
+    public int getExt4() {
+      return ext4_;
+    }
+
+    public static final int EXT5_FIELD_NUMBER = 11;
+    private int ext5_;
+    /**
+     * <code>int32 ext5 = 11;</code>
+     * @return The ext5.
+     */
+    @Override
+    public int getExt5() {
+      return ext5_;
     }
 
     private byte memoizedIsInitialized = -1;
@@ -470,14 +685,29 @@ public final class ProtoBuf {
       if (!getToBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 3, to_);
       }
-      if (!getDataContentBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 4, dataContent_);
+      if (!getDataBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 4, data_);
       }
-      if (!getMsgNoBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 5, msgNo_);
+      if (!getIdBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 5, id_);
       }
       if (ack_ != 0) {
         output.writeInt32(6, ack_);
+      }
+      if (!getExt1Bytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 7, ext1_);
+      }
+      if (!getExt2Bytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 8, ext2_);
+      }
+      if (!getExt3Bytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 9, ext3_);
+      }
+      if (ext4_ != 0) {
+        output.writeInt32(10, ext4_);
+      }
+      if (ext5_ != 0) {
+        output.writeInt32(11, ext5_);
       }
       unknownFields.writeTo(output);
     }
@@ -498,15 +728,32 @@ public final class ProtoBuf {
       if (!getToBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, to_);
       }
-      if (!getDataContentBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, dataContent_);
+      if (!getDataBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, data_);
       }
-      if (!getMsgNoBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, msgNo_);
+      if (!getIdBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, id_);
       }
       if (ack_ != 0) {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(6, ack_);
+      }
+      if (!getExt1Bytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(7, ext1_);
+      }
+      if (!getExt2Bytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(8, ext2_);
+      }
+      if (!getExt3Bytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(9, ext3_);
+      }
+      if (ext4_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(10, ext4_);
+      }
+      if (ext5_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(11, ext5_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -529,12 +776,22 @@ public final class ProtoBuf {
           .equals(other.getFrom())) return false;
       if (!getTo()
           .equals(other.getTo())) return false;
-      if (!getDataContent()
-          .equals(other.getDataContent())) return false;
-      if (!getMsgNo()
-          .equals(other.getMsgNo())) return false;
+      if (!getData()
+          .equals(other.getData())) return false;
+      if (!getId()
+          .equals(other.getId())) return false;
       if (getAck()
           != other.getAck()) return false;
+      if (!getExt1()
+          .equals(other.getExt1())) return false;
+      if (!getExt2()
+          .equals(other.getExt2())) return false;
+      if (!getExt3()
+          .equals(other.getExt3())) return false;
+      if (getExt4()
+          != other.getExt4()) return false;
+      if (getExt5()
+          != other.getExt5()) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -552,12 +809,22 @@ public final class ProtoBuf {
       hash = (53 * hash) + getFrom().hashCode();
       hash = (37 * hash) + TO_FIELD_NUMBER;
       hash = (53 * hash) + getTo().hashCode();
-      hash = (37 * hash) + DATACONTENT_FIELD_NUMBER;
-      hash = (53 * hash) + getDataContent().hashCode();
-      hash = (37 * hash) + MSGNO_FIELD_NUMBER;
-      hash = (53 * hash) + getMsgNo().hashCode();
+      hash = (37 * hash) + DATA_FIELD_NUMBER;
+      hash = (53 * hash) + getData().hashCode();
+      hash = (37 * hash) + ID_FIELD_NUMBER;
+      hash = (53 * hash) + getId().hashCode();
       hash = (37 * hash) + ACK_FIELD_NUMBER;
       hash = (53 * hash) + getAck();
+      hash = (37 * hash) + EXT1_FIELD_NUMBER;
+      hash = (53 * hash) + getExt1().hashCode();
+      hash = (37 * hash) + EXT2_FIELD_NUMBER;
+      hash = (53 * hash) + getExt2().hashCode();
+      hash = (37 * hash) + EXT3_FIELD_NUMBER;
+      hash = (53 * hash) + getExt3().hashCode();
+      hash = (37 * hash) + EXT4_FIELD_NUMBER;
+      hash = (53 * hash) + getExt4();
+      hash = (37 * hash) + EXT5_FIELD_NUMBER;
+      hash = (53 * hash) + getExt5();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -697,11 +964,21 @@ public final class ProtoBuf {
 
         to_ = "";
 
-        dataContent_ = "";
+        data_ = "";
 
-        msgNo_ = "";
+        id_ = "";
 
         ack_ = 0;
+
+        ext1_ = "";
+
+        ext2_ = "";
+
+        ext3_ = "";
+
+        ext4_ = 0;
+
+        ext5_ = 0;
 
         return this;
       }
@@ -732,9 +1009,14 @@ public final class ProtoBuf {
         result.type_ = type_;
         result.from_ = from_;
         result.to_ = to_;
-        result.dataContent_ = dataContent_;
-        result.msgNo_ = msgNo_;
+        result.data_ = data_;
+        result.id_ = id_;
         result.ack_ = ack_;
+        result.ext1_ = ext1_;
+        result.ext2_ = ext2_;
+        result.ext3_ = ext3_;
+        result.ext4_ = ext4_;
+        result.ext5_ = ext5_;
         onBuilt();
         return result;
       }
@@ -794,16 +1076,34 @@ public final class ProtoBuf {
           to_ = other.to_;
           onChanged();
         }
-        if (!other.getDataContent().isEmpty()) {
-          dataContent_ = other.dataContent_;
+        if (!other.getData().isEmpty()) {
+          data_ = other.data_;
           onChanged();
         }
-        if (!other.getMsgNo().isEmpty()) {
-          msgNo_ = other.msgNo_;
+        if (!other.getId().isEmpty()) {
+          id_ = other.id_;
           onChanged();
         }
         if (other.getAck() != 0) {
           setAck(other.getAck());
+        }
+        if (!other.getExt1().isEmpty()) {
+          ext1_ = other.ext1_;
+          onChanged();
+        }
+        if (!other.getExt2().isEmpty()) {
+          ext2_ = other.ext2_;
+          onChanged();
+        }
+        if (!other.getExt3().isEmpty()) {
+          ext3_ = other.ext3_;
+          onChanged();
+        }
+        if (other.getExt4() != 0) {
+          setExt4(other.getExt4());
+        }
+        if (other.getExt5() != 0) {
+          setExt5(other.getExt5());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -1069,22 +1369,22 @@ public final class ProtoBuf {
         return this;
       }
 
-      private Object dataContent_ = "";
+      private Object data_ = "";
       /**
        * <pre>
        *消息体
        * </pre>
        *
-       * <code>string dataContent = 4;</code>
-       * @return The dataContent.
+       * <code>string data = 4;</code>
+       * @return The data.
        */
-      public String getDataContent() {
-        Object ref = dataContent_;
+      public String getData() {
+        Object ref = data_;
         if (!(ref instanceof String)) {
           com.google.protobuf.ByteString bs =
               (com.google.protobuf.ByteString) ref;
           String s = bs.toStringUtf8();
-          dataContent_ = s;
+          data_ = s;
           return s;
         } else {
           return (String) ref;
@@ -1095,17 +1395,17 @@ public final class ProtoBuf {
        *消息体
        * </pre>
        *
-       * <code>string dataContent = 4;</code>
-       * @return The bytes for dataContent.
+       * <code>string data = 4;</code>
+       * @return The bytes for data.
        */
       public com.google.protobuf.ByteString
-          getDataContentBytes() {
-        Object ref = dataContent_;
+          getDataBytes() {
+        Object ref = data_;
         if (ref instanceof String) {
           com.google.protobuf.ByteString b = 
               com.google.protobuf.ByteString.copyFromUtf8(
                   (String) ref);
-          dataContent_ = b;
+          data_ = b;
           return b;
         } else {
           return (com.google.protobuf.ByteString) ref;
@@ -1116,17 +1416,17 @@ public final class ProtoBuf {
        *消息体
        * </pre>
        *
-       * <code>string dataContent = 4;</code>
-       * @param value The dataContent to set.
+       * <code>string data = 4;</code>
+       * @param value The data to set.
        * @return This builder for chaining.
        */
-      public Builder setDataContent(
+      public Builder setData(
           String value) {
         if (value == null) {
     throw new NullPointerException();
   }
   
-        dataContent_ = value;
+        data_ = value;
         onChanged();
         return this;
       }
@@ -1135,12 +1435,12 @@ public final class ProtoBuf {
        *消息体
        * </pre>
        *
-       * <code>string dataContent = 4;</code>
+       * <code>string data = 4;</code>
        * @return This builder for chaining.
        */
-      public Builder clearDataContent() {
+      public Builder clearData() {
         
-        dataContent_ = getDefaultInstance().getDataContent();
+        data_ = getDefaultInstance().getData();
         onChanged();
         return this;
       }
@@ -1149,38 +1449,38 @@ public final class ProtoBuf {
        *消息体
        * </pre>
        *
-       * <code>string dataContent = 4;</code>
-       * @param value The bytes for dataContent to set.
+       * <code>string data = 4;</code>
+       * @param value The bytes for data to set.
        * @return This builder for chaining.
        */
-      public Builder setDataContentBytes(
+      public Builder setDataBytes(
           com.google.protobuf.ByteString value) {
         if (value == null) {
     throw new NullPointerException();
   }
   checkByteStringIsUtf8(value);
         
-        dataContent_ = value;
+        data_ = value;
         onChanged();
         return this;
       }
 
-      private Object msgNo_ = "";
+      private Object id_ = "";
       /**
        * <pre>
        *消息编号
        * </pre>
        *
-       * <code>string msgNo = 5;</code>
-       * @return The msgNo.
+       * <code>string id = 5;</code>
+       * @return The id.
        */
-      public String getMsgNo() {
-        Object ref = msgNo_;
+      public String getId() {
+        Object ref = id_;
         if (!(ref instanceof String)) {
           com.google.protobuf.ByteString bs =
               (com.google.protobuf.ByteString) ref;
           String s = bs.toStringUtf8();
-          msgNo_ = s;
+          id_ = s;
           return s;
         } else {
           return (String) ref;
@@ -1191,17 +1491,17 @@ public final class ProtoBuf {
        *消息编号
        * </pre>
        *
-       * <code>string msgNo = 5;</code>
-       * @return The bytes for msgNo.
+       * <code>string id = 5;</code>
+       * @return The bytes for id.
        */
       public com.google.protobuf.ByteString
-          getMsgNoBytes() {
-        Object ref = msgNo_;
+          getIdBytes() {
+        Object ref = id_;
         if (ref instanceof String) {
           com.google.protobuf.ByteString b = 
               com.google.protobuf.ByteString.copyFromUtf8(
                   (String) ref);
-          msgNo_ = b;
+          id_ = b;
           return b;
         } else {
           return (com.google.protobuf.ByteString) ref;
@@ -1212,17 +1512,17 @@ public final class ProtoBuf {
        *消息编号
        * </pre>
        *
-       * <code>string msgNo = 5;</code>
-       * @param value The msgNo to set.
+       * <code>string id = 5;</code>
+       * @param value The id to set.
        * @return This builder for chaining.
        */
-      public Builder setMsgNo(
+      public Builder setId(
           String value) {
         if (value == null) {
     throw new NullPointerException();
   }
   
-        msgNo_ = value;
+        id_ = value;
         onChanged();
         return this;
       }
@@ -1231,12 +1531,12 @@ public final class ProtoBuf {
        *消息编号
        * </pre>
        *
-       * <code>string msgNo = 5;</code>
+       * <code>string id = 5;</code>
        * @return This builder for chaining.
        */
-      public Builder clearMsgNo() {
+      public Builder clearId() {
         
-        msgNo_ = getDefaultInstance().getMsgNo();
+        id_ = getDefaultInstance().getId();
         onChanged();
         return this;
       }
@@ -1245,18 +1545,18 @@ public final class ProtoBuf {
        *消息编号
        * </pre>
        *
-       * <code>string msgNo = 5;</code>
-       * @param value The bytes for msgNo to set.
+       * <code>string id = 5;</code>
+       * @param value The bytes for id to set.
        * @return This builder for chaining.
        */
-      public Builder setMsgNoBytes(
+      public Builder setIdBytes(
           com.google.protobuf.ByteString value) {
         if (value == null) {
     throw new NullPointerException();
   }
   checkByteStringIsUtf8(value);
         
-        msgNo_ = value;
+        id_ = value;
         onChanged();
         return this;
       }
@@ -1300,6 +1600,296 @@ public final class ProtoBuf {
       public Builder clearAck() {
         
         ack_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private Object ext1_ = "";
+      /**
+       * <code>string ext1 = 7;</code>
+       * @return The ext1.
+       */
+      public String getExt1() {
+        Object ref = ext1_;
+        if (!(ref instanceof String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          String s = bs.toStringUtf8();
+          ext1_ = s;
+          return s;
+        } else {
+          return (String) ref;
+        }
+      }
+      /**
+       * <code>string ext1 = 7;</code>
+       * @return The bytes for ext1.
+       */
+      public com.google.protobuf.ByteString
+          getExt1Bytes() {
+        Object ref = ext1_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (String) ref);
+          ext1_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string ext1 = 7;</code>
+       * @param value The ext1 to set.
+       * @return This builder for chaining.
+       */
+      public Builder setExt1(
+          String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        ext1_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string ext1 = 7;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearExt1() {
+        
+        ext1_ = getDefaultInstance().getExt1();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string ext1 = 7;</code>
+       * @param value The bytes for ext1 to set.
+       * @return This builder for chaining.
+       */
+      public Builder setExt1Bytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        ext1_ = value;
+        onChanged();
+        return this;
+      }
+
+      private Object ext2_ = "";
+      /**
+       * <code>string ext2 = 8;</code>
+       * @return The ext2.
+       */
+      public String getExt2() {
+        Object ref = ext2_;
+        if (!(ref instanceof String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          String s = bs.toStringUtf8();
+          ext2_ = s;
+          return s;
+        } else {
+          return (String) ref;
+        }
+      }
+      /**
+       * <code>string ext2 = 8;</code>
+       * @return The bytes for ext2.
+       */
+      public com.google.protobuf.ByteString
+          getExt2Bytes() {
+        Object ref = ext2_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (String) ref);
+          ext2_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string ext2 = 8;</code>
+       * @param value The ext2 to set.
+       * @return This builder for chaining.
+       */
+      public Builder setExt2(
+          String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        ext2_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string ext2 = 8;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearExt2() {
+        
+        ext2_ = getDefaultInstance().getExt2();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string ext2 = 8;</code>
+       * @param value The bytes for ext2 to set.
+       * @return This builder for chaining.
+       */
+      public Builder setExt2Bytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        ext2_ = value;
+        onChanged();
+        return this;
+      }
+
+      private Object ext3_ = "";
+      /**
+       * <code>string ext3 = 9;</code>
+       * @return The ext3.
+       */
+      public String getExt3() {
+        Object ref = ext3_;
+        if (!(ref instanceof String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          String s = bs.toStringUtf8();
+          ext3_ = s;
+          return s;
+        } else {
+          return (String) ref;
+        }
+      }
+      /**
+       * <code>string ext3 = 9;</code>
+       * @return The bytes for ext3.
+       */
+      public com.google.protobuf.ByteString
+          getExt3Bytes() {
+        Object ref = ext3_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (String) ref);
+          ext3_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string ext3 = 9;</code>
+       * @param value The ext3 to set.
+       * @return This builder for chaining.
+       */
+      public Builder setExt3(
+          String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        ext3_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string ext3 = 9;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearExt3() {
+        
+        ext3_ = getDefaultInstance().getExt3();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string ext3 = 9;</code>
+       * @param value The bytes for ext3 to set.
+       * @return This builder for chaining.
+       */
+      public Builder setExt3Bytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        ext3_ = value;
+        onChanged();
+        return this;
+      }
+
+      private int ext4_ ;
+      /**
+       * <code>int32 ext4 = 10;</code>
+       * @return The ext4.
+       */
+      @Override
+      public int getExt4() {
+        return ext4_;
+      }
+      /**
+       * <code>int32 ext4 = 10;</code>
+       * @param value The ext4 to set.
+       * @return This builder for chaining.
+       */
+      public Builder setExt4(int value) {
+        
+        ext4_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int32 ext4 = 10;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearExt4() {
+        
+        ext4_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private int ext5_ ;
+      /**
+       * <code>int32 ext5 = 11;</code>
+       * @return The ext5.
+       */
+      @Override
+      public int getExt5() {
+        return ext5_;
+      }
+      /**
+       * <code>int32 ext5 = 11;</code>
+       * @param value The ext5 to set.
+       * @return This builder for chaining.
+       */
+      public Builder setExt5(int value) {
+        
+        ext5_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int32 ext5 = 11;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearExt5() {
+        
+        ext5_ = 0;
         onChanged();
         return this;
       }
@@ -1370,11 +1960,12 @@ public final class ProtoBuf {
       descriptor;
   static {
     String[] descriptorData = {
-      "\n\016proto_my.proto\022\022com.villa.im.model\"c\n\010" +
-      "proto_my\022\014\n\004type\030\001 \001(\005\022\014\n\004from\030\002 \001(\t\022\n\n\002" +
-      "to\030\003 \001(\t\022\023\n\013dataContent\030\004 \001(\t\022\r\n\005msgNo\030\005" +
-      " \001(\t\022\013\n\003ack\030\006 \001(\005B\036\n\022com.villa.im.modelB" +
-      "\010ProtoBufb\006proto3"
+      "\n\016proto_my.proto\022\022com.villa.im.model\"\237\001\n" +
+      "\010proto_my\022\014\n\004type\030\001 \001(\005\022\014\n\004from\030\002 \001(\t\022\n\n" +
+      "\002to\030\003 \001(\t\022\014\n\004data\030\004 \001(\t\022\n\n\002id\030\005 \001(\t\022\013\n\003a" +
+      "ck\030\006 \001(\005\022\014\n\004ext1\030\007 \001(\t\022\014\n\004ext2\030\010 \001(\t\022\014\n\004" +
+      "ext3\030\t \001(\t\022\014\n\004ext4\030\n \001(\005\022\014\n\004ext5\030\013 \001(\005B\036" +
+      "\n\022com.villa.im.modelB\010ProtoBufb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -1385,7 +1976,7 @@ public final class ProtoBuf {
     internal_static_com_villa_im_model_proto_my_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_com_villa_im_model_proto_my_descriptor,
-        new String[] { "Type", "From", "To", "DataContent", "MsgNo", "Ack", });
+        new String[] { "Type", "From", "To", "Data", "Id", "Ack", "Ext1", "Ext2", "Ext3", "Ext4", "Ext5", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)
