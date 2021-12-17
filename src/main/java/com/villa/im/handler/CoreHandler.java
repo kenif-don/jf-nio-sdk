@@ -27,7 +27,7 @@ public class CoreHandler {
         if(protocol.getType()!=ChannelConst.CHANNEL_LOGIN){
             //未登录
             if(!ChannelHandler.getInstance().isOnline(ctx.channel())){
-                ProtocolManager.sendAck(ctx.channel(), ChannelConst.NO_LOGIN,ChannelConst.CHANNEL_MSG);
+                ProtocolManager.sendAck(ctx.channel(), ChannelConst.CHANNEL_NO_LOGIN);
                 return;
             }
         }
@@ -42,7 +42,7 @@ public class CoreHandler {
                 String channelId = protocol.getFrom();
                 if(!Util.isNotEmpty(channelId)){
                     //发送消息给客户端,需要连接标识符
-                    ProtocolManager.sendAck(ctx.channel(), ChannelConst.NOT_LOGIN_ID,ChannelConst.CHANNEL_LOGIN);
+                    ProtocolManager.sendAck(ctx.channel(), ChannelConst.CHANNEL_NOT_LOGIN_ID);
                     return;
                 }
                 //将连接标识符存入连接属性中
@@ -50,7 +50,7 @@ public class CoreHandler {
                 //将连接保存
                 ChannelHandler.getInstance().addChannel(ctx.channel());
                 //发送请求结果给客户端
-                ProtocolManager.sendAck(ctx.channel(), ChannelConst.SUCCESS,ChannelConst.CHANNEL_LOGIN);
+                ProtocolManager.sendAck(ctx.channel(),ChannelConst.CHANNEL_LOGIN_SUCCESS);
                 break;
             //客户端退出登录
             case ChannelConst.CHANNEL_LOGOUT:
@@ -63,10 +63,11 @@ public class CoreHandler {
                 break;
             //心跳应答
             case ChannelConst.CHANNEL_HEART:
-                ProtocolManager.sendOkACK(ctx.channel(),ChannelConst.CHANNEL_HEART);
+                ProtocolManager.sendAck(ctx.channel(),ChannelConst.CHANNEL_HEART);
                 break;
-            //客户端发送消息
-            case ChannelConst.CHANNEL_MSG:
+            //客户端发送消息 单聊群聊都统一处理,只是在获取转发者时,业务层根据type来区分
+            case ChannelConst.CHANNEL_ONE2ONE_MSG:
+            case ChannelConst.CHANNEL_GROUP_MSG:
                 //sendMag前置
                 if(!ChannelConst.LOGIC_PROCESS.sendMsgBefore(ctx.channel(), protocol)){
                     return;

@@ -14,7 +14,12 @@ public class Protocol {
     private String to;
     //消息的实际内容 可以是json字符串 可以是普通字符串
     private String data;
-    //ack 1-ack应答包  -1 代表此消息包不是ack应答包 而是携带了消息内容  99-代表此消息,需要服务器给个回执 100-代表此消息需要qos支持 101-代表需要客户端给服务器一个回执
+    /**
+     * ack qos开关也放这个字段处理
+     * 1-   ack应答包,此消息仅代表应答
+     * 100- 代表此消息需要qos支持,qos会给客户端回执
+     * 其他- 代表此消息包不是ack应答包 而是携带了消息内容
+     */
     private int ack;
     /**
      * 普通消息必传
@@ -44,11 +49,11 @@ public class Protocol {
         this.ack = 1;
     }
 
-    public Protocol(int type, String from, String to, String dataContent, int ack, String id) {
+    public Protocol(int type, String from, String to, String data, int ack, String id) {
         this.type = type;
         this.from = from;
         this.to = to;
-        this.data = dataContent;
+        this.data = data;
         this.ack = ack;
         this.id = id;
     }

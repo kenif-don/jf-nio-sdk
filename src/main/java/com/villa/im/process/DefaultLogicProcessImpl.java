@@ -1,10 +1,7 @@
 package com.villa.im.process;
 
-import com.alibaba.fastjson.JSON;
 import com.villa.im.manager.ProtocolManager;
-import com.villa.im.model.ChannelConst;
 import com.villa.im.model.Protocol;
-import com.villa.im.util.Log;
 import io.netty.channel.Channel;
 
 import java.util.ArrayList;
@@ -42,7 +39,7 @@ public class DefaultLogicProcessImpl implements LogicProcess {
 //        Log.log("【客户端消息】："+ JSON.toJSONString(protocol));
         return true;
     }
-    public void sendFailCallBack(Protocol protocol) {
+    public void sendFailCallBack(String channelId,Protocol protocol) {
 //        Log.log("【客户端消息转发失败】："+JSON.toJSONString(protocol));
     }
     public void sendSuccessCallBack(Protocol protocol) {

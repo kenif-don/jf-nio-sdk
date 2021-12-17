@@ -12,10 +12,9 @@ import java.util.List;
  */
 public interface LogicProcess {
     /**
+     * type-1 单聊 type-8 群聊
      * 根据toId获取要转发的目标群体
      * 得到的结果可以是好友id/获取在同一个群的所有用户id
-     * 如果返回时大于1个目标 将优先采用udp协议传输  协议优先级为 udp>tco>ws
-     * 如果这条消息不应该发送 那么请在实现中返回0的数字字符串
      */
     List<String> getTargets(Protocol protocol);
 
@@ -47,11 +46,13 @@ public interface LogicProcess {
 
     /**
      * qos失败的回调
-     * 这个方法是真正意义上的失败,也就是对方离线或qos过程中离线 如果对方在线qos会每N秒推送一次消息,直到成功或用户下线为止,并不是真正的失败
+     * 这个方法是真正意义上的失败,也就是对方离线或qos过程中离线
      * 此方法适合用来做离线消息
      * 每条消息,每个接收者支触发一次
+     * @param channelId 客户端唯一标志,这个标志可用于记录当前离线消息属于谁的
+     * @param protocol 消息体
      */
-    void sendFailCallBack(Protocol protocol);
+    void sendFailCallBack(String channelId,Protocol protocol);
 
     /**
      * 消息真正意义上的发送成功回调 目标客户端收到并回执给服务器算真正意义的成功

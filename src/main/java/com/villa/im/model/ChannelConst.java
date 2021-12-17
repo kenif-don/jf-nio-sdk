@@ -26,21 +26,24 @@ public class ChannelConst {
     //-----------------消息协议类型(100内保留给当前SDK做系统指令，自定义指令请使用101以上)--------------------------
     //客户端登录
     public static final int CHANNEL_LOGIN = 0;
-    //客户端消息交互
-    public static final int CHANNEL_MSG = 1;
-    //接收到的客户端回执
+    //消息交互
+    public static final int CHANNEL_ONE2ONE_MSG = 1;
+    //消息回执
     public static final int CHANNEL_ACK = 2;
     //接收到的客户端心跳
     public static final int CHANNEL_HEART = 3;
+    //群聊消息交互
+    public static final int CHANNEL_GROUP_MSG = 8;
     //客户端正常退出
     public static final int CHANNEL_LOGOUT = 9;
-    //------------------------------前后端交互错误码------------------------------------------------------
-    //登录未携带连接标志符
-    public static final String NOT_LOGIN_ID = "401";
+
+    //------------------------------提示类协议类型------------------------------------------------------
     /** 客户端未登录 */
-    public static final String NO_LOGIN = "403";
-    //处理成功
-    public static final String SUCCESS = "200";
-    //消息未携带消息ID
-    public static final String MESSAGE_NO_ID = "1001";
+    public static final int CHANNEL_NO_LOGIN = 11;
+    /** 登录未携带连接标志符 */
+    public static final int CHANNEL_NOT_LOGIN_ID = 12;
+    /** 处理成功 */
+    public static final int CHANNEL_LOGIN_SUCCESS = 13;
+    /** 此消息必须携带消息ID,但未携带 */
+    public static final int CHANNEL_MESSAGE_NO_ID = 14;
 }
