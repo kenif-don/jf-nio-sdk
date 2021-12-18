@@ -79,13 +79,13 @@ public class ProtocolManager {
      * 统一的消息转发
      */
     public static void sendMsg(Channel channel, Protocol protocol){
-        //聊天消息必须携带一个消息ID 如果没有就回执报错
-        if(!Util.isNotEmpty(protocol.getId())){
-            ProtocolManager.sendAck(channel,ChannelConst.CHANNEL_MESSAGE_NO_ID);
-            return;
-        }
         //开启了qos 客户端需要一个回执
         if(protocol.getAck()==100){
+            //聊天消息必须携带一个消息ID 如果没有就回执报错
+            if(!Util.isNotEmpty(protocol.getId())){
+                ProtocolManager.sendAck(channel,ChannelConst.CHANNEL_MESSAGE_NO_ID);
+                return;
+            }
             //先给发送方一个消息回执，代表服务器收到了消息
             ProtocolManager.sendAck(channel,protocol,ChannelConst.CHANNEL_ACK);
             //判断是否已经存在待发送消息
@@ -111,9 +111,12 @@ public class ProtocolManager {
          */
         ChannelConst.LOGIC_PROCESS.addMessage(protocol);
         //------------------------处理转发逻辑-----------------
-        //通过业务处理器获取多个目标并转发和qos
-        ChannelConst.LOGIC_PROCESS.getTargets(protocol).forEach(target->{
-            sendMsg(target,protocol);
+        //利用线程池加速
+        ThreadManager.getInstance().execute(()-> {
+            //通过业务处理器获取多个目标并转发和qos
+            ChannelConst.LOGIC_PROCESS.getTargets(protocol).forEach(target -> {
+                sendMsg(target, protocol);
+            });
         });
     }
 
@@ -122,30 +125,27 @@ public class ProtocolManager {
      * 此方法会开启qos和结果回调
      */
     public static void sendMsg(String channelId, Protocol protocol){
-        //利用线程池加速
-        ThreadManager.getInstance().execute(()->{
-            //判断目标是否在线 而且不是自己 自己不能给自己发消息
-            if(ChannelHandler.getInstance().isOnline(channelId)&&!channelId.equals(protocol.getFrom())){
-                //客户端要求启用qos机制才启用 ack==100
-                if(protocol.getAck()==100){
-                    //将待转发消息存起来 给每个客户端对应当前消息生成一个唯一消息编号
-                    String new_msg_no = Util.getRandomStr();
-                    //将新的消息编号设置到消息中，替换原来的消息编号  原来的消息编号只与发送它的客户端对应
-                    protocol.setId(new_msg_no);
-                    msgs.put(new_msg_no,new MsgDTO(channelId,protocol));
-                }
-                //获取优先级最高的协议
-                Channel realChannel = ChannelHandler.getInstance().getChannelUDPFirst(channelId);
-                /** 直接发送 这里如果发送失败，会有补偿机制去做重发
-                 *  成功不需要做什么操作
-                 *  如果客户端收到ack为100的此条消息 客户端需要给服务器回执,不然服务器的qos队列消息不会删除
-                 */
-                send(realChannel, protocol);
-                return;
+        //判断目标是否在线 而且不是自己 自己不能给自己发消息
+        if(ChannelHandler.getInstance().isOnline(channelId)&&!channelId.equals(protocol.getFrom())){
+            //客户端要求启用qos机制才启用 ack==100
+            if(protocol.getAck()==100){
+                //将待转发消息存起来 给每个客户端对应当前消息生成一个唯一消息编号
+                String new_msg_no = Util.getRandomStr();
+                //将新的消息编号设置到消息中，替换原来的消息编号  原来的消息编号只与发送它的客户端对应
+                protocol.setId(new_msg_no);
+                msgs.put(new_msg_no,new MsgDTO(channelId,protocol));
             }
-            //对方客户端不在线 则直接调用失败回调函数通知
-            ChannelConst.LOGIC_PROCESS.sendFailCallBack(channelId,protocol);
-        });
+            //获取优先级最高的协议
+            Channel realChannel = ChannelHandler.getInstance().getChannelUDPFirst(channelId);
+            /** 直接发送 这里如果发送失败，会有补偿机制去做重发
+             *  成功不需要做什么操作
+             *  如果客户端收到ack为100的此条消息 客户端需要给服务器回执,不然服务器的qos队列消息不会删除
+             */
+            send(realChannel, protocol);
+            return;
+        }
+        //对方客户端不在线 则直接调用失败回调函数通知
+        ChannelConst.LOGIC_PROCESS.sendFailCallBack(channelId,protocol);
     }
     /**
      * 通用的发送数据方法
