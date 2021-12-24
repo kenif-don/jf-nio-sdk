@@ -53,4 +53,12 @@ public class DefaultLogicProcessImpl implements LogicProcess {
     public void customProtocolHandler(Channel channel, Protocol protocol) {
         ProtocolManager.sendMsg(channel,protocol);
     }
+    /** 链接关闭处理逻辑 */
+    public void sessionClosed(String channelId, Channel channel) {
+
+    }
+    /** 离线处理逻辑 */
+    public boolean channelTimeout(String channelId, Channel channel) {
+        return true;
+    }
 }

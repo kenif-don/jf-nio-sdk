@@ -10,6 +10,8 @@ import com.villa.im.model.Protocol;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.timeout.IdleState;
+import io.netty.handler.timeout.IdleStateEvent;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
@@ -91,5 +93,16 @@ public class Util {
      */
     public static String getRandomStr(){
         return UUID.randomUUID().toString();
+    }
+    /** 客户端链接超时处理 */
+    public static void userEventTriggered(ChannelHandlerContext ctx, Object evt,CoreHandler coreHandler){
+        IdleStateEvent event = (IdleStateEvent)evt;
+        if (event.state()== IdleState.READER_IDLE){
+            String channelId = Util.getChannelId(ctx.channel());
+            //触发事件
+            if(Util.isNotEmpty(channelId)&&ChannelConst.LOGIC_PROCESS.channelTimeout(channelId,ctx.channel())){
+                coreHandler.handlerRemoved(ctx);
+            }
+        }
     }
 }

@@ -72,4 +72,15 @@ public interface LogicProcess {
      * @param protocol 消息体
      */
     void customProtocolHandler(Channel channel,Protocol protocol);
+
+    /**
+     * 客户端掉线
+     */
+    void sessionClosed(String channelId, Channel channel);
+
+    /**
+     * 客户端是否超时
+     * @return true-如果链接登录过 则会关闭并踢掉此链接 并触发sessionClosed事件 false-不会
+     */
+    boolean channelTimeout(String channelId, Channel channel);
 }

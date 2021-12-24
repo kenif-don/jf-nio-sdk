@@ -94,6 +94,11 @@ public class CoreHandler {
      * 连接断开的时候触发
      */
     public void handlerRemoved(ChannelHandlerContext ctx) {
+        String channelId = Util.getChannelId(ctx.channel());
+        if(Util.isNotEmpty(channelId)){
+            //触发事件
+            ChannelConst.LOGIC_PROCESS.sessionClosed(Util.getChannelId(ctx.channel()),ctx.channel());
+        }
         //断开连接 将登录者T掉
         ChannelHandler.getInstance().kickChannel(ctx.channel());
         Log.log("有连接断开,当前连接数:"+--channelCount);

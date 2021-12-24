@@ -23,6 +23,9 @@ import io.netty.handler.codec.protobuf.ProtobufDecoder;
 import io.netty.handler.codec.protobuf.ProtobufEncoder;
 import io.netty.handler.codec.protobuf.ProtobufVarint32FrameDecoder;
 import io.netty.handler.codec.protobuf.ProtobufVarint32LengthFieldPrepender;
+import io.netty.handler.timeout.IdleStateHandler;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * netty-tcp服务器 tcp/udp/ws(wss) 三种协议可以同时存在
@@ -88,7 +91,8 @@ public class TCPServer extends BaseServer{
                         });
                         break;
                 }
-
+                //20秒客户端和服务器未交互,则触发超时事件
+                pipeline.addLast(new IdleStateHandler(20,0,0, TimeUnit.SECONDS));
                 //装载核心处理器
                 pipeline.addLast(new TCPHandler(CoreHandler.newInstance()));
             }

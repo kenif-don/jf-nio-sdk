@@ -6,6 +6,8 @@ import com.villa.im.util.Util;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
+import io.netty.handler.timeout.IdleState;
+import io.netty.handler.timeout.IdleStateEvent;
 
 /**
  * @作者 微笑い一刀
@@ -42,5 +44,13 @@ public class WebSocketHandler extends SimpleChannelInboundHandler<WebSocketFrame
      */
     protected void channelRead0(ChannelHandlerContext ctx, WebSocketFrame content) {
         Util.channelRead(ctx,coreHandler,content.content());
+    }
+    /** 客户端超时 */
+    public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
+        if (evt instanceof IdleStateEvent){
+            Util.userEventTriggered(ctx,evt,coreHandler);
+        }else {
+            super.userEventTriggered(ctx,evt);
+        }
     }
 }
