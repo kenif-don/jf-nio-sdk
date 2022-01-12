@@ -13,7 +13,7 @@ import java.util.List;
 public interface LogicProcess {
     /**
      * type-1 单聊 type-8 群聊
-     * 根据toId获取要转发的目标群体
+     * 根据to获取要转发的目标群体
      * 得到的结果可以是好友id/获取在同一个群的所有用户id
      */
     List<String> getTargets(Protocol protocol);
@@ -45,6 +45,7 @@ public interface LogicProcess {
     boolean sendMsgBefore(Channel channel,Protocol protocol);
 
     /**
+     * TODO... 这里需要做到一个用户多个客户端的情况,需要全部失败才算失败,目前仅做到一个失败就回调一次,需要迭代
      * qos失败的回调
      * 这个方法是真正意义上的失败,也就是对方离线或qos过程中离线
      * 此方法适合用来做离线消息
@@ -56,12 +57,12 @@ public interface LogicProcess {
 
     /**
      * 消息真正意义上的发送成功回调 目标客户端收到并回执给服务器算真正意义的成功
-     * 每条消息,每个接收者支触发一次
+     * 每条消息,每个接收者只触发一次
      */
     void sendSuccessCallBack(Protocol protocol);
     /**
      * 发送数据的回调
-     * 发送了一次数据的回调(成功则成功,失败则会走qos),并不意味着成功或者失败。
+     * 发送了一次数据的回调(成功则成功,失败则会走qos),并不意味着成功或者失败。这里仅代表发送了,但是客户端是否已收到并不知道,需要在#sendFailCallBack和#sendSuccessCallBack中才能知道
      * 每条消息,每个接收者只触发一次
      * TODO...udp协议无法监听成功与失败(虽然这里无需成功和失败的状态,但是还需要再次测试udp是否能监听到发送成功)
      */

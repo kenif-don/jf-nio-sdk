@@ -1,6 +1,5 @@
 package com.villa.im;
 
-import com.villa.im.handler.CoreHandler;
 import com.villa.im.model.ChannelConst;
 import com.villa.im.model.DataProtoType;
 import com.villa.im.process.LogicProcess;
