@@ -4,8 +4,10 @@
 
 当客户端登录服务器时,需要携带客户端唯一标志,并对此唯一标志进行签名.服务器对此签名进行验证,验证不合法则登录不成功<br>
 ####登录流程如下:<br>
+![img.png](img_3.jpg)
 1. 完成http接口请求进行登录,得到用户信息,包含唯一ID
-2. 获取当前时间戳,根据下述运算得到签名字符串
+2. 通过http服务器获取IM服务器授权token
+3. 获取当前时间戳,根据下述运算得到签名字符串
 ```java
     public static int[] dealKeys = new int[]{
         0x07, 0xB6, 0x79, 0x56, 0x7A, 0x5C, 0x4A, 0xBE, 0x1D, 0xF1, 0xB2, 0x10, 0x3C, 0x5E, 0xDC, 0xA6,
@@ -31,7 +33,7 @@
         return Util.MD5(timestamp+"_"+dealKeys[(int)(timestamp%dealKeys.length)]).toUpperCase();
     }
 ```
-3. 使用此签名串对1中ID进行AES加密,加密方式如下:
+3. 使用此签名串对1中ID和2中token进行AES加密,加密方式如下:
 ```java
 /**
      * AES加密
