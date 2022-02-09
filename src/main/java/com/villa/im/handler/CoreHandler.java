@@ -1,9 +1,9 @@
 package com.villa.im.handler;
 
-import com.alibaba.fastjson.JSON;
-import com.villa.im.model.ChannelConst;
-import com.villa.im.model.Protocol;
 import com.villa.im.manager.ProtocolManager;
+import com.villa.im.model.ChannelConst;
+import com.villa.im.model.LoginInfo;
+import com.villa.im.model.Protocol;
 import com.villa.im.util.Log;
 import com.villa.im.util.Util;
 import io.netty.channel.ChannelHandlerContext;
@@ -24,7 +24,7 @@ public class CoreHandler {
     }
     public void channelRead0(ChannelHandlerContext ctx, Protocol protocol) {
         //如果当前请求不是登录 则都需要判断登录
-        if(protocol.getType()!=ChannelConst.CHANNEL_LOGIN){
+        if(protocol.getType()!=ChannelConst.CHANNEL_LOGIN&&protocol.getType()!=ChannelConst.CHANNEL_HEART){
             //未登录
             if(!ChannelHandler.getInstance().isOnline(ctx.channel())){
                 ProtocolManager.sendAck(ctx.channel(), ChannelConst.CHANNEL_NO_LOGIN);
@@ -34,19 +34,23 @@ public class CoreHandler {
         switch (protocol.getType()){
             //客户端登录
             case ChannelConst.CHANNEL_LOGIN:
+                //客户端已经登录 不能重复登录
+                if(ChannelHandler.getInstance().isOnline(ctx.channel())){
+                    return;
+                }
                 //login前置
                 if(!ChannelConst.LOGIC_PROCESS.loginBefore(ctx.channel(), protocol)){
                     return;
                 }
-                //获取连接标识符
-                String channelId = protocol.getFrom();
-                if(!Util.isNotEmpty(channelId)){
+                //获取登录信息
+                LoginInfo loginInfo = ChannelConst.LOGIC_PROCESS.getLoginInfo(ctx.channel(), protocol);
+                if(loginInfo==null||Util.isEmpty(loginInfo.getId())||Util.isEmpty(loginInfo.getDevice())){
                     //发送消息给客户端,需要连接标识符
                     ProtocolManager.sendAck(ctx.channel(), ChannelConst.CHANNEL_NOT_LOGIN_ID);
                     return;
                 }
-                //将连接标识符存入连接属性中
-                Util.putChannelId(ctx.channel(), channelId);
+                //将连接信息存入连接属性中
+                Util.putChannelInfo(ctx.channel(), loginInfo);
                 //将连接保存
                 ChannelHandler.getInstance().addChannel(ctx.channel());
                 //发送请求结果给客户端
@@ -87,7 +91,7 @@ public class CoreHandler {
      * 当有新的Channel连接 时候会触发   
      */
     public void handlerAdded(ChannelHandlerContext ctx) {
-        Log.log("新连接进入,当前连接数："+ ++channelCount);
+        Log.log("【IM】新连接进入,当前连接数："+ ++channelCount);
     }
 
     /**
@@ -101,7 +105,7 @@ public class CoreHandler {
         }
         //断开连接 将登录者T掉
         ChannelHandler.getInstance().kickChannel(ctx.channel());
-        Log.log("有连接断开,当前连接数:"+--channelCount);
+        Log.log("【IM】有连接断开,当前连接数:"+--channelCount);
     }
 
     /**
@@ -110,9 +114,9 @@ public class CoreHandler {
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         String channelId = Util.getChannelId(ctx.channel());
         if(Util.isNotEmpty(channelId)){
-            throw new RuntimeException(String.format("[%s]连接发生异常：%s",channelId,cause.getMessage()));
+            throw new RuntimeException(String.format("【IM】[%s]连接发生异常：%s",channelId,cause.getMessage()));
         }else{
-            throw new RuntimeException(String.format("未登录的连接发生异常：%s",cause.getMessage()));
+            throw new RuntimeException(String.format("【IM】未登录的连接发生异常：%s",cause.getMessage()));
         }
     }
 }

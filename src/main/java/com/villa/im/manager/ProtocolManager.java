@@ -12,6 +12,7 @@ import io.netty.channel.ChannelFutureListener;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
@@ -41,21 +42,21 @@ public class ProtocolManager {
                 while (iterator.hasNext()){
                     MsgDTO msgDTO = iterator.next();
                     //如果在线就发送待发消息
-                    if(ChannelHandler.getInstance().isOnline(msgDTO.getChannelId())){
+                    if(ChannelHandler.getInstance().isOnline(msgDTO.getChannel())){
                         //当前发送时间必须比上次发送时间至少间隔ChannelConst.QOS_DELAY
                         long cur_timestamp = System.currentTimeMillis();
                         if(System.currentTimeMillis()-msgDTO.getPreSendTimeStamp()<ChannelConst.QOS_DELAY){
                             continue;
                         }
-                        Channel realChannel = ChannelHandler.getInstance().getChannelUDPFirst(msgDTO.getChannelId());
+                        Channel realChannel= msgDTO.getChannel();
                         //记录当前发送时间
                         msgDTO.setPreSendTimeStamp(cur_timestamp);
                         baseSend(realChannel, msgDTO.getProtocol());
                     }else{
                         //如果不在线  就将当前待发消息直接删除
-                        msgs.remove(msgDTO.getProtocol().getId());
+                        msgs.remove(msgDTO.getProtocol().getNo());
                         //qos是在线才会触发 这里不在线代表 之前在线 后来不在线了 算是失败了 提供回调到业务层
-                        ChannelConst.LOGIC_PROCESS.sendFailCallBack(msgDTO.getChannelId(),msgDTO.getProtocol());
+                        ChannelConst.LOGIC_PROCESS.sendFailCallBack(Util.getChannelId(msgDTO.getChannel()),msgDTO.getProtocol());
                     }
                 }
             }
@@ -69,8 +70,8 @@ public class ProtocolManager {
      */
     public static void ack(Protocol protocol) {
         //只需要删除对应的待发消息就行了--消息补偿流程就结束了
-        if(Util.isNotEmpty(protocol.getId())){
-            MsgDTO msgDTO = msgs.remove(protocol.getId());
+        if(Util.isNotEmpty(protocol.getNo())){
+            MsgDTO msgDTO = msgs.remove(protocol.getNo());
             //成功回调
             ChannelConst.LOGIC_PROCESS.sendSuccessCallBack(msgDTO.getProtocol());
         }
@@ -82,7 +83,7 @@ public class ProtocolManager {
         //开启了qos 客户端需要一个回执
         if(protocol.getAck()==100){
             //聊天消息必须携带一个消息ID 如果没有就回执报错
-            if(!Util.isNotEmpty(protocol.getId())){
+            if(!Util.isNotEmpty(protocol.getNo())){
                 ProtocolManager.sendAck(channel,ChannelConst.CHANNEL_MESSAGE_NO_ID);
                 return;
             }
@@ -90,11 +91,11 @@ public class ProtocolManager {
             ProtocolManager.sendAck(channel,protocol,ChannelConst.CHANNEL_ACK);
             //判断是否已经存在待发送消息
             //判断这条消息是否已存在，如果已存在不做任何处理，否则会出现消息重复
-            if(msgs.contains(protocol.getId())){
+            if(msgs.contains(protocol.getNo())){
                 return;
             }
             /**
-             * 当消息不存在的时候 将当前消息作为当前客户端的待发消息进行存储，等待回执删除
+             * 当消息不存在的时候 将当前消息作为当前客户端的待发消息进行存储，等待回执删除 这是回执给发送者的qos消息包
              * 这里需要启动消息补偿机制，只需要将消息存入待转发消息集合就行
              * 但是这里的设计是：
              * 1。 对于发送着来说，会将发送者携带的消息编号存入集合 作为带转发消息（其实已经发了，只是需要等到客户端回执才会清除这个消息）而服务器会
@@ -102,20 +103,29 @@ public class ProtocolManager {
              *     而客户端回执的这个消息又会与 需转发客户端的回执一样，服务器也就采用同样的处理，进行消息删除
              * 2。 对于需转发客户端来说，消息编号会新生成一个，与接收到的不同，而且不同的客户端生成不同的消息编号，与客户端对应
              */
-            msgs.put(protocol.getId(),new MsgDTO(Util.getChannelId(channel),protocol));
+            msgs.put(protocol.getNo(),new MsgDTO(channel,protocol));
         }
-        /**
-         * 不管是否在线 而且不管是否转发成功  都需要  --存到消息记录中
-         * 这里不在回调函数中执行 是因为在回调中可能被执行多次 这样会导致添加消息的方法会被调用多次
-         * 而回调函数一般用来做离线消息存储 或push推送等
-         */
-        ChannelConst.LOGIC_PROCESS.addMessage(protocol);
         //------------------------处理转发逻辑-----------------
         //利用线程池加速
         ThreadManager.getInstance().execute(()-> {
             //通过业务处理器获取多个目标并转发和qos
             ChannelConst.LOGIC_PROCESS.getTargets(protocol).forEach(target -> {
                 sendMsg(target, protocol);
+            });
+            /**
+             * 这里同时需要转发给"自己"的其他设备,其实与其他人是一样的操作
+             */
+            List<Channel> channels = ChannelHandler.getInstance().getChannels(Util.getChannelId(channel), Util.getChannelDevice(channel));
+            channels.forEach(myChannel->{
+                //将待转发消息存起来 给每个客户端对应当前消息生成一个唯一消息编号
+                String new_msg_no = Util.getRandomStr();
+                //将新的消息编号设置到消息中，替换原来的消息编号  原来的消息编号只与发送它的客户端对应
+                protocol.setNo(new_msg_no);
+                if(protocol.getAck()==100) {
+                    //需要qos 才加入到qos队列,否则就不加入
+                    msgs.put(new_msg_no, new MsgDTO(myChannel, protocol));
+                }
+                send(myChannel, protocol);
             });
         });
     }
@@ -128,20 +138,25 @@ public class ProtocolManager {
         //判断目标是否在线 而且不是自己 自己不能给自己发消息
         if(ChannelHandler.getInstance().isOnline(channelId)&&!channelId.equals(protocol.getFrom())){
             //客户端要求启用qos机制才启用 ack==100
-            if(protocol.getAck()==100){
+            //获取转发目标 1-N个
+            List<Channel> channels = ChannelHandler.getInstance().getChannels(channelId);
+            channels.forEach(realChannel->{
                 //将待转发消息存起来 给每个客户端对应当前消息生成一个唯一消息编号
                 String new_msg_no = Util.getRandomStr();
                 //将新的消息编号设置到消息中，替换原来的消息编号  原来的消息编号只与发送它的客户端对应
-                protocol.setId(new_msg_no);
-                msgs.put(new_msg_no,new MsgDTO(channelId,protocol));
-            }
-            //获取优先级最高的协议
-            Channel realChannel = ChannelHandler.getInstance().getChannelUDPFirst(channelId);
-            /** 直接发送 这里如果发送失败，会有补偿机制去做重发
-             *  成功不需要做什么操作
-             *  如果客户端收到ack为100的此条消息 客户端需要给服务器回执,不然服务器的qos队列消息不会删除
-             */
-            send(realChannel, protocol);
+                protocol.setNo(new_msg_no);
+                if(protocol.getAck()==100) {
+                    //需要qos 才加入到qos队列,否则就不加入
+                    msgs.put(new_msg_no, new MsgDTO(realChannel, protocol));
+                }
+                /**
+                 * 不管是否在线 而且不管是否转发成功  都需要  --存到消息记录中
+                 * 这里不在回调函数中执行 是因为在回调中可能被执行多次 这样会导致添加消息的方法会被调用多次
+                 * 而回调函数一般用来做离线消息存储 或push推送等
+                 */
+                ChannelConst.LOGIC_PROCESS.addMessage(protocol);
+                send(realChannel, protocol);
+            });
             return;
         }
         //对方客户端不在线 则直接调用失败回调函数通知
@@ -179,6 +194,6 @@ public class ProtocolManager {
     }
     public static void sendAck(Channel channel, Protocol protocol, int type){
         //这里为了不对原对象进行修改,所以新new一个对象赋值 其中type为ack类型 ack为1代表应答包
-        baseSend(channel,new Protocol(type,protocol.getFrom(),protocol.getTo(),protocol.getData(),1,protocol.getId()));
+        baseSend(channel,new Protocol(type,protocol.getFrom(),protocol.getTo(),protocol.getData(),1,protocol.getNo()));
     }
 }

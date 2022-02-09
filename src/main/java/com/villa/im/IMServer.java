@@ -11,25 +11,25 @@ import com.villa.im.server.WSServer;
  * @作者 微笑い一刀
  * @bbs_url https://blog.csdn.net/u012169821
  */
-public class Server {
-    private static Server server = new Server();
-    public Server initLogicProcess(LogicProcess logicProcess){
+public class IMServer {
+    private static IMServer server = new IMServer();
+    public IMServer initLogicProcess(LogicProcess logicProcess){
         ChannelConst.LOGIC_PROCESS = logicProcess;
         return server;
     }
-    public Server initDataProtoType(DataProtoType dataProtoType){
+    public IMServer initDataProtoType(DataProtoType dataProtoType){
         ChannelConst.DATA_PROTO_TYPE = dataProtoType;
         return server;
     }
-    private Server(){
+    private IMServer(){
     }
-    public static Server getInstance(){
+    public static IMServer getInstance(){
         return server;
     }
     //启动三种协议
     public void startupAll(int tcp_port,int udp_port,int ws_port){
         startupTCP(tcp_port);
-        startupTCP(udp_port);
+        startupUDP(udp_port);
         startupWS(ws_port);
     }
     public void startupTCP(int port){
@@ -56,5 +56,14 @@ public class Server {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * 退出
+     */
+    public void shutdown(){
+        TCPServer.getInstance().close();
+        UDPServer.getInstance().close();
+        WSServer.getInstance().close();
     }
 }

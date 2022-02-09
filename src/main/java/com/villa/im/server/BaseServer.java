@@ -1,6 +1,5 @@
 package com.villa.im.server;
 
-import com.villa.im.model.DataProtoType;
 import com.villa.im.model.ProtoType;
 import io.netty.bootstrap.AbstractBootstrap;
 import io.netty.bootstrap.Bootstrap;

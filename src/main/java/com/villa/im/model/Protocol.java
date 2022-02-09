@@ -26,7 +26,7 @@ public class Protocol {
      * 消息唯一编号 注意这个只是客户端生成的一个唯一值，uuid或者时间戳+六位随机数都可以
      * 并不代表消息唯一主键 也不会存进数据库 只是用来做消息补偿
      */
-    private String id;
+    private String no;
     /**
      * String类型的扩展字段
      */
@@ -49,13 +49,13 @@ public class Protocol {
         this.ack = 1;
     }
 
-    public Protocol(int type, String from, String to, String data, int ack, String id) {
+    public Protocol(int type, String from, String to, String data, int ack, String no) {
         this.type = type;
         this.from = from;
         this.to = to;
         this.data = data;
         this.ack = ack;
-        this.id = id;
+        this.no = no;
     }
 
     public int getType() {
@@ -98,12 +98,12 @@ public class Protocol {
         this.ack = ack;
     }
 
-    public String getId() {
-        return id;
+    public String getNo() {
+        return no;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setNo(String no) {
+        this.no = no;
     }
 
     public String getExt1() {

@@ -3,7 +3,6 @@ package com.villa.im.server;
 import com.alibaba.fastjson.JSON;
 import com.villa.im.handler.CoreHandler;
 import com.villa.im.handler.UDPHandler;
-import com.villa.im.model.DataProtoType;
 import com.villa.im.model.ProtoType;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;

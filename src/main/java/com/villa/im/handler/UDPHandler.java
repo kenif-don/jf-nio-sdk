@@ -1,12 +1,10 @@
 package com.villa.im.handler;
 
-import com.villa.im.model.ChannelConst;
 import com.villa.im.model.ProtoType;
 import com.villa.im.util.Util;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.socket.DatagramPacket;
-import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 
 /**
@@ -28,7 +26,7 @@ public class UDPHandler extends SimpleChannelInboundHandler<DatagramPacket> {
      * 新链接加入
      */
     public void channelActive(ChannelHandlerContext ctx) {
-        ctx.channel().attr(ChannelConst.PROTO_TYPE).set(ProtoType.UDP);
+        Util.putChannelProtoType(ctx.channel(), ProtoType.UDP);
         coreHandler.handlerAdded(ctx);
     }
 

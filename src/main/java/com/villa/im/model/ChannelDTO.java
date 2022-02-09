@@ -2,39 +2,42 @@ package com.villa.im.model;
 
 import io.netty.channel.Channel;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
  * 客户端连接的包装类
- * 此类中包含了最少一个最多3个协议的客户端连接 tcp/udp/ws
+ * 此类中包含了最少一个客户端连接 key为客户端标志 可以是设备号 也可以是app/pc/web等类型值
+ * 若为设备号,那同类型设备可同时存在多个  比如手机端可以同时存在多个,pc/web端同理
+ * 若为类型值,那么同类型设备仅能存在一个  就类似微信了
  * @作者 微笑い一刀
  * @bbs_url https://blog.csdn.net/u012169821
  */
 public class ChannelDTO {
-    private Map<ProtoType, Channel> channels = new HashMap<>();
-    //按照协定的udp>tcp>ws规则获取客户端连接对象
-    public Channel getChannelUDPFirst(){
-        if(channels.containsKey(ProtoType.UDP)){
-            return channels.get(ProtoType.UDP);
-        }else if(channels.containsKey(ProtoType.TCP)){
-            return channels.get(ProtoType.TCP);
-        }else{
-            return channels.get(ProtoType.WS);
-        }
+    private Map<String, Channel> channels = new HashMap<>();
+    public List<Channel> getChannels(){
+        return new ArrayList<>(channels.values());
     }
 
-    public void putChannel(ProtoType protoType,Channel channel){
-        channels.put(protoType,channel);
+    public void putChannel(String device,Channel channel){
+        channels.put(device,channel);
     }
-    public Channel getChannel(ProtoType protoType){
-        return channels.get(protoType);
+    public Channel getChannel(String device){
+        return channels.get(device);
+    }
+    public Channel removeChannel(String device){
+        return channels.remove(device);
     }
 
-    public Channel removeChannel(ProtoType protoType){
-        return channels.remove(protoType);
-    }
-    public Map<ProtoType, Channel> getChannels() {
-        return channels;
+    public List<Channel> getChannelsButMe(String device) {
+        List<Channel> butMeChannels = new ArrayList<>();
+        channels.keySet().forEach(key->{
+            if(!key.equals(device)){
+                butMeChannels.add(channels.get(key));
+            }
+        });
+        return butMeChannels;
     }
 }

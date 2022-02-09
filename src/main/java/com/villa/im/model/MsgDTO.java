@@ -1,5 +1,7 @@
 package com.villa.im.model;
 
+import io.netty.channel.Channel;
+
 /**
  * 暂存消息的包装类
  * @作者 微笑い一刀
@@ -7,7 +9,7 @@ package com.villa.im.model;
  */
 public class MsgDTO {
     //连接标志符 用来获取客户端通道
-    private String channelId;
+    private Channel channel;
     //消息体
     private Protocol protocol;
     /**
@@ -19,8 +21,8 @@ public class MsgDTO {
      */
 
     private long preSendTimeStamp;
-    public MsgDTO(String channelId, Protocol protocol) {
-        this.channelId = channelId;
+    public MsgDTO(Channel channel, Protocol protocol) {
+        this.channel = channel;
         this.protocol = protocol;
         preSendTimeStamp = System.currentTimeMillis();
     }
@@ -33,12 +35,12 @@ public class MsgDTO {
         this.preSendTimeStamp = preSendTimeStamp;
     }
 
-    public String getChannelId() {
-        return channelId;
+    public Channel getChannel() {
+        return channel;
     }
 
-    public void setChannelId(String channelId) {
-        this.channelId = channelId;
+    public void setChannel(Channel channel) {
+        this.channel = channel;
     }
 
     public Protocol getProtocol() {

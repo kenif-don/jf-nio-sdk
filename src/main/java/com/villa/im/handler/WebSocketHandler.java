@@ -1,12 +1,10 @@
 package com.villa.im.handler;
 
-import com.villa.im.model.ChannelConst;
 import com.villa.im.model.ProtoType;
 import com.villa.im.util.Util;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
-import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 
 /**
@@ -29,7 +27,7 @@ public class WebSocketHandler extends SimpleChannelInboundHandler<WebSocketFrame
      * 新链接加入
      */
     public void channelActive(ChannelHandlerContext ctx) {
-        ctx.channel().attr(ChannelConst.PROTO_TYPE).set(ProtoType.WS);
+        Util.putChannelProtoType(ctx.channel(), ProtoType.WS);
         coreHandler.handlerAdded(ctx);
     }
 

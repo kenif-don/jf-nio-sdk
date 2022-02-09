@@ -6,9 +6,7 @@ import com.villa.im.util.Util;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
-import io.netty.handler.timeout.IdleStateHandler;
 
 /**
  * @作者 微笑い一刀
@@ -29,7 +27,7 @@ public class TCPHandler extends SimpleChannelInboundHandler<ByteBuf>{
      * 新链接加入
      */
     public void channelActive(ChannelHandlerContext ctx) {
-        ctx.channel().attr(ChannelConst.PROTO_TYPE).set(ProtoType.TCP);
+        Util.putChannelProtoType(ctx.channel(), ProtoType.TCP);
         coreHandler.handlerAdded(ctx);
     }
 

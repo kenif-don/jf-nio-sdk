@@ -2,18 +2,15 @@ package com.villa.im.util;
 
 import com.alibaba.fastjson.JSON;
 import com.google.protobuf.InvalidProtocolBufferException;
+import com.villa.im.handler.ChannelHandler;
 import com.villa.im.handler.CoreHandler;
-import com.villa.im.model.ChannelConst;
-import com.villa.im.model.ProtoBuf;
-import com.villa.im.model.ProtoType;
-import com.villa.im.model.Protocol;
+import com.villa.im.model.*;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
@@ -23,6 +20,9 @@ import java.util.UUID;
  * @bbs_url https://blog.csdn.net/u012169821
  */
 public class Util {
+    public static boolean isEmpty(String str){
+        return str==null||"".equals(str.trim());
+    }
     public static boolean isNotEmpty(String str){
         return str!=null&&!"".equals(str.trim());
     }
@@ -42,7 +42,7 @@ public class Util {
         buf.readBytes(data);
         try {
             ProtoBuf.proto_my proto_my = ProtoBuf.proto_my.parseFrom(data);
-            return new Protocol(proto_my.getType(),proto_my.getFrom(),proto_my.getTo(),proto_my.getData(),proto_my.getAck(),proto_my.getId());
+            return new Protocol(proto_my.getType(),proto_my.getFrom(),proto_my.getTo(),proto_my.getData(),proto_my.getAck(),proto_my.getNo());
         } catch (InvalidProtocolBufferException e) {
             e.printStackTrace();
         }
@@ -58,36 +58,43 @@ public class Util {
         return JSON.parseObject(new String(data, StandardCharsets.UTF_8),Protocol.class);
     }
     /**
-     * 简单的封装 从客户端连接中获取客户端的标识符
+     * 往客户端连接中放登录标志
      */
-    public static String getChannelId(Channel channel){
-        Object attr = channel.attr(ChannelConst.CHANNEL_ID).get();
-        if(attr==null){
-            return null;
-        }
-        return attr.toString();
+    public static void putChannelInfo(Channel channel, LoginInfo loginInfo){
+        channel.attr(ChannelConst.CHANNEL_INFO).set(loginInfo);
     }
-
-    /**
-     * 往客户端连接中放标识符
-     */
-    public static void putChannelId(Channel channel,String channelId){
-        channel.attr(ChannelConst.CHANNEL_ID).set(channelId);
-    }
-    /**
-     * 简单的封装 从客户端连接中获取客户端协议类型
-     */
-    public static ProtoType getChannelProtoType(Channel channel){
-        return (ProtoType) channel.attr(ChannelConst.PROTO_TYPE).get();
-    }
-
     /**
      * 往客户端连接中放协议类型
      */
     public static void putChannelProtoType(Channel channel,ProtoType protoType){
         channel.attr(ChannelConst.PROTO_TYPE).set(protoType);
     }
-
+    /**
+     * 简单的封装 从客户端连接中获取客户端的标识符
+     */
+    public static String getChannelId(Channel channel){
+        LoginInfo attr = channel.attr(ChannelConst.CHANNEL_INFO).get();
+        if(attr==null){
+            return null;
+        }
+        return attr.getId();
+    }
+    /**
+     * 简单的封装 从客户端连接中获取客户端协议类型
+     */
+    public static String getChannelDevice(Channel channel){
+        LoginInfo attr = channel.attr(ChannelConst.CHANNEL_INFO).get();
+        if(attr==null){
+            return null;
+        }
+        return attr.getDevice();
+    }
+    /**
+     * 简单的封装 从客户端连接中获取客户端协议类型
+     */
+    public static ProtoType getChannelProtoType(Channel channel){
+        return channel.attr(ChannelConst.PROTO_TYPE).get();
+    }
     /**
      * 获取随机字符串 通过uuid生成
      */
@@ -98,10 +105,9 @@ public class Util {
     public static void userEventTriggered(ChannelHandlerContext ctx, Object evt,CoreHandler coreHandler){
         IdleStateEvent event = (IdleStateEvent)evt;
         if (event.state()== IdleState.READER_IDLE){
-            String channelId = Util.getChannelId(ctx.channel());
-            //触发事件
-            if(Util.isNotEmpty(channelId)&&ChannelConst.LOGIC_PROCESS.channelTimeout(channelId,ctx.channel())){
-                coreHandler.handlerRemoved(ctx);
+            if(ctx.channel()!=null&&ctx.channel().isOpen()){
+                Log.log("【IM】：客户端超时退出");
+                ctx.channel().close();
             }
         }
     }

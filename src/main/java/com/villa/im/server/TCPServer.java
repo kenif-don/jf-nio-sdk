@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSON;
 import com.villa.im.handler.CoreHandler;
 import com.villa.im.handler.TCPHandler;
 import com.villa.im.model.ChannelConst;
-import com.villa.im.model.DataProtoType;
 import com.villa.im.model.ProtoBuf;
 import com.villa.im.model.ProtoType;
 import io.netty.bootstrap.ServerBootstrap;
@@ -19,10 +18,6 @@ import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.codec.LengthFieldPrepender;
 import io.netty.handler.codec.MessageToByteEncoder;
 import io.netty.handler.codec.json.JsonObjectDecoder;
-import io.netty.handler.codec.protobuf.ProtobufDecoder;
-import io.netty.handler.codec.protobuf.ProtobufEncoder;
-import io.netty.handler.codec.protobuf.ProtobufVarint32FrameDecoder;
-import io.netty.handler.codec.protobuf.ProtobufVarint32LengthFieldPrepender;
 import io.netty.handler.timeout.IdleStateHandler;
 
 import java.util.concurrent.TimeUnit;
@@ -73,9 +68,7 @@ public class TCPServer extends BaseServer{
                 pipeline.addLast("frameEncoder", new LengthFieldPrepender(4));
                 switch (ChannelConst.DATA_PROTO_TYPE){
                     case JSON://如果使用json协议的编解码器
-                        //jSON解码器
-                        pipeline.addLast(new JsonObjectDecoder());
-                        //JSON编码器
+                        //JSON编码器--客户端以JSON字符串方式接收
                         pipeline.addLast(new MessageToByteEncoder<Object>() {
                             protected void encode(ChannelHandlerContext channel, Object in, ByteBuf out) throws Exception {
                                 out.writeBytes(JSON.toJSONBytes(in));
@@ -91,8 +84,8 @@ public class TCPServer extends BaseServer{
                         });
                         break;
                 }
-                //20秒客户端和服务器未交互,则触发超时事件
-                pipeline.addLast(new IdleStateHandler(20,0,0, TimeUnit.SECONDS));
+                //30秒客户端和服务器未交互,则触发超时事件
+                pipeline.addLast(new IdleStateHandler(30,0,0, TimeUnit.SECONDS));
                 //装载核心处理器
                 pipeline.addLast(new TCPHandler(CoreHandler.newInstance()));
             }

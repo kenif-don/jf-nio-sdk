@@ -74,7 +74,39 @@
 消息转发流程,模拟用户A发给用户B--发送与接收流程：同理转发给客户端B的消息也将加入QOS策略,避免丢失或重复，丢入Qos将记录消息体和发送目标,同用户不同客户端之间Qos内容独立不一致
 
 ![img_1.png](img_1.png)
+###通道模型
+```java
+/**
+ * 所有在线的客户端连接
+ * key为用户唯一主键
+ */
+private ConcurrentMap<String, ChannelDTO> channels = new ConcurrentHashMap<>();
+```
+```java
+/**
+ * 客户端连接的包装类
+ * 此类中包含了最少一个客户端连接 key为客户端标志 可以是设备号 也可以是app/pc/web等类型值
+ * 若为设备号,那同类型设备可同时存在多个  比如手机端可以同时存在多个,pc/web端同理
+ * 若为类型值,那么同类型设备仅能存在一个  就类似微信了
+ */
+public class ChannelDTO {
+    private Map<String, Channel> channels = new HashMap<>();
+    public List<Channel> getChannels(){
+        return new ArrayList<>(channels.values());
+    }
 
+    public void putChannel(String device_no,Channel channel){
+        channels.put(device_no,channel);
+    }
+    public Channel getChannel(String device_no){
+        return channels.get(device_no);
+    }
+
+    public Channel removeChannel(String device_no){
+        return channels.remove(device_no);
+    }
+}
+```
 ##3. 兼容多消息类型
 支持文本、图片、语音、短视频、文件、表情、名片、位置、合并消息、@功能等消息类型。 但其实消息类型并不需要服务器进行维护，而是由客户端维护解析，服务器需要做的事情仅仅只是转发而已
 ##4. 支持单聊/群聊

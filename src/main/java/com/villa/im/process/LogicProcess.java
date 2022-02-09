@@ -1,8 +1,11 @@
 package com.villa.im.process;
 
+import com.villa.im.manager.ProtocolManager;
+import com.villa.im.model.LoginInfo;
 import com.villa.im.model.Protocol;
 import io.netty.channel.Channel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -15,34 +18,62 @@ public interface LogicProcess {
      * type-1 单聊 type-8 群聊
      * 根据to获取要转发的目标群体
      * 得到的结果可以是好友id/获取在同一个群的所有用户id
+     *
+     * --demo实现  将原目标进行返回
+     *   真实场景应该是根据protocol中dataContent获取聊天类型 好友聊天就是to 群聊还需要再去获取群成员
+     *   @param protocol 消息体
      */
-    List<String> getTargets(Protocol protocol);
-
+    default List<String> getTargets(Protocol protocol){
+        List<String> list = new ArrayList<>();
+        list.add(protocol.getTo());
+        return list;
+    }
     /**
      * 将消息存到数据库
+     * ---demo实现 不做任何处理
      */
-    void addMessage(Protocol protocol);
+    default void addMessage(Protocol protocol){}
 
     /**
      * 长连接的登录请求前置方法,如果返回false 则不会执行长连接登录功能
      * 可以用来做账号密码验证,签名验证等
-     * 当然也可以将登录请求独立到http接口去,这也是本框架推荐的做法,而这个方法需要做的仅仅是验签即可
+     *
+     * ---demo实现 直接返回登录验证成功
      */
-    boolean loginBefore(Channel channel,Protocol protocol);
+    default boolean loginBefore(Channel channel,Protocol protocol){
+        return true;
+    }
 
+    /**
+     * 获取登录信息 由业务层解析并返回登录信息
+     *
+     * ---demo实现 直接将发送者编号作为标志用户ID和设备号/设备类型值
+     */
+    default LoginInfo getLoginInfo(Channel channel, Protocol protocol){
+        LoginInfo loginInfo = new LoginInfo();
+        loginInfo.setId(protocol.getFrom());
+        loginInfo.setDevice(protocol.getFrom());
+        return loginInfo;
+    }
     /**
      * 长连接的退出登录请求前置方法,如果返回false 则不会执行长连接登出功能
      * 可以用来做销毁登录session或者token等操作
      * 当然也可以将退出登录请求独立到http接口,闲置此方法即可 但需要返回true 让长连接登出功能得以继续
      * 如果需要抛错到长连接  调用#ProtocolManager.sendAck(Channel,dataContent,type-ChannelConst中的消息协议类型);
+     *
+     * ---demo实现 直接返回true 让长连接处理退出操作
      */
-    boolean logoutBefore(Channel channel,Protocol protocol);
+    default boolean logoutBefore(Channel channel,Protocol protocol){
+        return true;
+    }
 
     /**
      * 服务器接收到通用消息的前置方法 返回false 则直接阻断长连接后续功能 比如转发消息/qos/回调  都不再执行 直接砍断
-     * 目前未想到此方法的作用，留作一些个性化业务吧 默认返回true即可
+     * 默认返回true 可用作黑明白好友，群消息验证操作 比如拉黑不能发送消息等操作
      */
-    boolean sendMsgBefore(Channel channel,Protocol protocol);
+    default boolean sendMsgBefore(Channel channel,Protocol protocol){
+        return true;
+    }
 
     /**
      * TODO... 这里需要做到一个用户多个客户端的情况,需要全部失败才算失败,目前仅做到一个失败就回调一次,需要迭代
@@ -53,35 +84,38 @@ public interface LogicProcess {
      * @param channelId 客户端唯一标志,这个标志可用于记录当前离线消息属于谁的
      * @param protocol 消息体
      */
-    void sendFailCallBack(String channelId,Protocol protocol);
+    default void sendFailCallBack(String channelId,Protocol protocol){}
 
     /**
      * 消息真正意义上的发送成功回调 目标客户端收到并回执给服务器算真正意义的成功
      * 每条消息,每个接收者只触发一次
      */
-    void sendSuccessCallBack(Protocol protocol);
+    default void sendSuccessCallBack(Protocol protocol){}
     /**
      * 发送数据的回调
      * 发送了一次数据的回调(成功则成功,失败则会走qos),并不意味着成功或者失败。这里仅代表发送了,但是客户端是否已收到并不知道,需要在#sendFailCallBack和#sendSuccessCallBack中才能知道
      * 每条消息,每个接收者只触发一次
      * TODO...udp协议无法监听成功与失败(虽然这里无需成功和失败的状态,但是还需要再次测试udp是否能监听到发送成功)
      */
-    void sendCallBack(Object protocol);
+    default void sendCallBack(Object protocol){}
     /**
      * 自定义协议类型的处理方法 可扩展框架协议外的其他自定义类型协议
+     * ---demo实现 直接转发
      * @param channel 客户端消息通道
      * @param protocol 消息体
      */
-    void customProtocolHandler(Channel channel,Protocol protocol);
+    default void customProtocolHandler(Channel channel,Protocol protocol){
+        ProtocolManager.sendMsg(channel,protocol);
+    }
 
     /**
-     * 客户端掉线
+     * 客户端掉线 框架会自动T掉这个链接用户 并关闭链接
      */
-    void sessionClosed(String channelId, Channel channel);
+    default void sessionClosed(String channelId, Channel channel){}
 
     /**
-     * 客户端是否超时
-     * @return true-如果链接登录过 则会关闭并踢掉此链接 并触发sessionClosed事件 false-不会
+     * 客户端超时退出
      */
-    boolean channelTimeout(String channelId, Channel channel);
+    default void channelTimeout(String channelId, Channel channel){
+    }
 }
