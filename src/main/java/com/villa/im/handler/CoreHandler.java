@@ -1,6 +1,7 @@
 package com.villa.im.handler;
 
 import com.villa.im.manager.ProtocolManager;
+import com.villa.im.manager.SendManager;
 import com.villa.im.model.ChannelConst;
 import com.villa.im.model.LoginInfo;
 import com.villa.im.model.Protocol;
@@ -27,7 +28,7 @@ public class CoreHandler {
         if(protocol.getType()!=ChannelConst.CHANNEL_LOGIN&&protocol.getType()!=ChannelConst.CHANNEL_HEART){
             //未登录
             if(!ChannelHandler.getInstance().isOnline(ctx.channel())){
-                ProtocolManager.sendAck(ctx.channel(), ChannelConst.CHANNEL_NO_LOGIN);
+                SendManager.sendAck(ctx.channel(), ChannelConst.CHANNEL_NO_LOGIN);
                 return;
             }
         }
@@ -46,7 +47,7 @@ public class CoreHandler {
                 LoginInfo loginInfo = ChannelConst.LOGIC_PROCESS.getLoginInfo(ctx.channel(), protocol);
                 if(loginInfo==null||Util.isEmpty(loginInfo.getId())||Util.isEmpty(loginInfo.getDevice())){
                     //发送消息给客户端,需要连接标识符
-                    ProtocolManager.sendAck(ctx.channel(), ChannelConst.CHANNEL_NOT_LOGIN_ID);
+                    SendManager.sendAck(ctx.channel(), ChannelConst.CHANNEL_NOT_LOGIN_ID);
                     return;
                 }
                 //将连接信息存入连接属性中
@@ -54,7 +55,7 @@ public class CoreHandler {
                 //将连接保存
                 ChannelHandler.getInstance().addChannel(ctx.channel());
                 //发送请求结果给客户端
-                ProtocolManager.sendAck(ctx.channel(),ChannelConst.CHANNEL_LOGIN_SUCCESS);
+                SendManager.sendAck(ctx.channel(),ChannelConst.CHANNEL_LOGIN_SUCCESS);
                 break;
             //客户端退出登录
             case ChannelConst.CHANNEL_LOGOUT:
@@ -67,7 +68,7 @@ public class CoreHandler {
                 break;
             //心跳应答
             case ChannelConst.CHANNEL_HEART:
-                ProtocolManager.sendAck(ctx.channel(),ChannelConst.CHANNEL_HEART);
+                SendManager.sendAck(ctx.channel(),ChannelConst.CHANNEL_HEART);
                 break;
             //客户端发送消息 单聊群聊都统一处理,只是在获取转发者时,业务层根据type来区分
             case ChannelConst.CHANNEL_ONE2ONE_MSG:
@@ -76,10 +77,10 @@ public class CoreHandler {
                 if(!ChannelConst.LOGIC_PROCESS.sendMsgBefore(ctx.channel(), protocol)){
                     return;
                 }
-                ProtocolManager.sendMsg(ctx.channel(),protocol);
+                ProtocolManager.handlerMsg(ctx.channel(),protocol);
                 break;
             case ChannelConst.CHANNEL_ACK:
-                ProtocolManager.ack(protocol);
+                ProtocolManager.ack(ctx.channel(),protocol);
                 break;
             //业务层自定义的消息协议
             default:

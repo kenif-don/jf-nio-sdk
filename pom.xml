@@ -6,7 +6,7 @@
 
     <groupId>com.villa</groupId>
     <artifactId>im_sdk</artifactId>
-    <version>1.6.4</version>
+    <version>1.6.5</version>
     <description>villa im的基础能力包</description>
     <packaging>jar</packaging>
     <dependencies>

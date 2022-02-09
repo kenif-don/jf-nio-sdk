@@ -69,7 +69,7 @@ public interface LogicProcess {
 
     /**
      * 服务器接收到通用消息的前置方法 返回false 则直接阻断长连接后续功能 比如转发消息/qos/回调  都不再执行 直接砍断
-     * 默认返回true 可用作黑明白好友，群消息验证操作 比如拉黑不能发送消息等操作
+     * 默认返回true 可用作拉黑关系好友验证，群消息验证操作 比如拉黑不能发送消息等操作
      */
     default boolean sendMsgBefore(Channel channel,Protocol protocol){
         return true;
@@ -94,7 +94,7 @@ public interface LogicProcess {
     /**
      * 发送数据的回调
      * 发送了一次数据的回调(成功则成功,失败则会走qos),并不意味着成功或者失败。这里仅代表发送了,但是客户端是否已收到并不知道,需要在#sendFailCallBack和#sendSuccessCallBack中才能知道
-     * 每条消息,每个接收者只触发一次
+     * 每条消息,每发送一次(在qos中的消息可能会发送多次)就调用此方法一次
      * TODO...udp协议无法监听成功与失败(虽然这里无需成功和失败的状态,但是还需要再次测试udp是否能监听到发送成功)
      */
     default void sendCallBack(Object protocol){}
