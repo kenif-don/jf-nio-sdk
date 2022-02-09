@@ -105,7 +105,7 @@ public interface LogicProcess {
      * @param protocol 消息体
      */
     default void customProtocolHandler(Channel channel,Protocol protocol){
-        ProtocolManager.sendMsg(channel,protocol);
+        ProtocolManager.handlerMsg(channel,protocol);
     }
 
     /**

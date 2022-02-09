@@ -10,13 +10,22 @@ public class LoginInfo {
     private String id;
     /** 设备号或设备类型 */
     private String device;
-
+    private String token;
     public LoginInfo() {
     }
 
-    public LoginInfo(String id, String device) {
+    public LoginInfo(String id, String device,String token) {
         this.id = id;
         this.device = device;
+        this.token = token;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 
     public String getId() {
