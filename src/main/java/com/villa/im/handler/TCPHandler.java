@@ -1,6 +1,5 @@
 package com.villa.im.handler;
 
-import com.villa.im.model.ChannelConst;
 import com.villa.im.model.ProtoType;
 import com.villa.im.util.Util;
 import io.netty.buffer.ByteBuf;

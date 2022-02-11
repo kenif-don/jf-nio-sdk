@@ -2,11 +2,15 @@ package com.villa.im.manager;
 
 import com.alibaba.fastjson.JSON;
 import com.villa.im.model.ChannelConst;
+import com.villa.im.model.ProtoBuf;
 import com.villa.im.model.Protocol;
 import com.villa.im.util.Util;
+import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.codec.MessageToByteEncoder;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 
 /**
@@ -20,7 +24,7 @@ public class SendManager {
      * @param channel   客户端连接
      * @param protocol  发送的数据
      */
-    public static void send(Channel channel, Object protocol){
+    public static void send(Channel channel, Protocol protocol){
         baseSend(channel,protocol).addListener((ChannelFutureListener) result -> {
             if(ChannelConst.LOGIC_PROCESS==null)return;
             //回调函数处理
@@ -28,13 +32,31 @@ public class SendManager {
         });
     }
 
-    private static ChannelFuture baseSend(Channel channel, Object protocol) {
+    private static ChannelFuture baseSend(Channel channel, Protocol protocol) {
         switch (Util.getChannelProtoType(channel)){
             case WS:
                 return channel.writeAndFlush(new TextWebSocketFrame(JSON.toJSONString(protocol)));
             case TCP:
             case UDP:
-                return channel.writeAndFlush(protocol);
+                switch (ChannelConst.DATA_PROTO_TYPE){
+                    case JSON://如果使用json协议的编解码器
+                        return channel.writeAndFlush(protocol);
+                    case PROTOBUF://如果使用protobuf的编解码器
+                        ProtoBuf.proto_my build = ProtoBuf.proto_my.newBuilder()
+                                .setType(protocol.getType())
+                                .setAck(protocol.getAck())
+                                .setFrom(protocol.getFrom())
+                                .setTo(protocol.getTo())
+                                .setNo(protocol.getNo())
+                                .setData(protocol.getData())
+                                .setExt1(protocol.getExt1())
+                                .setExt2(protocol.getExt2())
+                                .setExt3(protocol.getExt3())
+                                .setExt4(protocol.getExt4())
+                                .setExt5(protocol.getExt5())
+                                .build();
+                        return channel.writeAndFlush(build);
+                }
         }
         return null;
     }
