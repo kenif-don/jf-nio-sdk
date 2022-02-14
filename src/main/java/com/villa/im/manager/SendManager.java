@@ -71,4 +71,14 @@ public class SendManager {
         //这里为了不对原对象进行修改,所以新new一个对象赋值 其中type为ack类型 ack为1代表应答包
         baseSend(channel,new Protocol(type,protocol.getFrom(),protocol.getTo(),protocol.getData(),1,protocol.getNo()));
     }
+
+    /**
+     * 发送登录成功的回执
+     */
+    public static void sendLoginAck(Channel channel, int type) {
+        Protocol protocol = new Protocol(type);
+        //返回时间戳给客户端 用于时间矫正 做时序处理
+        protocol.setData(System.currentTimeMillis()+"");
+        baseSend(channel,protocol);
+    }
 }

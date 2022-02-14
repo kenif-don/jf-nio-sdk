@@ -28,7 +28,7 @@ public class ChannelConst {
     //-----------------消息协议类型(100内保留给当前SDK做系统指令，自定义指令请使用101以上)--------------------------
     //客户端登录
     public static final int CHANNEL_LOGIN = 0;
-    //消息交互
+    //单聊消息交互
     public static final int CHANNEL_ONE2ONE_MSG = 1;
     //消息回执
     public static final int CHANNEL_ACK = 2;

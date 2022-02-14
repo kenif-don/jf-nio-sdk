@@ -55,7 +55,7 @@ public class CoreHandler {
                 //将连接保存
                 ChannelHandler.getInstance().addChannel(ctx.channel());
                 //发送请求结果给客户端
-                SendManager.sendAck(ctx.channel(),ChannelConst.CHANNEL_LOGIN_SUCCESS);
+                SendManager.sendLoginAck(ctx.channel(),ChannelConst.CHANNEL_LOGIN_SUCCESS);
                 break;
             //客户端退出登录
             case ChannelConst.CHANNEL_LOGOUT:
