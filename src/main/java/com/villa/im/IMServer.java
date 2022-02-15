@@ -32,6 +32,9 @@ public class IMServer {
         startupUDP(udp_port);
         startupWS(ws_port);
     }
+    public void openDebug(){
+        ChannelConst.DEBUG = true;
+    }
     public void startupTCP(int port){
         try {
             //初始化tcp协议/消息协议类型

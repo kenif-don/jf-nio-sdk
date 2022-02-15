@@ -8,10 +8,12 @@ import io.netty.util.AttributeKey;
  * @bbs_url https://blog.csdn.net/u012169821
  */
 public class ChannelConst {
+    /** 是否开启日志 */
+    public static boolean DEBUG;
     /**
-     * qos发送延迟
+     * qos发送延迟 每3秒发送一次
      */
-    public static int QOS_DELAY = 2*1000;
+    public static int QOS_DELAY = 3*1000;
     //需要业务处定义的业务处理器 --默认实现
     public static LogicProcess LOGIC_PROCESS = new LogicProcess() {};
     //消息类型的协议类型 --默认json格式
@@ -25,7 +27,7 @@ public class ChannelConst {
      */
     public static AttributeKey<LoginInfo> CHANNEL_INFO = AttributeKey.newInstance("channel_info");
 
-    //-----------------消息协议类型(100内保留给当前SDK做系统指令，自定义指令请使用101以上)--------------------------
+    //-----------------消息协议类型(500内保留给当前SDK做系统指令，自定义指令请使用101以上)--------------------------
     //客户端登录
     public static final int CHANNEL_LOGIN = 0;
     //单聊消息交互
@@ -40,8 +42,8 @@ public class ChannelConst {
     public static final int CHANNEL_LOGOUT = 9;
 
     //------------------------------提示类协议类型------------------------------------------------------
-    /** 此操作需要客户端登录 但客户端未登录 */
-    public static final int CHANNEL_NO_LOGIN = 11;
+    /** IM的统一错误码 */
+    public static final int CHANNEL_ERR = 500;
     /**
      * 登录失败的返回类型
      * 1. 登录时data不存在
@@ -52,9 +54,6 @@ public class ChannelConst {
      * 6. param中device无值
      * 7. param中token值无效
      */
-    public static final int CHANNEL_NOT_LOGIN_ID = 12;
     /** 处理成功 */
-    public static final int CHANNEL_LOGIN_SUCCESS = 13;
-    /** 此消息必须携带消息ID,但未携带 */
-    public static final int CHANNEL_MESSAGE_NO_ID = 14;
+    public static final int CHANNEL_SUCCESS = 200;
 }

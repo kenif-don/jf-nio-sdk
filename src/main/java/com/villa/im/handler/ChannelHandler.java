@@ -1,7 +1,7 @@
 package com.villa.im.handler;
 
 import com.villa.im.model.ChannelDTO;
-import com.villa.im.util.Log;
+import com.villa.im.util.IMLog;
 import com.villa.im.util.Util;
 import io.netty.channel.Channel;
 
@@ -39,7 +39,7 @@ public class ChannelHandler {
             Channel oldChannel = getChannelById(channel);
             //如果两次链接相等  代表是客户端发送了登录的重复请求 不做处理就行
             if(oldChannel.compareTo(channel)==0){
-                Log.log("两次登录都是同一个连接发起,客户端重复发送了登录请求,不做任何处理");
+                IMLog.log("两次登录都是同一个连接发起,客户端重复发送了登录请求,不做任何处理");
                 return;
             }
             //这里代表客户端连接是一个新的连接或者新的设备 需要将老的链接T掉
@@ -55,7 +55,7 @@ public class ChannelHandler {
         printOlineCount();
     }
     public void printOlineCount(){
-        Log.log("【IM】当前【"+channels.size()+"】人在线");
+        IMLog.log("【IM】当前【"+channels.size()+"】人在线");
     }
     /**
      * 踢掉客户端连接
@@ -66,7 +66,7 @@ public class ChannelHandler {
             channel.close();
         }
         if (Util.isEmpty(channelId)){
-            Log.log("【IM】当前连接标识符不存在,不进行踢人操作");
+            IMLog.log("【IM】当前连接标识符不存在,不进行踢人操作");
             return;
         }
         //从集合中删除
@@ -79,7 +79,7 @@ public class ChannelHandler {
             }
         }
         //客户端连接被T掉后并不去关闭连接，因为客户端可能是因为更换账号等操作  连接不关闭 只是换绑定id
-        Log.log(String.format("【IM】客户端[%s]被踢下线", channelId));
+        IMLog.log(String.format("【IM】客户端[%s]被踢下线", channelId));
         printOlineCount();
     }
     /**

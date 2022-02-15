@@ -2,7 +2,6 @@ package com.villa.im.util;
 
 import com.alibaba.fastjson.JSON;
 import com.google.protobuf.InvalidProtocolBufferException;
-import com.villa.im.handler.ChannelHandler;
 import com.villa.im.handler.CoreHandler;
 import com.villa.im.model.*;
 import io.netty.buffer.ByteBuf;
@@ -106,7 +105,7 @@ public class Util {
         IdleStateEvent event = (IdleStateEvent)evt;
         if (event.state()== IdleState.READER_IDLE){
             if(ctx.channel()!=null&&ctx.channel().isOpen()){
-                Log.log("【IM】：客户端超时退出");
+                IMLog.log("【IM】：客户端超时退出");
                 ctx.channel().close();
             }
         }

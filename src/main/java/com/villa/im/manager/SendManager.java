@@ -5,12 +5,9 @@ import com.villa.im.model.ChannelConst;
 import com.villa.im.model.ProtoBuf;
 import com.villa.im.model.Protocol;
 import com.villa.im.util.Util;
-import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.MessageToByteEncoder;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 
 /**
@@ -64,21 +61,28 @@ public class SendManager {
     /**
      * 统一回复客户端的应答方法
      */
-    public static void sendAck(Channel channel,int type){
+    public static void sendHeartbeat(Channel channel,int type){
         baseSend(channel,new Protocol(type));
     }
-    public static void sendAck(Channel channel, Protocol protocol, int type){
+
+    /**
+     * 给发送方的消息回执
+     */
+    public static void sendMsgAck(Channel channel, Protocol protocol, int type){
         //这里为了不对原对象进行修改,所以新new一个对象赋值 其中type为ack类型 ack为1代表应答包
         baseSend(channel,new Protocol(type,protocol.getFrom(),protocol.getTo(),protocol.getData(),1,protocol.getNo()));
     }
 
-    /**
-     * 发送登录成功的回执
+    /***
+     * 给请求方发送一条错误消息应答包
      */
-    public static void sendLoginAck(Channel channel, int type) {
-        Protocol protocol = new Protocol(type);
-        //返回时间戳给客户端 用于时间矫正 做时序处理
-        protocol.setData(System.currentTimeMillis()+"");
-        baseSend(channel,protocol);
+    public static void sendErr(Channel channel,String err_code){
+        baseSend(channel,new Protocol(ChannelConst.CHANNEL_ERR,err_code));
+    }
+    /***
+     * 给请求方发送一条成功消息应答包
+     */
+    public static void sendSuccess(Channel channel,String data){
+        baseSend(channel,new Protocol(ChannelConst.CHANNEL_SUCCESS,data));
     }
 }

@@ -3,9 +3,10 @@ package com.villa.im.handler;
 import com.villa.im.manager.ProtocolManager;
 import com.villa.im.manager.SendManager;
 import com.villa.im.model.ChannelConst;
+import com.villa.im.model.ErrCodeDTO;
 import com.villa.im.model.LoginInfo;
 import com.villa.im.model.Protocol;
-import com.villa.im.util.Log;
+import com.villa.im.util.IMLog;
 import com.villa.im.util.Util;
 import io.netty.channel.ChannelHandlerContext;
 
@@ -28,7 +29,7 @@ public class CoreHandler {
         if(protocol.getType()!=ChannelConst.CHANNEL_LOGIN&&protocol.getType()!=ChannelConst.CHANNEL_HEART){
             //未登录
             if(!ChannelHandler.getInstance().isOnline(ctx.channel())){
-                SendManager.sendAck(ctx.channel(), ChannelConst.CHANNEL_NO_LOGIN);
+                SendManager.sendErr(ctx.channel(), ErrCodeDTO.ox90001);
                 return;
             }
         }
@@ -47,15 +48,15 @@ public class CoreHandler {
                 LoginInfo loginInfo = ChannelConst.LOGIC_PROCESS.getLoginInfo(ctx.channel(), protocol);
                 if(loginInfo==null||Util.isEmpty(loginInfo.getId())||Util.isEmpty(loginInfo.getDevice())){
                     //发送消息给客户端,需要连接标识符
-                    SendManager.sendAck(ctx.channel(), ChannelConst.CHANNEL_NOT_LOGIN_ID);
+                    SendManager.sendErr(ctx.channel(), ErrCodeDTO.ox90002);
                     return;
                 }
                 //将连接信息存入连接属性中
                 Util.putChannelInfo(ctx.channel(), loginInfo);
                 //将连接保存
                 ChannelHandler.getInstance().addChannel(ctx.channel());
-                //发送请求结果给客户端
-                SendManager.sendLoginAck(ctx.channel(),ChannelConst.CHANNEL_LOGIN_SUCCESS);
+                //发送请求结果给客户端-- 登录成功后返回时间戳给客户端用于时间矫正,最终用于消息时序字段
+                SendManager.sendSuccess(ctx.channel(),System.currentTimeMillis()+"");
                 break;
             //客户端退出登录
             case ChannelConst.CHANNEL_LOGOUT:
@@ -68,7 +69,7 @@ public class CoreHandler {
                 break;
             //心跳应答
             case ChannelConst.CHANNEL_HEART:
-                SendManager.sendAck(ctx.channel(),ChannelConst.CHANNEL_HEART);
+                SendManager.sendHeartbeat(ctx.channel(),ChannelConst.CHANNEL_HEART);
                 break;
             //客户端发送消息 单聊群聊都统一处理,只是在获取转发者时,业务层根据type来区分
             case ChannelConst.CHANNEL_ONE2ONE_MSG:
@@ -92,7 +93,7 @@ public class CoreHandler {
      * 当有新的Channel连接 时候会触发   
      */
     public void handlerAdded(ChannelHandlerContext ctx) {
-        Log.log("【IM】新连接进入,当前连接数："+ ++channelCount);
+        IMLog.log("【IM】新连接进入,当前连接数："+ ++channelCount);
     }
 
     /**
@@ -106,7 +107,7 @@ public class CoreHandler {
         }
         //断开连接 将登录者T掉
         ChannelHandler.getInstance().kickChannel(ctx.channel());
-        Log.log("【IM】有连接断开,当前连接数:"+--channelCount);
+        IMLog.log("【IM】有连接断开,当前连接数:"+--channelCount);
     }
 
     /**
