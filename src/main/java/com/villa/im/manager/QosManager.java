@@ -51,7 +51,7 @@ public class QosManager {
                         IMLog.log("【IM】QOS推送一条消息,消息ID为【%s】",msgDTO.getProtocol().getNo());
                     }else{
                         //如果不在线  就将当前待发消息直接删除
-                        msgs.remove(msgDTO.getProtocol().getNo());
+                        removeQosMessage(msgDTO.getProtocol(),msgDTO.getDevice());
                         //qos是在线才会触发 这里不在线代表 之前在线 后来不在线了 算是失败了 提供回调到业务层
                         ChannelConst.LOGIC_PROCESS.sendFailCallBack(Util.getChannelId(msgDTO.getChannel()),msgDTO.getProtocol());
                         IMLog.log("【IM】此【%s】目标不存在，消息【%s】可做离线处理",msgDTO.getProtocol().getTo(),msgDTO.getProtocol().getNo());
@@ -64,15 +64,16 @@ public class QosManager {
     private static ConcurrentHashMap<String, MsgDTO> msgs = new ConcurrentHashMap<>();
     /** 将消息添加qos队列--这里使用map来装 */
     public static void putQosQueue(Channel channel, Protocol protocol){
-        msgs.put(protocol.getNo()+"_"+Util.getChannelDevice(channel), new MsgDTO(channel,protocol));
+        msgs.put(protocol.getNo()+"_"+Util.getChannelDevice(channel), new MsgDTO(channel,protocol,Util.getChannelDevice(channel)));
         IMLog.log("【IM】将消息【%s】加入到QOS队列中,当前队列中消息数为:【%d】",protocol.getNo(),msgs.size());
-    }
-    public static ConcurrentHashMap<String, MsgDTO> getMsgs(){
-        return msgs;
     }
     /** 从qos中删除对应的消息 */
     public static MsgDTO removeQosMessage(Channel channel,Protocol protocol){
         return msgs.remove(protocol.getNo()+"_"+Util.getChannelDevice(channel));
+    }
+    /** 从qos中删除对应的消息--用于离线 */
+    public static MsgDTO removeQosMessage(Protocol protocol,String device){
+        return msgs.remove(protocol.getNo()+"_"+device);
     }
     /** 判断是否包含 */
     public static boolean contains(Channel channel,Protocol protocol){

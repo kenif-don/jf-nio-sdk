@@ -8,6 +8,7 @@ import io.netty.channel.Channel;
  * @bbs_url https://blog.csdn.net/u012169821
  */
 public class MsgDTO {
+    private String device;
     //连接标志符 用来获取客户端通道
     private Channel channel;
     //消息体
@@ -21,10 +22,19 @@ public class MsgDTO {
      */
 
     private long preSendTimeStamp;
-    public MsgDTO(Channel channel, Protocol protocol) {
+    public MsgDTO(Channel channel, Protocol protocol,String device) {
         this.channel = channel;
         this.protocol = protocol;
-        preSendTimeStamp = System.currentTimeMillis();
+        this.preSendTimeStamp = System.currentTimeMillis();
+        this.device = device;
+    }
+
+    public String getDevice() {
+        return device;
+    }
+
+    public void setDevice(String device) {
+        this.device = device;
     }
 
     public long getPreSendTimeStamp() {

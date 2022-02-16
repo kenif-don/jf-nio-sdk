@@ -63,6 +63,8 @@ public class TCPServer extends BaseServer{
         ((ServerBootstrap)getBootstrap()).childHandler(new ChannelInitializer<SocketChannel>() {
             protected void initChannel(SocketChannel  channel) {
                 ChannelPipeline pipeline = channel.pipeline();
+                //30秒客户端和服务器未交互,则触发超时事件
+                pipeline.addLast(new IdleStateHandler(30,0,0, TimeUnit.SECONDS));
                 //通过将消息分为消息头和消息体来处理沾包半包问题
                 pipeline.addLast("frameDecoder", new LengthFieldBasedFrameDecoder(1024*1024*10+4, 0, 4, 0, 4));
                 pipeline.addLast("frameEncoder", new LengthFieldPrepender(4));
@@ -84,8 +86,6 @@ public class TCPServer extends BaseServer{
                         });
                         break;
                 }
-                //30秒客户端和服务器未交互,则触发超时事件
-                pipeline.addLast(new IdleStateHandler(30,0,0, TimeUnit.SECONDS));
                 //装载核心处理器
                 pipeline.addLast(new TCPHandler(CoreHandler.newInstance()));
             }

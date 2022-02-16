@@ -52,6 +52,7 @@ public class ChannelHandler {
         //不在线或被T掉或不同协议登录后的处理 直接存起来
         channelDTO.putChannel(Util.getChannelDevice(channel),channel);
         channels.put(channelId,channelDTO);
+        IMLog.log("【IM】【%s】上线",channelId);
         printOlineCount();
     }
     public void printOlineCount(){
@@ -62,13 +63,6 @@ public class ChannelHandler {
      */
     public void kickChannel(Channel channel){
         String channelId = Util.getChannelId(channel);
-        if(channel!=null&&channel.isOpen()){
-            channel.close();
-        }
-        if (Util.isEmpty(channelId)){
-            IMLog.log("【IM】当前连接标识符不存在,不进行踢人操作");
-            return;
-        }
         //从集合中删除
         if(channels.get(channelId)!=null){
             channels.get(channelId).removeChannel(Util.getChannelDevice(channel));
@@ -78,9 +72,9 @@ public class ChannelHandler {
                 channels.remove(channelId);
             }
         }
-        //客户端连接被T掉后并不去关闭连接，因为客户端可能是因为更换账号等操作  连接不关闭 只是换绑定id
-        IMLog.log(String.format("【IM】客户端[%s]被踢下线", channelId));
+        IMLog.log(String.format("【IM】客户端[%s]下线", channelId));
         printOlineCount();
+        channel.close();
     }
     /**
      * 获取指定用户的所有链接

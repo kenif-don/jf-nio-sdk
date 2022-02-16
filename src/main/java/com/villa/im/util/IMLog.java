@@ -9,12 +9,12 @@ import com.villa.im.model.ChannelConst;
 public class IMLog {
     public static void log(Object message) {
         if(ChannelConst.DEBUG){
-            com.villa.log.Log.out(message);
+            com.villa.log.Log.out(message,4);
         }
     }
     public static void log(String message,Object ...format) {
         if(ChannelConst.DEBUG){
-            com.villa.log.Log.out(String.format(message,format));
+            com.villa.log.Log.out(String.format(message,format),4);
         }
     }
 }

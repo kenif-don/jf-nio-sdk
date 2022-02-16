@@ -44,16 +44,6 @@ public class ChannelConst {
     //------------------------------提示类协议类型------------------------------------------------------
     /** IM的统一错误码 */
     public static final int CHANNEL_ERR = 500;
-    /**
-     * 登录失败的返回类型
-     * 1. 登录时data不存在
-     * 2. data中time字段无值
-     * 3. data中param字段无值
-     * 4. param中token无值
-     * 5. param中id无值
-     * 6. param中device无值
-     * 7. param中token值无效
-     */
     /** 处理成功 */
     public static final int CHANNEL_SUCCESS = 200;
 }

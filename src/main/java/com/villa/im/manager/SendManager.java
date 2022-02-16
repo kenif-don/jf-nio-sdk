@@ -70,7 +70,8 @@ public class SendManager {
      */
     public static void sendMsgAck(Channel channel, Protocol protocol, int type){
         //这里为了不对原对象进行修改,所以新new一个对象赋值 其中type为ack类型 ack为1代表应答包
-        baseSend(channel,new Protocol(type,protocol.getFrom(),protocol.getTo(),protocol.getData(),1,protocol.getNo()));
+        Protocol pt = new Protocol(type, protocol.getFrom(), protocol.getTo(), protocol.getData(), 1, protocol.getNo());
+        baseSend(channel,pt);
     }
 
     /***
