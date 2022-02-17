@@ -10,6 +10,7 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
+import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 
 /**
@@ -37,7 +38,7 @@ public class WSServer extends BaseServer{
             protected void initChannel(SocketChannel channel) {
                 //编解码器
                 channel.pipeline()
-                .addLast(new ReadTimeoutHandler(30))
+                .addLast(new IdleStateHandler(30,0,0))
                 .addLast(new HttpServerCodec())
                 .addLast(new HttpObjectAggregator(1024*64))
                 .addLast(new WebSocketServerProtocolHandler("/"))

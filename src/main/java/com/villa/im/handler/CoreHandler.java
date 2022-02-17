@@ -115,6 +115,7 @@ public class CoreHandler {
      */
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         String channelId = Util.getChannelId(ctx.channel());
+        cause.printStackTrace();
         if(Util.isNotEmpty(channelId)){
             throw new RuntimeException(String.format("【IM】[%s]连接发生异常：%s",channelId,cause.getMessage()));
         }else{

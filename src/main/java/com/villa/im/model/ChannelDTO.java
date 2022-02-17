@@ -3,9 +3,8 @@ package com.villa.im.model;
 import io.netty.channel.Channel;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 客户端连接的包装类
@@ -16,7 +15,8 @@ import java.util.Map;
  * @bbs_url https://blog.csdn.net/u012169821
  */
 public class ChannelDTO {
-    private Map<String, Channel> channels = new HashMap<>();
+    //HashMap有线程安全问题
+    private ConcurrentHashMap<String, Channel> channels = new ConcurrentHashMap<>();
     public List<Channel> getChannels(){
         return new ArrayList<>(channels.values());
     }

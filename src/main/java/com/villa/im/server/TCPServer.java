@@ -64,8 +64,8 @@ public class TCPServer extends BaseServer{
         ((ServerBootstrap)getBootstrap()).childHandler(new ChannelInitializer<SocketChannel>() {
             protected void initChannel(SocketChannel  channel) {
                 ChannelPipeline pipeline = channel.pipeline();
-                //30秒客户端和服务器未交互,则触发超时事件--需要放在解码器前面才能生效
-                pipeline.addLast(new ReadTimeoutHandler(30));
+                //30秒客户端和服务器未交互,则触发超时事件--需要放在解码器前面才能生效 如果使用ReadTimeoutHandler是抛异常 IdleStateHandler则是事件通知
+                pipeline.addLast(new IdleStateHandler(30,0,0));
                 //通过将消息分为消息头和消息体来处理沾包半包问题
                 pipeline.addLast("frameDecoder", new LengthFieldBasedFrameDecoder(1024*1024*10+4, 0, 4, 0, 4));
                 pipeline.addLast("frameEncoder", new LengthFieldPrepender(4));

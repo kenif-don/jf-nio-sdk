@@ -12,6 +12,9 @@ import io.netty.channel.ChannelOption;
 import io.netty.channel.socket.nio.NioDatagramChannel;
 import io.netty.handler.codec.MessageToByteEncoder;
 import io.netty.handler.codec.json.JsonObjectDecoder;
+import io.netty.handler.logging.LogLevel;
+import io.netty.handler.logging.LoggingHandler;
+import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 
 /**
@@ -34,14 +37,15 @@ public class UDPServer extends BaseServer{
         //开启广播
         ((Bootstrap)getBootstrap()).option(ChannelOption.SO_BROADCAST,true);
         //异步的服务器端 UDP Socket 连接
-        getBootstrap().channel(NioDatagramChannel.class);
+        getBootstrap().channel(NioDatagramChannel.class).handler(new LoggingHandler(LogLevel.ERROR));
+
     }
     protected void initChildChannelHandler() {
         ((Bootstrap)getBootstrap()).handler(new ChannelInitializer<NioDatagramChannel>() {
             protected void initChannel(NioDatagramChannel  channel) {
                 //jSON解码器
                 channel.pipeline()
-                .addLast(new ReadTimeoutHandler(30))
+                .addLast(new IdleStateHandler(30,0,0))
                 .addLast(new JsonObjectDecoder())
                 //JSON编码器
                 .addLast(new MessageToByteEncoder<Object>() {

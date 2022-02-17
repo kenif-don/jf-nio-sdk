@@ -63,16 +63,17 @@ public class ChannelHandler {
      */
     public void kickChannel(Channel channel){
         String channelId = Util.getChannelId(channel);
-        //从集合中删除
-        if(channels.get(channelId)!=null){
+        //登录过的才从集合中删除 未登录的 直接关闭链接即可
+        if(Util.isNotEmpty(channelId)&&channels.get(channelId)!=null){
+            //下面两句代码有线程安全问题 将HashMap换成ConcurrentHashMap
             channels.get(channelId).removeChannel(Util.getChannelDevice(channel));
             //也就是这个标识符对应的连接全部没有了
             if(channels.get(channelId).getChannels().size()==0){
                 //就把channels中的也进行删除
                 channels.remove(channelId);
             }
+            IMLog.log(String.format("【IM】客户端[%s]下线", channelId));
         }
-        IMLog.log(String.format("【IM】客户端[%s]下线", channelId));
         printOlineCount();
         channel.close();
     }
