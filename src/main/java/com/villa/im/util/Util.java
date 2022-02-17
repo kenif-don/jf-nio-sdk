@@ -11,7 +11,6 @@ import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 
 import java.nio.charset.StandardCharsets;
-import java.util.UUID;
 
 /**
  * 统一工具类
@@ -94,20 +93,13 @@ public class Util {
     public static ProtoType getChannelProtoType(Channel channel){
         return channel.attr(ChannelConst.PROTO_TYPE).get();
     }
-    /**
-     * 获取随机字符串 通过uuid生成
-     */
-    public static String getRandomStr(){
-        return UUID.randomUUID().toString();
-    }
     /** 客户端链接超时处理 */
     public static void userEventTriggered(ChannelHandlerContext ctx, Object evt,CoreHandler coreHandler){
         IdleStateEvent event = (IdleStateEvent)evt;
-        if (event.state()== IdleState.READER_IDLE){
-            if(ctx.channel()!=null&&ctx.channel().isOpen()){
-                IMLog.log("【IM】：客户端超时退出");
-                ctx.channel().close();
-            }
+        //没有登录过的才关闭链接  登录过的不处理
+        if (event.state()== IdleState.READER_IDLE&&Util.isEmpty(Util.getChannelId(ctx.channel()))&&ctx.channel()!=null&&ctx.channel().isOpen()){
+            IMLog.log("【IM】未登录的客户端超时退出");
+            ctx.close();
         }
     }
 }

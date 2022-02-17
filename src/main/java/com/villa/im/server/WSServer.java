@@ -10,6 +10,7 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
+import io.netty.handler.timeout.ReadTimeoutHandler;
 
 /**
  * netty-ws服务器 tcp/udp/ws(wss) 三种协议可以同时存在
@@ -35,7 +36,9 @@ public class WSServer extends BaseServer{
         ((ServerBootstrap)getBootstrap()).childHandler(new ChannelInitializer<SocketChannel>() {
             protected void initChannel(SocketChannel channel) {
                 //编解码器
-                channel.pipeline().addLast(new HttpServerCodec())
+                channel.pipeline()
+                .addLast(new ReadTimeoutHandler(30))
+                .addLast(new HttpServerCodec())
                 .addLast(new HttpObjectAggregator(1024*64))
                 .addLast(new WebSocketServerProtocolHandler("/"))
                 //装载核心处理器

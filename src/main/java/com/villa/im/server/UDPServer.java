@@ -12,6 +12,7 @@ import io.netty.channel.ChannelOption;
 import io.netty.channel.socket.nio.NioDatagramChannel;
 import io.netty.handler.codec.MessageToByteEncoder;
 import io.netty.handler.codec.json.JsonObjectDecoder;
+import io.netty.handler.timeout.ReadTimeoutHandler;
 
 /**
  * netty-udp服务器 tcp/udp/ws(wss) 三种协议可以同时存在
@@ -39,7 +40,9 @@ public class UDPServer extends BaseServer{
         ((Bootstrap)getBootstrap()).handler(new ChannelInitializer<NioDatagramChannel>() {
             protected void initChannel(NioDatagramChannel  channel) {
                 //jSON解码器
-                channel.pipeline().addLast(new JsonObjectDecoder())
+                channel.pipeline()
+                .addLast(new ReadTimeoutHandler(30))
+                .addLast(new JsonObjectDecoder())
                 //JSON编码器
                 .addLast(new MessageToByteEncoder<Object>() {
                     protected void encode(ChannelHandlerContext channel, Object in, ByteBuf out) throws Exception {

@@ -112,10 +112,4 @@ public interface LogicProcess {
      * 客户端掉线 框架会自动T掉这个链接用户 并关闭链接
      */
     default void sessionClosed(String channelId, Channel channel){}
-
-    /**
-     * 客户端超时退出
-     */
-    default void channelTimeout(String channelId, Channel channel){
-    }
 }

@@ -72,6 +72,11 @@ public abstract class BaseServer {
         setRunning(true);
         //添加监听
         addCloseListener(cf);
+        serverChannel.closeFuture().addListener((ChannelFutureListener) future -> {
+            //监听到服务端通道关闭时释放线程组
+            bossGroup.shutdownGracefully();
+            workGroup.shutdownGracefully();
+        });
     }
 
     /**
