@@ -116,6 +116,8 @@ public class CoreHandler {
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         String channelId = Util.getChannelId(ctx.channel());
         cause.printStackTrace();
+        //客户端异常断开 不做处理 也不做日志记录
+        if(cause.getMessage().contains("Connection reset by peer")){return;}
         if(Util.isNotEmpty(channelId)){
             throw new RuntimeException(String.format("【IM】[%s]连接发生异常：%s",channelId,cause.getMessage()));
         }else{

@@ -90,7 +90,7 @@ public class ProtocolManager {
             channels.forEach(myChannel->{
                 if(protocol.getAck()==100) {
                     //需要qos 才加入到qos队列,否则就不加入
-                    QosManager.putQosQueue(channel,protocol);
+                    QosManager.putQosQueue(myChannel,protocol);
                 }
                 SendManager.send(myChannel, protocol);
             });

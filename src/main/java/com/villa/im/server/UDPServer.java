@@ -37,7 +37,7 @@ public class UDPServer extends BaseServer{
         //开启广播
         ((Bootstrap)getBootstrap()).option(ChannelOption.SO_BROADCAST,true);
         //异步的服务器端 UDP Socket 连接
-        getBootstrap().channel(NioDatagramChannel.class).handler(new LoggingHandler(LogLevel.ERROR));
+        getBootstrap().channel(NioDatagramChannel.class);
 
     }
     protected void initChildChannelHandler() {
