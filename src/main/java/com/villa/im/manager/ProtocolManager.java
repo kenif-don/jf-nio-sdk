@@ -6,8 +6,8 @@ import com.villa.im.model.ChannelConst;
 import com.villa.im.model.ErrCodeDTO;
 import com.villa.im.model.MsgDTO;
 import com.villa.im.model.Protocol;
-import com.villa.im.util.IMLog;
 import com.villa.im.util.Util;
+import com.villa.log.Log;
 import io.netty.channel.Channel;
 
 import java.util.List;
@@ -24,7 +24,7 @@ public class ProtocolManager {
     public static void ack(Channel channel,Protocol protocol) {
         //只需要删除对应的待发消息就行了--消息补偿流程就结束了
         if(Util.isNotEmpty(protocol.getNo())){
-            IMLog.log("【IM】接收到消息回执,消息ID为【%s】",protocol.getNo());
+            Log.out("【IM】接收到消息回执,消息ID为【%s】",protocol.getNo());
             MsgDTO msgDTO = QosManager.removeQosMessage(channel,protocol);
             /**
              * 可能会因为网络问题导致 qos发送多次给前端 前端也会回复多次ack到后台
@@ -34,7 +34,7 @@ public class ProtocolManager {
             if(msgDTO!=null){
                 //成功回调
                 ChannelConst.LOGIC_PROCESS.sendSuccessCallBack(msgDTO.getProtocol());
-                IMLog.log("【IM】消息【%s】执行回调函数",protocol.getNo());
+                Log.out("【IM】消息【%s】执行回调函数",protocol.getNo());
             }
         }
     }
@@ -47,7 +47,7 @@ public class ProtocolManager {
             //聊天消息必须携带一个消息ID 如果没有就回执报错
             if(!Util.isNotEmpty(protocol.getNo())){
                 SendManager.sendErr(channel, ErrCodeDTO.ox90003);
-                IMLog.log("【IM】消息【%s】未携带消息ID,拒绝处理", JSON.toJSONString(protocol));
+                Log.out("【IM】消息【%s】未携带消息ID,拒绝处理", JSON.toJSONString(protocol));
                 return;
             }
             //先给发送方一个消息回执，代表服务器收到了消息
@@ -55,7 +55,7 @@ public class ProtocolManager {
             //判断是否已经存在待发送消息
             //判断这条消息是否已存在，如果已存在不做任何处理，否则会出现消息重复
             if(QosManager.contains(channel,protocol)){
-                IMLog.log("【IM】消息ID【"+protocol.getNo()+"】已存在,不处理.直接结束.");
+                Log.out("【IM】消息ID【"+protocol.getNo()+"】已存在,不处理.直接结束.");
                 return;
             }
             /**
@@ -75,7 +75,7 @@ public class ProtocolManager {
          * 而回调函数一般用来做离线消息存储 或push推送等
          */
         ChannelConst.LOGIC_PROCESS.addMessage(protocol);
-        IMLog.log("【IM】添加消息ID为【%s】的消息到数据库",protocol.getNo());
+        Log.out("【IM】添加消息ID为【%s】的消息到数据库",protocol.getNo());
         //------------------------处理转发逻辑-----------------
         //利用线程池加速
         ThreadManager.getInstance().execute(()-> {

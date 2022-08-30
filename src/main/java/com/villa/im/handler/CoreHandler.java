@@ -6,8 +6,8 @@ import com.villa.im.model.ChannelConst;
 import com.villa.im.model.ErrCodeDTO;
 import com.villa.im.model.LoginInfo;
 import com.villa.im.model.Protocol;
-import com.villa.im.util.IMLog;
 import com.villa.im.util.Util;
+import com.villa.log.Log;
 import io.netty.channel.ChannelHandlerContext;
 
 /**
@@ -93,7 +93,7 @@ public class CoreHandler {
      * 当有新的Channel连接 时候会触发   
      */
     public void handlerAdded(ChannelHandlerContext ctx) {
-        IMLog.log("【IM】新连接进入,当前连接数："+ ++channelCount);
+        Log.out("【IM】新连接进入,当前连接数："+ ++channelCount);
     }
 
     /**
@@ -107,7 +107,7 @@ public class CoreHandler {
         }
         //断开连接 将登录者T掉
         ChannelHandler.getInstance().kickChannel(ctx.channel());
-        IMLog.log("【IM】有连接断开,当前连接数:"+--channelCount);
+        Log.out("【IM】有连接断开,当前连接数:"+--channelCount);
     }
 
     /**

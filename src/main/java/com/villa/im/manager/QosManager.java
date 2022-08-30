@@ -4,8 +4,8 @@ import com.villa.im.handler.ChannelHandler;
 import com.villa.im.model.ChannelConst;
 import com.villa.im.model.MsgDTO;
 import com.villa.im.model.Protocol;
-import com.villa.im.util.IMLog;
 import com.villa.im.util.Util;
+import com.villa.log.Log;
 import io.netty.channel.Channel;
 
 import java.util.Iterator;
@@ -48,13 +48,13 @@ public class QosManager {
                         //记录当前发送时间
                         msgDTO.setPreSendTimeStamp(cur_timestamp);
                         SendManager.send(realChannel, msgDTO.getProtocol());
-                        IMLog.log("【IM】QOS推送一条消息,消息ID为【%s】",msgDTO.getProtocol().getNo());
+                        Log.out("【IM】QOS推送一条消息,消息ID为【%s】",msgDTO.getProtocol().getNo());
                     }else{
                         //如果不在线  就将当前待发消息直接删除
                         removeQosMessage(msgDTO.getProtocol(),msgDTO.getDevice());
                         //qos是在线才会触发 这里不在线代表 之前在线 后来不在线了 算是失败了 提供回调到业务层
                         ChannelConst.LOGIC_PROCESS.sendFailCallBack(Util.getChannelId(msgDTO.getChannel()),msgDTO.getProtocol());
-                        IMLog.log("【IM】此【%s】目标不存在，消息【%s】可做离线处理",msgDTO.getProtocol().getTo(),msgDTO.getProtocol().getNo());
+                        Log.out("【IM】此【%s】目标不存在，消息【%s】可做离线处理",msgDTO.getProtocol().getTo(),msgDTO.getProtocol().getNo());
                     }
                 }
             }
@@ -65,7 +65,7 @@ public class QosManager {
     /** 将消息添加qos队列--这里使用map来装 */
     public static void putQosQueue(Channel channel, Protocol protocol){
         msgs.put(protocol.getNo()+"_"+Util.getChannelDevice(channel), new MsgDTO(channel,protocol,Util.getChannelDevice(channel)));
-        IMLog.log("【IM】将消息【%s】加入到QOS队列中,当前队列中消息数为:【%d】",protocol.getNo(),msgs.size());
+        Log.out("【IM】将消息【%s】加入到QOS队列中,当前队列中消息数为:【%d】",protocol.getNo(),msgs.size());
     }
     /** 从qos中删除对应的消息 */
     public static MsgDTO removeQosMessage(Channel channel,Protocol protocol){

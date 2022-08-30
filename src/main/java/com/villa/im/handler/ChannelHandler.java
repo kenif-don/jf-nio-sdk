@@ -1,8 +1,8 @@
 package com.villa.im.handler;
 
 import com.villa.im.model.ChannelDTO;
-import com.villa.im.util.IMLog;
 import com.villa.im.util.Util;
+import com.villa.log.Log;
 import io.netty.channel.Channel;
 
 import java.util.List;
@@ -39,7 +39,7 @@ public class ChannelHandler {
             Channel oldChannel = getChannelById(channel);
             //如果两次链接相等  代表是客户端发送了登录的重复请求 不做处理就行
             if(oldChannel.compareTo(channel)==0){
-                IMLog.log("两次登录都是同一个连接发起,客户端重复发送了登录请求,不做任何处理");
+                Log.out("两次登录都是同一个连接发起,客户端重复发送了登录请求,不做任何处理");
                 return;
             }
             //这里代表客户端连接是一个新的连接或者新的设备 需要将老的链接T掉
@@ -52,11 +52,11 @@ public class ChannelHandler {
         //不在线或被T掉或不同协议登录后的处理 直接存起来
         channelDTO.putChannel(Util.getChannelDevice(channel),channel);
         channels.put(channelId,channelDTO);
-        IMLog.log("【IM】【%s】上线",channelId);
+        Log.out("【IM】【%s】上线",channelId);
         printOlineCount();
     }
     public void printOlineCount(){
-        IMLog.log("【IM】当前【"+channels.size()+"】人在线");
+        Log.out("【IM】当前【"+channels.size()+"】人在线");
     }
     /**
      * 踢掉客户端连接
@@ -72,7 +72,7 @@ public class ChannelHandler {
                 //就把channels中的也进行删除
                 channels.remove(channelId);
             }
-            IMLog.log(String.format("【IM】客户端[%s]下线", channelId));
+            Log.out(String.format("【IM】客户端[%s]下线", channelId));
         }
         printOlineCount();
         channel.close();

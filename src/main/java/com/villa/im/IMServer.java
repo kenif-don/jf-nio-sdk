@@ -6,6 +6,7 @@ import com.villa.im.process.LogicProcess;
 import com.villa.im.server.TCPServer;
 import com.villa.im.server.UDPServer;
 import com.villa.im.server.WSServer;
+import com.villa.log.Log;
 
 /**
  * @作者 微笑い一刀
@@ -34,6 +35,7 @@ public class IMServer {
     }
     public void openDebug(){
         ChannelConst.DEBUG = true;
+        Log.init();
     }
     public void startupTCP(int port){
         try {

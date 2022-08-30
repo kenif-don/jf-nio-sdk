@@ -26,12 +26,6 @@
             <artifactId>protobuf-java</artifactId>
             <version>3.17.3</version>
         </dependency>
-<!--        如果没有私服环境 使用/doc/log-2.0.14.jar日志包 将此包放入maven本地仓库即可 或使用离线包-->
-        <dependency>
-            <groupId>com.villa</groupId>
-            <artifactId>log</artifactId>
-            <version>2.0.14</version>
-        </dependency>
     </dependencies>
     <build>
         <plugins>
