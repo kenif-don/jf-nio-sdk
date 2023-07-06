@@ -7,10 +7,6 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.timeout.IdleStateEvent;
 
-/**
- * @作者 微笑い一刀
- * @bbs_url https://blog.csdn.net/u012169821
- */
 public class TCPHandler extends SimpleChannelInboundHandler<ByteBuf>{
     private CoreHandler coreHandler;
     public TCPHandler(CoreHandler coreHandler){

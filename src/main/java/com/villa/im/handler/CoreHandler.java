@@ -3,17 +3,14 @@ package com.villa.im.handler;
 import com.villa.im.manager.ProtocolManager;
 import com.villa.im.manager.SendManager;
 import com.villa.im.model.ChannelConst;
-import com.villa.im.model.ErrCodeDTO;
+import com.villa.im.model.IMErrCodeDTO;
 import com.villa.im.model.LoginInfo;
 import com.villa.im.model.Protocol;
 import com.villa.im.util.Util;
-import com.villa.log.Log;
 import io.netty.channel.ChannelHandlerContext;
 
 /**
  * TCP/UDP/WS 统一的处理器
- * @作者 微笑い一刀
- * @bbs_url https://blog.csdn.net/u012169821
  */
 public class CoreHandler {
     private static int channelCount = 0;
@@ -29,7 +26,7 @@ public class CoreHandler {
         if(protocol.getType()!=ChannelConst.CHANNEL_LOGIN&&protocol.getType()!=ChannelConst.CHANNEL_HEART){
             //未登录
             if(!ChannelHandler.getInstance().isOnline(ctx.channel())){
-                SendManager.sendErr(ctx.channel(), ErrCodeDTO.ox90001);
+                SendManager.sendErr(ctx.channel(), IMErrCodeDTO.ox90001);
                 return;
             }
         }
@@ -48,7 +45,7 @@ public class CoreHandler {
                 LoginInfo loginInfo = ChannelConst.LOGIC_PROCESS.getLoginInfo(ctx.channel(), protocol);
                 if(loginInfo==null||Util.isEmpty(loginInfo.getId())||Util.isEmpty(loginInfo.getDevice())){
                     //发送消息给客户端,需要连接标识符
-                    SendManager.sendErr(ctx.channel(), ErrCodeDTO.ox90002);
+                    SendManager.sendErr(ctx.channel(), IMErrCodeDTO.ox90002);
                     return;
                 }
                 //将连接信息存入连接属性中
@@ -56,7 +53,9 @@ public class CoreHandler {
                 //将连接保存
                 ChannelHandler.getInstance().addChannel(ctx.channel());
                 //发送请求结果给客户端-- 登录成功后返回时间戳给客户端用于时间矫正,最终用于消息时序字段
-                SendManager.sendSuccess(ctx.channel(),System.currentTimeMillis()+"");
+                SendManager.sendSuccess(ctx.channel(),ChannelConst.CHANNEL_LOGIN,System.currentTimeMillis()+"");
+                //login后置
+                ChannelConst.LOGIC_PROCESS.loginAfter(ctx.channel(), protocol);
                 break;
             //客户端退出登录
             case ChannelConst.CHANNEL_LOGOUT:
@@ -78,6 +77,8 @@ public class CoreHandler {
                 if(!ChannelConst.LOGIC_PROCESS.sendMsgBefore(ctx.channel(), protocol)){
                     return;
                 }
+                //将当前通道的id设置为from--不相信客户端传的 客户端也可以不传
+                protocol.setFrom(Util.getChannelId(ctx.channel()));
                 ProtocolManager.handlerMsg(ctx.channel(),protocol);
                 break;
             case ChannelConst.CHANNEL_ACK:
@@ -85,6 +86,8 @@ public class CoreHandler {
                 break;
             //业务层自定义的消息协议
             default:
+                //将当前通道的id设置为from--不相信客户端传的 客户端也可以不传
+                protocol.setFrom(Util.getChannelId(ctx.channel()));
                 ChannelConst.LOGIC_PROCESS.customProtocolHandler(ctx.channel(),protocol);
                 break;
         }
@@ -93,7 +96,7 @@ public class CoreHandler {
      * 当有新的Channel连接 时候会触发   
      */
     public void handlerAdded(ChannelHandlerContext ctx) {
-        Log.out("【IM】新连接进入,当前连接数："+ ++channelCount);
+        ChannelConst.LOGIC_PROCESS.newChannelAdded(ctx,++channelCount);
     }
 
     /**
@@ -107,7 +110,6 @@ public class CoreHandler {
         }
         //断开连接 将登录者T掉
         ChannelHandler.getInstance().kickChannel(ctx.channel());
-        Log.out("【IM】有连接断开,当前连接数:"+--channelCount);
     }
 
     /**

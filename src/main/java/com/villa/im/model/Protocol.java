@@ -2,8 +2,6 @@ package com.villa.im.model;
 
 /**
  * 交互的消息协议对象
- * @作者 微笑い一刀
- * @bbs_url https://blog.csdn.net/u012169821
  */
 public class Protocol {
     //用于请求分发的指令

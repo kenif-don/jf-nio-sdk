@@ -11,12 +11,9 @@ import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import io.netty.handler.timeout.IdleStateHandler;
-import io.netty.handler.timeout.ReadTimeoutHandler;
 
 /**
  * netty-ws服务器 tcp/udp/ws(wss) 三种协议可以同时存在
- * @作者 微笑い一刀
- * @bbs_url https://blog.csdn.net/u012169821
  */
 public class WSServer extends BaseServer{
     //饿汉单例
@@ -40,8 +37,8 @@ public class WSServer extends BaseServer{
                 channel.pipeline()
                 .addLast(new IdleStateHandler(30,0,0))
                 .addLast(new HttpServerCodec())
-                .addLast(new HttpObjectAggregator(1024*64))
-                .addLast(new WebSocketServerProtocolHandler("/"))
+                .addLast(new HttpObjectAggregator(1024*1024*10))
+                .addLast(new WebSocketServerProtocolHandler("/",null,false,1024*1024*10,false))
                 //装载核心处理器
                 .addLast(new WebSocketHandler(CoreHandler.newInstance()));
             }

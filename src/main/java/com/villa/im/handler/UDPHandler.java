@@ -7,10 +7,6 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.socket.DatagramPacket;
 import io.netty.handler.timeout.IdleStateEvent;
 
-/**
- * @作者 微笑い一刀
- * @bbs_url https://blog.csdn.net/u012169821
- */
 public class UDPHandler extends SimpleChannelInboundHandler<DatagramPacket> {
     private CoreHandler coreHandler;
     public UDPHandler(CoreHandler coreHandler){

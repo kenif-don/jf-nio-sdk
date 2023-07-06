@@ -2,8 +2,6 @@ package com.villa.im.model;
 
 /**
  * 用户登录信息 作用到通道进行绑定
- * @作者 微笑い一刀
- * @bbs_url https://blog.csdn.net/u012169821
  */
 public class LoginInfo {
     /** 用户标志 */

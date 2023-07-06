@@ -2,7 +2,6 @@ package com.villa.im.handler;
 
 import com.villa.im.model.ChannelDTO;
 import com.villa.im.util.Util;
-import com.villa.log.Log;
 import io.netty.channel.Channel;
 
 import java.util.List;
@@ -13,8 +12,6 @@ import java.util.concurrent.ConcurrentMap;
  * 饿汉单例  这里不适应静态类的原因是个人认为静态类中放的都应该是一些独立的方法 也就是不需要跟其他方法或属性有太多关联的东西
  * 比如工具类  一般每个方法会成为一个独立的功能，不会与太多其类属性或依赖的对象产生太多交集
  * 而当前这个类是用来管理客户端连接的，几乎所有方法都会对客户端连接对象进行关联，所以使用单例
- * @作者 微笑い一刀
- * @bbs_url https://blog.csdn.net/u012169821
  */
 public class ChannelHandler {
     private static ChannelHandler channelHandler = new ChannelHandler();
@@ -39,7 +36,6 @@ public class ChannelHandler {
             Channel oldChannel = getChannelById(channel);
             //如果两次链接相等  代表是客户端发送了登录的重复请求 不做处理就行
             if(oldChannel.compareTo(channel)==0){
-                Log.out("两次登录都是同一个连接发起,客户端重复发送了登录请求,不做任何处理");
                 return;
             }
             //这里代表客户端连接是一个新的连接或者新的设备 需要将老的链接T掉
@@ -52,11 +48,10 @@ public class ChannelHandler {
         //不在线或被T掉或不同协议登录后的处理 直接存起来
         channelDTO.putChannel(Util.getChannelDevice(channel),channel);
         channels.put(channelId,channelDTO);
-        Log.out("【IM】【%s】上线",channelId);
         printOlineCount();
     }
     public void printOlineCount(){
-        Log.out("【IM】当前【"+channels.size()+"】人在线");
+        System.out.println("【IM】当前【"+channels.size()+"】人在线");
     }
     /**
      * 踢掉客户端连接
@@ -72,7 +67,6 @@ public class ChannelHandler {
                 //就把channels中的也进行删除
                 channels.remove(channelId);
             }
-            Log.out(String.format("【IM】客户端[%s]下线", channelId));
         }
         printOlineCount();
         channel.close();

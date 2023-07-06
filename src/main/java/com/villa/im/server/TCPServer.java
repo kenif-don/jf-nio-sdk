@@ -25,8 +25,6 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * netty-tcp服务器 tcp/udp/ws(wss) 三种协议可以同时存在
- * @作者 微笑い一刀
- * @bbs_url https://blog.csdn.net/u012169821
  */
 public class TCPServer extends BaseServer{
     //饿汉单例

@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSON;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.villa.im.handler.CoreHandler;
 import com.villa.im.model.*;
-import com.villa.log.Log;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -15,8 +14,6 @@ import java.nio.charset.StandardCharsets;
 
 /**
  * 统一工具类
- * @作者 微笑い一刀
- * @bbs_url https://blog.csdn.net/u012169821
  */
 public class Util {
     public static boolean isEmpty(String str){
@@ -99,7 +96,6 @@ public class Util {
         IdleStateEvent event = (IdleStateEvent)evt;
         //没有登录过的才关闭链接  登录过的不处理
         if (event.state()== IdleState.READER_IDLE&&Util.isEmpty(Util.getChannelId(ctx.channel()))&&ctx.channel()!=null&&ctx.channel().isOpen()){
-            Log.out("【IM】未登录的客户端超时退出");
             ctx.close();
         }
     }

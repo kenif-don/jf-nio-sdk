@@ -12,8 +12,6 @@ import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 
 /**
  * 专门处理发送的类
- * @作者 微笑い一刀
- * @bbs_url https://blog.csdn.net/u012169821
  */
 public class SendManager {
     /**
@@ -68,9 +66,9 @@ public class SendManager {
     /**
      * 给发送方的消息回执
      */
-    public static void sendMsgAck(Channel channel, Protocol protocol, int type){
+    public static void sendMsgAck(Channel channel, Protocol protocol){
         //这里为了不对原对象进行修改,所以新new一个对象赋值 其中type为ack类型 ack为1代表应答包
-        Protocol pt = new Protocol(type, protocol.getFrom(), protocol.getTo(), protocol.getData(), 1, protocol.getNo());
+        Protocol pt = new Protocol(protocol.getType(), protocol.getFrom(), protocol.getTo(), protocol.getData(), 1, protocol.getNo());
         baseSend(channel,pt);
     }
 
@@ -83,7 +81,7 @@ public class SendManager {
     /***
      * 给请求方发送一条成功消息应答包
      */
-    public static void sendSuccess(Channel channel,String data){
-        baseSend(channel,new Protocol(ChannelConst.CHANNEL_SUCCESS,data));
+    public static void sendSuccess(Channel channel,int type,String data){
+        baseSend(channel,new Protocol(type,data));
     }
 }

@@ -11,8 +11,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * 此类中包含了最少一个客户端连接 key为客户端标志 可以是设备号 也可以是app/pc/web等类型值
  * 若为设备号,那同类型设备可同时存在多个  比如手机端可以同时存在多个,pc/web端同理
  * 若为类型值,那么同类型设备仅能存在一个  就类似微信了
- * @作者 微笑い一刀
- * @bbs_url https://blog.csdn.net/u012169821
  */
 public class ChannelDTO {
     //HashMap有线程安全问题

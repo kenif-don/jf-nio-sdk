@@ -8,6 +8,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="hicom-im-sdk" />
         <module name="villa_im_sdk" />
+        <module name="im_sdk" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel target="16">

@@ -4,8 +4,6 @@ import io.netty.channel.Channel;
 
 /**
  * 暂存消息的包装类
- * @作者 微笑い一刀
- * @bbs_url https://blog.csdn.net/u012169821
  */
 public class MsgDTO {
     private String device;

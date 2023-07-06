@@ -4,16 +4,23 @@ import com.villa.im.manager.ProtocolManager;
 import com.villa.im.model.LoginInfo;
 import com.villa.im.model.Protocol;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandlerContext;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * 逻辑业务类
- * @作者 微笑い一刀
- * @bbs_url https://blog.csdn.net/u012169821
  */
 public interface LogicProcess {
+    /**
+     *
+     * @param ctx           通道
+     * @param channelCount  当前连接数
+     */
+    default void newChannelAdded(ChannelHandlerContext ctx,int channelCount){
+
+    }
     /**
      * type-1 单聊 type-8 群聊
      * 根据to获取要转发的目标群体
@@ -42,6 +49,14 @@ public interface LogicProcess {
      */
     default boolean loginBefore(Channel channel,Protocol protocol){
         return true;
+    }
+
+    /**
+     * 登录成功的后置方法 可以作为一般事件
+     * @param channel
+     * @param protocol
+     */
+    default void loginAfter(Channel channel,Protocol protocol){
     }
 
     /**
@@ -80,7 +95,7 @@ public interface LogicProcess {
      * qos失败的回调
      * 这个方法是真正意义上的失败,也就是对方离线或qos过程中离线
      * 此方法适合用来做离线消息
-     * 每条消息,每个接收者支触发一次
+     * 每条消息,每个接收者只触发一次
      * @param channelId 客户端唯一标志,这个标志可用于记录当前离线消息属于谁的
      * @param protocol 消息体
      */

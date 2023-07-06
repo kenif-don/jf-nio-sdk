@@ -6,7 +6,7 @@
 
     <groupId>com.villa</groupId>
     <artifactId>im_sdk</artifactId>
-    <version>1.6.26</version>
+    <version>1.7.5.1</version>
     <description>villa im的基础能力包</description>
     <packaging>jar</packaging>
     <dependencies>
@@ -18,7 +18,7 @@
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
-            <version>1.2.68</version>
+            <version>1.2.80</version>
         </dependency>
 <!--        netty+protobuf的包-->
         <dependency>
@@ -76,13 +76,13 @@
         <repository>
             <id>nexus-releases</id>
             <name>Nexus Release Repository</name>
-            <url>http://120.26.45.47:8081/repository/maven-releases/</url>
+            <url>http://gitlab.infocq.com:8081/repository/maven-releases/</url>
         </repository>
         <!--        快照版本的库-->
         <snapshotRepository>
             <id>nexus-snapshots</id>
             <name>Nexus Snapshot Repository</name>
-            <url>http://120.26.45.47:8081/repository/maven-snapshots/</url>
+            <url>http://gitlab.infocq.com:8081/repository/maven-snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
 </project>

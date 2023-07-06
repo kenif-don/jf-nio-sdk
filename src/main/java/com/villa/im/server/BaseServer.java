@@ -12,8 +12,6 @@ import io.netty.channel.nio.NioEventLoopGroup;
 
 /**
  * TCP/UDP/WS的抽象父类 将一些公共属性和方法进行抽取
- * @作者 微笑い一刀
- * @bbs_url https://blog.csdn.net/u012169821
  */
 public abstract class BaseServer {
     //协议类型
@@ -24,7 +22,7 @@ public abstract class BaseServer {
     private AbstractBootstrap bootstrap;
     //boss线程组 类似包工头 监听parent channel管理child channel的
     private final EventLoopGroup bossGroup = new NioEventLoopGroup(1);
-    //work线程 搬砖的 监听child channel 每个客户端对应一个channel 一个channel一个线程
+    //work线程 搬砖的 每个客户端对应一个channel 一个channel一个线程
     private final EventLoopGroup workGroup = new NioEventLoopGroup();
     //服务端
     protected Channel serverChannel;
@@ -46,14 +44,12 @@ public abstract class BaseServer {
      * 通道关闭监听
      */
     protected void addCloseListener(ChannelFuture cf){
-        cf.channel().closeFuture().addListener(new ChannelFutureListener() {
-            public void operationComplete(ChannelFuture channelFuture) throws Exception {
-                //服务器停止标志
-                isRunning = false;
-                //释放所有资源及关闭boss/work线程组
-                bossGroup.shutdownGracefully();
-                workGroup.shutdownGracefully();
-            }
+        cf.channel().closeFuture().addListener((ChannelFutureListener) channelFuture -> {
+            //服务器停止标志
+            isRunning = false;
+            //释放所有资源及关闭boss/work线程组
+            bossGroup.shutdownGracefully();
+            workGroup.shutdownGracefully();
         });
     }
     /**

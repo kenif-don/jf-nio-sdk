@@ -3,13 +3,7 @@ package com.villa.im.model;
 import com.villa.im.process.LogicProcess;
 import io.netty.util.AttributeKey;
 
-/**
- * @作者 微笑い一刀
- * @bbs_url https://blog.csdn.net/u012169821
- */
 public class ChannelConst {
-    /** 是否开启日志 */
-    public static boolean DEBUG;
     /**
      * qos发送延迟 每3秒发送一次
      */
