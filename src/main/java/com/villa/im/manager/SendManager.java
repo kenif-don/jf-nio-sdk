@@ -74,14 +74,16 @@ public class SendManager {
 
     /***
      * 给请求方发送一条错误消息应答包
+     * err模型
+     * ack  -- 500
+     * type -- 客户端请求的type
+     * data -- 返回的错误消息
      */
-    public static void sendErr(Channel channel,String err_code){
-        baseSend(channel,new Protocol(ChannelConst.CHANNEL_ERR,err_code,500));
+    public static void sendErr(Channel channel,int type,String err_code){
+        baseSend(channel,new Protocol(type,err_code,ChannelConst.ACK_ERR));
     }
-    /***
-     * 给请求方发送一条成功消息应答包
-     */
+    /** 给请求方发送一条成功消息应答包 */
     public static void sendSuccess(Channel channel,int type,String data){
-        baseSend(channel,new Protocol(type,data,200));
+        baseSend(channel,new Protocol(type,data,ChannelConst.ACK_SUCCESS));
     }
 }

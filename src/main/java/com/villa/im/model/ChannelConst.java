@@ -37,7 +37,7 @@ public class ChannelConst {
 
     //------------------------------提示类协议类型------------------------------------------------------
     /** IM的统一错误码 */
-    public static final int CHANNEL_ERR = 500;
+    public static final int ACK_ERR = 500;
     /** 处理成功 */
-    public static final int CHANNEL_SUCCESS = 200;
+    public static final int ACK_SUCCESS = 200;
 }
