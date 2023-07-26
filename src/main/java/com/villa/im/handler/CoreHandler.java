@@ -26,7 +26,7 @@ public class CoreHandler {
         if(protocol.getType()!=ChannelConst.CHANNEL_LOGIN&&protocol.getType()!=ChannelConst.CHANNEL_HEART){
             //未登录
             if(!ChannelHandler.getInstance().isOnline(ctx.channel())){
-                SendManager.sendErr(ctx.channel(), IMErrCodeDTO.ox90001);
+                SendManager.sendErr(ctx.channel(), protocol.getType(), IMErrCodeDTO.ox90001);
                 return;
             }
         }
@@ -45,7 +45,7 @@ public class CoreHandler {
                 LoginInfo loginInfo = ChannelConst.LOGIC_PROCESS.getLoginInfo(ctx.channel(), protocol);
                 if(loginInfo==null||Util.isEmpty(loginInfo.getId())||Util.isEmpty(loginInfo.getDevice())){
                     //发送消息给客户端,需要连接标识符
-                    SendManager.sendErr(ctx.channel(), IMErrCodeDTO.ox90002);
+                    SendManager.sendErr(ctx.channel(), protocol.getType(), IMErrCodeDTO.ox90002);
                     return;
                 }
                 //将连接信息存入连接属性中

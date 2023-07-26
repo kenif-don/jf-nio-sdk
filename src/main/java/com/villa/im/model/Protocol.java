@@ -1,9 +1,11 @@
 package com.villa.im.model;
 
+import java.io.Serializable;
+
 /**
  * 交互的消息协议对象
  */
-public class Protocol {
+public class Protocol implements Serializable {
     //用于请求分发的指令
     private int type;
     //消息从哪里来 泛指账号类唯一标识 比如userId等
@@ -47,8 +49,8 @@ public class Protocol {
         this.ack = 1;
     }
     /**
-     * 实例化应答包
-     * @param type 对应类型的应答包
+     * 实例化一个成功和失败的应答包
+     * @param type 对应类型的应答包 200成功 500-失败
      */
     public Protocol(int type,String data,int ack) {
         this.type = type;
