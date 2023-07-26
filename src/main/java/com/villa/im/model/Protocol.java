@@ -47,12 +47,12 @@ public class Protocol {
         this.ack = 1;
     }
     /**
-     * 实例化一个处理错误的应答包
+     * 实例化应答包
      * @param type 对应类型的应答包
      */
-    public Protocol(int type,String data) {
+    public Protocol(int type,String data,int ack) {
         this.type = type;
-        this.ack = 1;
+        this.ack = ack;
         this.data = data;
     }
     public Protocol(int type, String from, String to, String data, int ack, String no) {

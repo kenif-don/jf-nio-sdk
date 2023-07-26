@@ -76,12 +76,12 @@ public class SendManager {
      * 给请求方发送一条错误消息应答包
      */
     public static void sendErr(Channel channel,String err_code){
-        baseSend(channel,new Protocol(ChannelConst.CHANNEL_ERR,err_code));
+        baseSend(channel,new Protocol(ChannelConst.CHANNEL_ERR,err_code,500));
     }
     /***
      * 给请求方发送一条成功消息应答包
      */
     public static void sendSuccess(Channel channel,int type,String data){
-        baseSend(channel,new Protocol(type,data));
+        baseSend(channel,new Protocol(type,data,200));
     }
 }
