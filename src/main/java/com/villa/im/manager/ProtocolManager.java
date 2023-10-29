@@ -40,7 +40,7 @@ public class ProtocolManager {
         if(protocol.getAck()==100){
             //聊天消息必须携带一个消息ID 如果没有就回执报错
             if(!Util.isNotEmpty(protocol.getNo())){
-                SendManager.sendErr(channel, IMErrCodeDTO.ox90003);
+                SendManager.sendErr(channel, protocol.getType(),IMErrCodeDTO.ox90003);
                 return;
             }
             //先给发送方一个消息回执，代表服务器收到了消息
