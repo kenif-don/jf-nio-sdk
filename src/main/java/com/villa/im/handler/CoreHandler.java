@@ -37,15 +37,15 @@ public class CoreHandler {
                 if(ChannelHandler.getInstance().isOnline(ctx.channel())){
                     return;
                 }
-                //login前置
-                if(!ChannelConst.LOGIC_PROCESS.loginBefore(ctx.channel(), protocol)){
-                    return;
-                }
                 //获取登录信息
                 LoginInfo loginInfo = ChannelConst.LOGIC_PROCESS.getLoginInfo(ctx.channel(), protocol);
                 if(loginInfo==null||Util.isEmpty(loginInfo.getId())||Util.isEmpty(loginInfo.getDevice())){
                     //发送消息给客户端,需要连接标识符
                     SendManager.sendErr(ctx.channel(), protocol.getType(), IMErrCodeDTO.ox90002);
+                    return;
+                }
+                //login前置
+                if(!ChannelConst.LOGIC_PROCESS.loginBefore(ctx.channel(), protocol,loginInfo)){
                     return;
                 }
                 //将连接信息存入连接属性中
@@ -55,7 +55,7 @@ public class CoreHandler {
                 //发送请求结果给客户端-- 登录成功后返回时间戳给客户端用于时间矫正,最终用于消息时序字段
                 SendManager.sendSuccess(ctx.channel(),ChannelConst.CHANNEL_LOGIN,System.currentTimeMillis()+"");
                 //login后置
-                ChannelConst.LOGIC_PROCESS.loginAfter(ctx.channel(), protocol);
+                ChannelConst.LOGIC_PROCESS.loginAfter(ctx.channel(), protocol,loginInfo);
                 break;
             //客户端退出登录
             case ChannelConst.CHANNEL_LOGOUT:
@@ -117,9 +117,10 @@ public class CoreHandler {
      */
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         String channelId = Util.getChannelId(ctx.channel());
-        cause.printStackTrace();
         //客户端异常断开 不做处理 也不做日志记录
-        if(cause.getMessage().contains("Connection reset by peer")){return;}
+        if(cause.getMessage().contains("Connection reset by peer")||
+                cause.getMessage().contains("Connection reset")){return;}
+        cause.printStackTrace();
         if(Util.isNotEmpty(channelId)){
             throw new RuntimeException(String.format("【IM】[%s]连接发生异常：%s",channelId,cause.getMessage()));
         }else{

@@ -2,19 +2,16 @@ package com.villa.im.process;
 
 import com.alibaba.fastjson.JSON;
 import com.villa.im.manager.ProtocolManager;
-import com.villa.im.model.ChannelConst;
 import com.villa.im.model.LoginInfo;
 import com.villa.im.model.Protocol;
+import com.villa.im.util.Util;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 
-import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * 逻辑业务类
- */
+/**逻辑业务类*/
 public interface LogicProcess {
     /**
      *
@@ -59,7 +56,7 @@ public interface LogicProcess {
      *
      * ---demo实现 将MQ需要的基本数据放进这里
      */
-    default void loginAfter(Channel channel,Protocol protocol,LoginInfo loginInfo) throws SocketException {
+    default void loginAfter(Channel channel,Protocol protocol,LoginInfo loginInfo) {
     }
 
     /**
@@ -67,16 +64,11 @@ public interface LogicProcess {
      * ---demo实现 默认在protocol模型的data属性为loginInfo的json对象串
      */
     default LoginInfo getLoginInfo(Channel channel, Protocol protocol){
-        try{
-            LoginInfo loginInfo = JSON.parseObject(protocol.getData(), LoginInfo.class);
-            Assertion.assertionIsNotNullOrEmpty(loginInfo.getId(),"登录信息中id为空");
-            Assertion.assertionIsNotNullOrEmpty(loginInfo.getDevice(),"登录信息中device为空");
-            Assertion.assertionIsNotNullOrEmpty(loginInfo.getToken(),"登录信息中token为空");
-            return loginInfo;
-        }catch (Exception e){
-            Log.err("【IM--客户端登录】获取登录信息失败，解析JSON格式出错 消息：%s",e.getMessage());
+        LoginInfo loginInfo = JSON.parseObject(protocol.getData(), LoginInfo.class);
+        if(Util.isEmpty(loginInfo.getId())||Util.isEmpty(loginInfo.getDevice())||Util.isEmpty(loginInfo.getToken())){
+            return null;
         }
-        return null;
+        return loginInfo;
     }
     /**
      * 长连接的退出登录请求前置方法,如果返回false 则不会执行长连接登出功能
