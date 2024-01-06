@@ -63,7 +63,7 @@ public class ChannelHandler {
             //下面两句代码有线程安全问题 将HashMap换成ConcurrentHashMap
             channels.get(channelId).removeChannel(Util.getChannelDevice(channel));
             //也就是这个标识符对应的连接全部没有了
-            if(channels.get(channelId).getChannels().size()==0){
+            if(channels.get(channelId).getChannels().isEmpty()){
                 //就把channels中的也进行删除
                 channels.remove(channelId);
             }
@@ -115,7 +115,7 @@ public class ChannelHandler {
      */
     public boolean isOnline(String channelId){
         ChannelDTO channelDTO = channels.get(channelId);
-        return Util.isNotEmpty(channelId)&&channelDTO!=null&&channelDTO.getChannels().size()>0;
+        return Util.isNotEmpty(channelId)&&channelDTO!=null&& !channelDTO.getChannels().isEmpty();
     }
     private ChannelHandler(){
 

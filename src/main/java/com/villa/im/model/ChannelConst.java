@@ -4,9 +4,9 @@ import com.villa.im.process.LogicProcess;
 import io.netty.util.AttributeKey;
 
 public class ChannelConst {
-    /**
-     * qos发送延迟 每3秒发送一次
-     */
+    //qos 重试次数最大值
+    public static int QOS_MAX_COUNT = 1;
+    /** qos发送延迟 每3秒发送一次 */
     public static int QOS_DELAY = 3*1000;
     //需要业务处定义的业务处理器 --默认实现
     public static LogicProcess LOGIC_PROCESS = new LogicProcess() {};
@@ -40,4 +40,6 @@ public class ChannelConst {
     public static final int ACK_ERR = 500;
     /** 处理成功 */
     public static final int ACK_SUCCESS = 200;
+    /** 当前链接被挤掉 */
+    public static final int CHANNEL_KILL = 403;
 }

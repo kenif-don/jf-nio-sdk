@@ -30,28 +30,27 @@ public class QosManager {
          */
         new Timer().schedule(new TimerTask() {
             public void run() {
-                //获取待发消息集合的迭代器
-                Iterator<MsgDTO> iterator = msgs.values().iterator();
-                while (iterator.hasNext()){
-                    MsgDTO msgDTO = iterator.next();
-                    //如果在线就发送待发消息
-                    if(ChannelHandler.getInstance().isOnline(msgDTO.getChannel())){
-                        //当前发送时间必须比上次发送时间至少间隔ChannelConst.QOS_DELAY
-                        long cur_timestamp = System.currentTimeMillis();
-                        if(System.currentTimeMillis()-msgDTO.getPreSendTimeStamp()< ChannelConst.QOS_DELAY){
-                            continue;
-                        }
-                        Channel realChannel= msgDTO.getChannel();
-                        //记录当前发送时间
-                        msgDTO.setPreSendTimeStamp(cur_timestamp);
-                        SendManager.send(realChannel, msgDTO.getProtocol());
-                    }else{
-                        //如果不在线  就将当前待发消息直接删除
-                        removeQosMessage(msgDTO.getProtocol(),msgDTO.getDevice());
-                        //qos是在线才会触发 这里不在线代表 之前在线 后来不在线了 算是失败了 提供回调到业务层
-                        ChannelConst.LOGIC_PROCESS.sendFailCallBack(Util.getChannelId(msgDTO.getChannel()),msgDTO.getProtocol());
+            //获取待发消息集合的迭代器
+            for (MsgDTO msgDTO : msgs.values()) {
+                //如果在线就发送待发消息
+                if (ChannelHandler.getInstance().isOnline(msgDTO.getChannel()) && msgDTO.getCount() < ChannelConst.QOS_MAX_COUNT) {
+                    //当前发送时间必须比上次发送时间至少间隔ChannelConst.QOS_DELAY
+                    long cur_timestamp = System.currentTimeMillis();
+                    if (System.currentTimeMillis() - msgDTO.getPreSendTimeStamp() < ChannelConst.QOS_DELAY) {
+                        continue;
                     }
+                    Channel realChannel = msgDTO.getChannel();
+                    //记录当前发送时间
+                    msgDTO.setPreSendTimeStamp(cur_timestamp);
+                    msgDTO.setCount(msgDTO.getCount() + 1);
+                    SendManager.send(realChannel, msgDTO.getProtocol());
+                } else {
+                    //如果不在线  就将当前待发消息直接删除
+                    removeQosMessage(msgDTO.getProtocol(), msgDTO.getDevice());
+                    //qos是在线才会触发 这里不在线代表 之前在线 后来不在线了 算是失败了 提供回调到业务层
+                    ChannelConst.LOGIC_PROCESS.sendFailCallBack(Util.getChannelId(msgDTO.getChannel()), msgDTO.getProtocol());
                 }
+            }
             }
         },500,ChannelConst.QOS_DELAY);
     }
