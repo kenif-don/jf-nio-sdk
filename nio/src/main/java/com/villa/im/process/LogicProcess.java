@@ -1,6 +1,6 @@
 package com.villa.im.process;
 
-import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson2.JSON;
 import com.villa.im.manager.ProtocolManager;
 import com.villa.im.model.LoginInfo;
 import com.villa.im.model.Protocol;
@@ -18,9 +18,7 @@ public interface LogicProcess {
      * @param ctx           通道
      * @param channelCount  当前连接数
      */
-    default void newChannelAdded(ChannelHandlerContext ctx,int channelCount){
-
-    }
+    default void newChannelAdded(ChannelHandlerContext ctx,int channelCount){}
     /**
      * type-1 单聊 type-8 群聊
      * 根据to获取要转发的目标群体
