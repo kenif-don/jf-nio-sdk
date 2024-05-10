@@ -31,21 +31,17 @@ public class ChannelHandler {
     public void addChannel(Channel channel){
         String channelId = Util.getChannelId(channel);
         //先验证同设备号的是否在线
-        if(isOnline(channel)){
-            //上一次在线的链接
+        if(isOnline(channel)){//如果已经存在一个通道
+            //获取旧的
             Channel oldChannel = getChannelById(channel);
-            //如果两次链接相等  代表是客户端发送了登录的重复请求 不做处理就行
-            if(oldChannel.compareTo(channel)==0){
-                return;
-            }
             //这里代表客户端连接是一个新的连接或者新的设备 需要将老的链接T掉
-            kickChannel(channel);
+            kickChannel(oldChannel);
         }
         ChannelDTO channelDTO = channels.get(channelId);
         if(channelDTO==null){
             channelDTO = new ChannelDTO();
         }
-        //不在线或被T掉或不同协议登录后的处理 直接存起来
+        //将新的存起来
         channelDTO.putChannel(Util.getChannelDevice(channel),channel);
         channels.put(channelId,channelDTO);
         printOlineCount();
