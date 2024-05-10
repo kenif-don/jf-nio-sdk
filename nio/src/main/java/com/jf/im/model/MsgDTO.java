@@ -1,10 +1,12 @@
 package com.jf.im.model;
 
 import io.netty.channel.Channel;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-/**
- * 暂存消息的包装类
- */
+/**暂存消息的包装类*/
+@Data
+@NoArgsConstructor
 public class MsgDTO {
     private String device;
     //连接标志符 用来获取客户端通道
@@ -25,45 +27,5 @@ public class MsgDTO {
         this.protocol = protocol;
         this.preSendTimeStamp = System.currentTimeMillis();
         this.device = device;
-    }
-
-    public String getDevice() {
-        return device;
-    }
-
-    public void setDevice(String device) {
-        this.device = device;
-    }
-
-    public long getPreSendTimeStamp() {
-        return preSendTimeStamp;
-    }
-
-    public void setPreSendTimeStamp(long preSendTimeStamp) {
-        this.preSendTimeStamp = preSendTimeStamp;
-    }
-
-    public Channel getChannel() {
-        return channel;
-    }
-
-    public void setChannel(Channel channel) {
-        this.channel = channel;
-    }
-
-    public Protocol getProtocol() {
-        return protocol;
-    }
-
-    public void setProtocol(Protocol protocol) {
-        this.protocol = protocol;
-    }
-
-    public int getCount() {
-        return count;
-    }
-
-    public void setCount(int count) {
-        this.count = count;
     }
 }

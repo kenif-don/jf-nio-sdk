@@ -4,7 +4,6 @@ import com.alibaba.fastjson2.JSON;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.jf.im.handler.CoreHandler;
 import com.jf.im.model.*;
-import com.villa.im.model.*;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -16,20 +15,14 @@ import java.nio.charset.StandardCharsets;
 /**
  * 统一工具类
  */
-public class Util {
-    public static boolean isEmpty(String str){
-        return str==null||"".equals(str.trim());
-    }
-    public static boolean isNotEmpty(String str){
-        return str!=null&&!"".equals(str.trim());
-    }
-    public static  void channelRead(ChannelHandlerContext ctx, CoreHandler coreHandler, ByteBuf content) {
+public class NioUtil {
+    public static void channelRead(ChannelHandlerContext ctx, CoreHandler coreHandler, ByteBuf content) {
         switch (ChannelConst.DATA_PROTO_TYPE){
             case JSON:
-                coreHandler.channelRead0(ctx, Util.byteBuf2ProtocolByJson(content));
+                coreHandler.channelRead0(ctx, NioUtil.byteBuf2ProtocolByJson(content));
                 break;
             case PROTOBUF:
-                coreHandler.channelRead0(ctx,Util.byteBuf2ProtocolByProtoBuf(content));
+                coreHandler.channelRead0(ctx, NioUtil.byteBuf2ProtocolByProtoBuf(content));
                 break;
         }
     }
@@ -96,7 +89,7 @@ public class Util {
     public static void userEventTriggered(ChannelHandlerContext ctx, Object evt,CoreHandler coreHandler){
         IdleStateEvent event = (IdleStateEvent)evt;
         //没有登录过的才关闭链接  登录过的不处理
-        if (event.state()== IdleState.READER_IDLE&&Util.isEmpty(Util.getChannelId(ctx.channel()))&&ctx.channel()!=null&&ctx.channel().isOpen()){
+        if (event.state()== IdleState.READER_IDLE&& com.jf.comm.util.Util.isNullOrEmpty(NioUtil.getChannelId(ctx.channel()))&&ctx.channel()!=null&&ctx.channel().isOpen()){
             ctx.close();
         }
     }

@@ -4,7 +4,7 @@ import com.alibaba.fastjson2.JSON;
 import com.jf.im.model.ChannelConst;
 import com.jf.im.model.ProtoBuf;
 import com.jf.im.model.Protocol;
-import com.jf.im.util.Util;
+import com.jf.im.util.NioUtil;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
@@ -28,7 +28,7 @@ public class SendManager {
     }
 
     private static ChannelFuture baseSend(Channel channel, Protocol protocol) {
-        switch (Util.getChannelProtoType(channel)){
+        switch (NioUtil.getChannelProtoType(channel)){
             case WS:
                 return channel.writeAndFlush(new TextWebSocketFrame(JSON.toJSONString(protocol)));
             case TCP:

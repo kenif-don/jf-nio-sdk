@@ -1,7 +1,8 @@
 package com.jf.im.handler;
 
+import com.jf.comm.util.Util;
 import com.jf.im.model.ChannelDTO;
-import com.jf.im.util.Util;
+import com.jf.im.util.NioUtil;
 import io.netty.channel.Channel;
 
 import java.util.List;
@@ -29,7 +30,7 @@ public class ChannelHandler {
      * 如果存在在线的  需要判断两个链接是否一致 否则将老的链接T掉
      */
     public void addChannel(Channel channel){
-        String channelId = Util.getChannelId(channel);
+        String channelId = NioUtil.getChannelId(channel);
         //先验证同设备号的是否在线
         if(isOnline(channel)){//如果已经存在一个通道
             //获取旧的
@@ -42,7 +43,7 @@ public class ChannelHandler {
             channelDTO = new ChannelDTO();
         }
         //将新的存起来
-        channelDTO.putChannel(Util.getChannelDevice(channel),channel);
+        channelDTO.putChannel(NioUtil.getChannelDevice(channel),channel);
         channels.put(channelId,channelDTO);
         printOlineCount();
     }
@@ -53,11 +54,11 @@ public class ChannelHandler {
      * 踢掉客户端连接
      */
     public void kickChannel(Channel channel){
-        String channelId = Util.getChannelId(channel);
+        String channelId = NioUtil.getChannelId(channel);
         //登录过的才从集合中删除 未登录的 直接关闭链接即可
-        if(Util.isNotEmpty(channelId)&&channels.get(channelId)!=null){
+        if(Util.isNotNullOrEmpty(channelId)&&channels.get(channelId)!=null){
             //下面两句代码有线程安全问题 将HashMap换成ConcurrentHashMap
-            channels.get(channelId).removeChannel(Util.getChannelDevice(channel));
+            channels.get(channelId).removeChannel(NioUtil.getChannelDevice(channel));
             //也就是这个标识符对应的连接全部没有了
             if(channels.get(channelId).getChannels().isEmpty()){
                 //就把channels中的也进行删除
@@ -84,7 +85,7 @@ public class ChannelHandler {
      * 根据客户端标志符和客户端连接对应的设备号/设备类型值获取客户端连接
      */
     public Channel getChannelById(Channel channel){
-        return channels.get(Util.getChannelId(channel)).getChannel(Util.getChannelDevice(channel));
+        return channels.get(NioUtil.getChannelId(channel)).getChannel(NioUtil.getChannelDevice(channel));
     }
 
     /**
@@ -92,15 +93,15 @@ public class ChannelHandler {
      * 根据标识符和协议类型寻找
      */
     public boolean isOnline(Channel channel){
-        String channelId = Util.getChannelId(channel);
-        if(Util.isEmpty(channelId)){
+        String channelId = NioUtil.getChannelId(channel);
+        if(Util.isNullOrEmpty(channelId)){
             return false;
         }
         ChannelDTO channelDTO = channels.get(channelId);
         if(channelDTO==null) {
             return false;
         }
-        Channel onLineChannel = channelDTO.getChannel(Util.getChannelDevice(channel));
+        Channel onLineChannel = channelDTO.getChannel(NioUtil.getChannelDevice(channel));
         if(onLineChannel==null) {
             return false;
         }
@@ -111,7 +112,7 @@ public class ChannelHandler {
      */
     public boolean isOnline(String channelId){
         ChannelDTO channelDTO = channels.get(channelId);
-        return Util.isNotEmpty(channelId)&&channelDTO!=null&& !channelDTO.getChannels().isEmpty();
+        return Util.isNotNullOrEmpty(channelId)&&channelDTO!=null&& !channelDTO.getChannels().isEmpty();
     }
     private ChannelHandler(){
 

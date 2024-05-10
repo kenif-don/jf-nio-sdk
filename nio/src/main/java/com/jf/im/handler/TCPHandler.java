@@ -1,7 +1,7 @@
 package com.jf.im.handler;
 
 import com.jf.im.model.ProtoType;
-import com.jf.im.util.Util;
+import com.jf.im.util.NioUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -22,7 +22,7 @@ public class TCPHandler extends SimpleChannelInboundHandler<ByteBuf>{
      * 新链接加入
      */
     public void channelActive(ChannelHandlerContext ctx) {
-        Util.putChannelProtoType(ctx.channel(), ProtoType.TCP);
+        NioUtil.putChannelProtoType(ctx.channel(), ProtoType.TCP);
         coreHandler.handlerAdded(ctx);
     }
 
@@ -34,12 +34,12 @@ public class TCPHandler extends SimpleChannelInboundHandler<ByteBuf>{
     }
     /** 收到客户端消息 */
     protected void channelRead0(ChannelHandlerContext ctx, ByteBuf content) throws Exception {
-        Util.channelRead(ctx,coreHandler,content);
+        NioUtil.channelRead(ctx,coreHandler,content);
     }
     /** 客户端超时 */
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
         if (evt instanceof IdleStateEvent){
-            Util.userEventTriggered(ctx,evt,coreHandler);
+            NioUtil.userEventTriggered(ctx,evt,coreHandler);
         }else {
             super.userEventTriggered(ctx,evt);
         }

@@ -1,7 +1,7 @@
 package com.jf.im.handler;
 
 import com.jf.im.model.ProtoType;
-import com.jf.im.util.Util;
+import com.jf.im.util.NioUtil;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
@@ -19,7 +19,7 @@ public class WebSocketHandler extends SimpleChannelInboundHandler<WebSocketFrame
     }
     /**新链接加入*/
     public void channelActive(ChannelHandlerContext ctx) {
-        Util.putChannelProtoType(ctx.channel(), ProtoType.WS);
+        NioUtil.putChannelProtoType(ctx.channel(), ProtoType.WS);
         coreHandler.handlerAdded(ctx);
     }
 
@@ -29,12 +29,12 @@ public class WebSocketHandler extends SimpleChannelInboundHandler<WebSocketFrame
     }
     /**ws收到消息 将消息(转换为json)传递给CoreHandler处理*/
     protected void channelRead0(ChannelHandlerContext ctx, WebSocketFrame content) {
-        Util.channelRead(ctx,coreHandler,content.content());
+        NioUtil.channelRead(ctx,coreHandler,content.content());
     }
     /** 客户端事件监听 */
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
         if (evt instanceof IdleStateEvent){
-            Util.userEventTriggered(ctx,evt,coreHandler);
+            NioUtil.userEventTriggered(ctx,evt,coreHandler);
         }else {
             super.userEventTriggered(ctx,evt);
         }

@@ -4,7 +4,7 @@ import com.jf.im.handler.ChannelHandler;
 import com.jf.im.model.ChannelConst;
 import com.jf.im.model.MsgDTO;
 import com.jf.im.model.Protocol;
-import com.jf.im.util.Util;
+import com.jf.im.util.NioUtil;
 import io.netty.channel.Channel;
 
 import java.util.Timer;
@@ -47,7 +47,7 @@ public class QosManager {
                     //如果不在线  就将当前待发消息直接删除
                     removeQosMessage(msgDTO.getProtocol(), msgDTO.getDevice());
                     //qos是在线才会触发 这里不在线代表 之前在线 后来不在线了 算是失败了 提供回调到业务层
-                    ChannelConst.LOGIC_PROCESS.sendFailCallBack(Util.getChannelId(msgDTO.getChannel()), msgDTO.getProtocol());
+                    ChannelConst.LOGIC_PROCESS.sendFailCallBack(NioUtil.getChannelId(msgDTO.getChannel()), msgDTO.getProtocol());
                 }
             }
             }
@@ -57,11 +57,11 @@ public class QosManager {
     private static ConcurrentHashMap<String, MsgDTO> msgs = new ConcurrentHashMap<>();
     /** 将消息添加qos队列--这里使用map来装 */
     public static void putQosQueue(Channel channel, Protocol protocol){
-        msgs.put(protocol.getNo()+"_"+Util.getChannelDevice(channel), new MsgDTO(channel,protocol,Util.getChannelDevice(channel)));
+        msgs.put(protocol.getNo()+"_"+ NioUtil.getChannelDevice(channel), new MsgDTO(channel,protocol, NioUtil.getChannelDevice(channel)));
     }
     /** 从qos中删除对应的消息 */
     public static MsgDTO removeQosMessage(Channel channel,Protocol protocol){
-        return msgs.remove(protocol.getNo()+"_"+Util.getChannelDevice(channel));
+        return msgs.remove(protocol.getNo()+"_"+ NioUtil.getChannelDevice(channel));
     }
     /** 从qos中删除对应的消息--用于离线 */
     public static MsgDTO removeQosMessage(Protocol protocol,String device){
@@ -69,6 +69,6 @@ public class QosManager {
     }
     /** 判断是否包含 */
     public static boolean contains(Channel channel,Protocol protocol){
-        return msgs.containsKey(protocol.getNo()+"_"+Util.getChannelDevice(channel));
+        return msgs.containsKey(protocol.getNo()+"_"+ NioUtil.getChannelDevice(channel));
     }
 }

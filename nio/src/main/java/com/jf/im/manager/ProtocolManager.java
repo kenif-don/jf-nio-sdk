@@ -1,11 +1,12 @@
 package com.jf.im.manager;
 
+import com.jf.comm.util.Util;
 import com.jf.im.handler.ChannelHandler;
 import com.jf.im.model.ChannelConst;
 import com.jf.im.model.IMErrCodeDTO;
 import com.jf.im.model.MsgDTO;
 import com.jf.im.model.Protocol;
-import com.jf.im.util.Util;
+import com.jf.im.util.NioUtil;
 import io.netty.channel.Channel;
 
 import java.util.List;
@@ -19,7 +20,7 @@ public class ProtocolManager {
      */
     public static void ack(Channel channel,Protocol protocol) {
         //只需要删除对应的待发消息就行了--消息补偿流程就结束了
-        if(Util.isNotEmpty(protocol.getNo())){
+        if(Util.isNotNullOrEmpty(protocol.getNo())){
             MsgDTO msgDTO = QosManager.removeQosMessage(channel,protocol);
             /**
              * 可能会因为网络问题导致 qos发送多次给前端 前端也会回复多次ack到后台
@@ -39,7 +40,7 @@ public class ProtocolManager {
         //开启了qos 客户端需要一个回执
         if(protocol.getAck()==100){
             //聊天消息必须携带一个消息ID 如果没有就回执报错
-            if(!Util.isNotEmpty(protocol.getNo())){
+            if(!Util.isNotNullOrEmpty(protocol.getNo())){
                 SendManager.sendErr(channel, protocol.getType(),IMErrCodeDTO.ox90003);
                 return;
             }
@@ -77,7 +78,7 @@ public class ProtocolManager {
             /**
              * 这里同时需要转发给"自己"的其他设备,其实与其他人是一样的操作
              */
-            List<Channel> channels = ChannelHandler.getInstance().getChannels(Util.getChannelId(channel), Util.getChannelDevice(channel));
+            List<Channel> channels = ChannelHandler.getInstance().getChannels(NioUtil.getChannelId(channel), NioUtil.getChannelDevice(channel));
             channels.forEach(myChannel->{
                 if(protocol.getAck()==100) {
                     //需要qos 才加入到qos队列,否则就不加入

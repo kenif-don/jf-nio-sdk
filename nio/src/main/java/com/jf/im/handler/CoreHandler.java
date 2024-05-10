@@ -1,17 +1,16 @@
 package com.jf.im.handler;
 
+import com.jf.comm.util.Util;
 import com.jf.im.manager.ProtocolManager;
 import com.jf.im.manager.SendManager;
 import com.jf.im.model.ChannelConst;
 import com.jf.im.model.IMErrCodeDTO;
 import com.jf.im.model.LoginInfo;
 import com.jf.im.model.Protocol;
-import com.jf.im.util.Util;
+import com.jf.im.util.NioUtil;
 import io.netty.channel.ChannelHandlerContext;
 
-/**
- * TCP/UDP/WS 统一的处理器
- */
+/**TCP/UDP/WS 统一的处理器*/
 public class CoreHandler {
     private static int channelCount = 0;
     private static CoreHandler coreHandler = new CoreHandler();
@@ -39,7 +38,7 @@ public class CoreHandler {
                 }
                 //获取登录信息
                 LoginInfo loginInfo = ChannelConst.LOGIC_PROCESS.getLoginInfo(ctx.channel(), protocol);
-                if(loginInfo==null||Util.isEmpty(loginInfo.getId())||Util.isEmpty(loginInfo.getDevice())){
+                if(loginInfo==null|| Util.isNullOrEmpty(loginInfo.getId())|| Util.isNullOrEmpty(loginInfo.getDevice())){
                     //发送消息给客户端,需要连接标识符
                     SendManager.sendErr(ctx.channel(), protocol.getType(), IMErrCodeDTO.ox90002);
                     return;
@@ -49,7 +48,7 @@ public class CoreHandler {
                     return;
                 }
                 //将连接信息存入连接属性中
-                Util.putChannelInfo(ctx.channel(), loginInfo);
+                NioUtil.putChannelInfo(ctx.channel(), loginInfo);
                 //将连接保存
                 ChannelHandler.getInstance().addChannel(ctx.channel());
                 //发送请求结果给客户端-- 登录成功后返回时间戳给客户端用于时间矫正,最终用于消息时序字段
@@ -78,7 +77,7 @@ public class CoreHandler {
                     return;
                 }
                 //将当前通道的id设置为from--不相信客户端传的 客户端也可以不传
-                protocol.setFrom(Util.getChannelId(ctx.channel()));
+                protocol.setFrom(NioUtil.getChannelId(ctx.channel()));
                 ProtocolManager.handlerMsg(ctx.channel(),protocol);
                 break;
             case ChannelConst.CHANNEL_ACK:
@@ -87,7 +86,7 @@ public class CoreHandler {
             //业务层自定义的消息协议
             default:
                 //将当前通道的id设置为from--不相信客户端传的 客户端也可以不传
-                protocol.setFrom(Util.getChannelId(ctx.channel()));
+                protocol.setFrom(NioUtil.getChannelId(ctx.channel()));
                 ChannelConst.LOGIC_PROCESS.customProtocolHandler(ctx.channel(),protocol);
                 break;
         }
@@ -103,10 +102,10 @@ public class CoreHandler {
      * 连接断开的时候触发
      */
     public void handlerRemoved(ChannelHandlerContext ctx) {
-        String channelId = Util.getChannelId(ctx.channel());
-        if(Util.isNotEmpty(channelId)){
+        String channelId = NioUtil.getChannelId(ctx.channel());
+        if(Util.isNotNullOrEmpty(channelId)){
             //触发事件
-            ChannelConst.LOGIC_PROCESS.sessionClosed(Util.getChannelId(ctx.channel()),ctx.channel());
+            ChannelConst.LOGIC_PROCESS.sessionClosed(NioUtil.getChannelId(ctx.channel()),ctx.channel());
         }
         //断开连接 将登录者T掉
         ChannelHandler.getInstance().kickChannel(ctx.channel());
@@ -116,12 +115,12 @@ public class CoreHandler {
      * 出现异常时候触发,关闭当前连接
      */
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-        String channelId = Util.getChannelId(ctx.channel());
+        String channelId = NioUtil.getChannelId(ctx.channel());
         //客户端异常断开 不做处理 也不做日志记录
         if(cause.getMessage().contains("Connection reset by peer")||
                 cause.getMessage().contains("Connection reset")){return;}
         cause.printStackTrace();
-        if(Util.isNotEmpty(channelId)){
+        if(Util.isNotNullOrEmpty((channelId))){
             throw new RuntimeException(String.format("【IM】[%s]连接发生异常：%s",channelId,cause.getMessage()));
         }else{
             throw new RuntimeException(String.format("【IM】未登录的连接发生异常：%s",cause.getMessage()));
