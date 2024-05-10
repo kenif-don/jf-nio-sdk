@@ -1,5 +1,4 @@
-import com.villa.im.model.Protocol;
-import com.villa.im.process.LogicProcess;
+import com.jf.im.process.LogicProcess;
 
 public class MyLogicProcess implements LogicProcess {
 //    @AutoWrize

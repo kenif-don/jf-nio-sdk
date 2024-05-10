@@ -1,5 +1,5 @@
-import com.villa.im.IMServer;
-import com.villa.im.model.DataProtoType;
+import com.jf.im.IMServer;
+import com.jf.im.model.DataProtoType;
 
 public class Test {
     public static void main(String[] args) {
