@@ -27,7 +27,7 @@ public class Protocol implements Serializable {
     /**
      * 普通消息必传
      * 消息唯一编号 注意这个只是客户端生成的一个唯一值，uuid或者时间戳+六位随机数都可以
-     * 并不代表消息唯一主键 也不会存进数据库 只是用来做消息补偿
+     * 用来做消息补偿 客户端也可以用它来做去重
      */
     private String no;
     /**
