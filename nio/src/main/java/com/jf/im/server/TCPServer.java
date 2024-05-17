@@ -36,8 +36,8 @@ public class TCPServer extends BaseServer{
         super.init();
         //child channel 禁用nagle算法  nagle算法：tcp内置缓冲区,这个缓存区需要被写满才能进行发送。对于数据量太小的交互，会出现高延迟，所以需要关闭
         ((ServerBootstrap)getBootstrap()).childOption(ChannelOption.TCP_NODELAY, true);
-        //child channel 开启心跳
-        ((ServerBootstrap)getBootstrap()).childOption(ChannelOption.SO_KEEPALIVE, true);
+        //child channel 关闭默认心跳 自己管理
+        ((ServerBootstrap)getBootstrap()).childOption(ChannelOption.SO_KEEPALIVE, false);
         //异步的服务器端 TCP Socket 连接
         getBootstrap().channel(NioServerSocketChannel.class);
         /**
@@ -58,8 +58,8 @@ public class TCPServer extends BaseServer{
         ((ServerBootstrap)getBootstrap()).childHandler(new ChannelInitializer<SocketChannel>() {
             protected void initChannel(SocketChannel  channel) {
                 ChannelPipeline pipeline = channel.pipeline();
-                //30秒客户端和服务器未交互,则触发超时事件--需要放在解码器前面才能生效 如果使用ReadTimeoutHandler是抛异常 IdleStateHandler则是事件通知
-                pipeline.addLast(new IdleStateHandler(30,30,30));
+                //10秒客户端和服务器未交互,则触发超时事件--需要放在解码器前面才能生效 如果使用ReadTimeoutHandler是抛异常 IdleStateHandler则是事件通知
+                pipeline.addLast(new IdleStateHandler(0,0,10));
                 //通过将消息分为消息头和消息体来处理沾包半包问题
                 pipeline.addLast("frameDecoder", new LengthFieldBasedFrameDecoder(1024*1024*10+4, 0, 4, 0, 4));
                 pipeline.addLast("frameEncoder", new LengthFieldPrepender(4));

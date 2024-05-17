@@ -35,7 +35,7 @@ public class WSServer extends BaseServer{
             protected void initChannel(SocketChannel channel) {
                 //编解码器
                 channel.pipeline()
-                .addLast(new IdleStateHandler(30,30,30))
+                .addLast(new IdleStateHandler(0,0,10))
                 .addLast(new HttpServerCodec())
                 .addLast(new HttpObjectAggregator(1024*1024*10))
                 .addLast(new WebSocketServerProtocolHandler("/",null,false,1024*1024*10,false))

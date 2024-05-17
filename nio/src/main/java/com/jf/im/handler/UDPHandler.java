@@ -39,9 +39,7 @@ public class UDPHandler extends SimpleChannelInboundHandler<DatagramPacket> {
     /** 客户端超时 */
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
         if (evt instanceof IdleStateEvent){
-            NioUtil.userEventTriggered(ctx,evt,coreHandler);
-        }else {
-            super.userEventTriggered(ctx,evt);
+            NioUtil.userEventTriggered(ctx);
         }
     }
 }

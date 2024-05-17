@@ -2,13 +2,12 @@ package com.jf.im.util;
 
 import com.alibaba.fastjson2.JSON;
 import com.google.protobuf.InvalidProtocolBufferException;
+import com.jf.comm.util.Util;
 import com.jf.im.handler.CoreHandler;
 import com.jf.im.model.*;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.timeout.IdleState;
-import io.netty.handler.timeout.IdleStateEvent;
 
 import java.nio.charset.StandardCharsets;
 
@@ -86,10 +85,10 @@ public class NioUtil {
         return channel.attr(ChannelConst.PROTO_TYPE).get();
     }
     /** 客户端链接超时处理 */
-    public static void userEventTriggered(ChannelHandlerContext ctx, Object evt,CoreHandler coreHandler){
-        IdleStateEvent event = (IdleStateEvent)evt;
-        //没有登录过的才关闭链接  登录过的不处理
-        if (event.state()== IdleState.READER_IDLE&& com.jf.comm.util.Util.isNullOrEmpty(NioUtil.getChannelId(ctx.channel()))&&ctx.channel()!=null&&ctx.channel().isOpen()){
+    public static void userEventTriggered(ChannelHandlerContext ctx){
+        //登录过的关闭链接
+        if (ctx.channel()!=null && Util.isNotNullOrEmpty(NioUtil.getChannelId(ctx.channel()))&& ctx.channel().isOpen()){
+            System.out.println("超时："+ctx.channel());
             ctx.close();
         }
     }

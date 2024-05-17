@@ -34,9 +34,7 @@ public class WebSocketHandler extends SimpleChannelInboundHandler<WebSocketFrame
     /** 客户端事件监听 */
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
         if (evt instanceof IdleStateEvent){
-            NioUtil.userEventTriggered(ctx,evt,coreHandler);
-        }else {
-            super.userEventTriggered(ctx,evt);
+            NioUtil.userEventTriggered(ctx);
         }
     }
 }

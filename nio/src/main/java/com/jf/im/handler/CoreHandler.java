@@ -118,8 +118,9 @@ public class CoreHandler {
         String channelId = NioUtil.getChannelId(ctx.channel());
         //客户端异常断开 不做处理 也不做日志记录
         if(cause.getMessage().contains("Connection reset by peer")||
-                cause.getMessage().contains("Connection reset")){return;}
-        cause.printStackTrace();
+                cause.getMessage().contains("Connection reset")||
+                cause.getMessage().contains("远程主机强迫关闭了一个现有的连接")//客户端进程突然被杀
+        ){return;}
         if(Util.isNotNullOrEmpty((channelId))){
             throw new RuntimeException(String.format("【IM】[%s]连接发生异常：%s",channelId,cause.getMessage()));
         }else{

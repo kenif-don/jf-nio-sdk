@@ -43,7 +43,7 @@ public class UDPServer extends BaseServer{
             protected void initChannel(NioDatagramChannel  channel) {
                 //jSON解码器
                 ChannelPipeline pipeline = channel.pipeline();
-                pipeline.addLast(new IdleStateHandler(30,30,30));
+                pipeline.addLast(new IdleStateHandler(0,0,10));
                 pipeline.addLast(new JsonObjectDecoder());
                 //JSON编码器
                 switch (ChannelConst.DATA_PROTO_TYPE){
