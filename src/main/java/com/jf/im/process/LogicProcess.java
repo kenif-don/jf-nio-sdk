@@ -14,7 +14,7 @@ import java.util.List;
 /**逻辑业务类*/
 public interface LogicProcess {
     /**
-     *
+     * 新连接进入
      * @param ctx           通道
      * @param channelCount  当前连接数
      */

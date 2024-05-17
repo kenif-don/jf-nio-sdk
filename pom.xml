@@ -7,14 +7,8 @@
     <groupId>com.jf</groupId>
     <artifactId>jf-nio-sdk</artifactId>
     <version>1.0</version>
-    <packaging>pom</packaging>
-    <modules>
-        <module>nio</module>
-        <module>cluster</module>
-    </modules>
+    <packaging>jar</packaging>
     <properties>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     <dependencies>
@@ -22,6 +16,22 @@
             <groupId>com.jf</groupId>
             <artifactId>jf-comm</artifactId>
             <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.jf</groupId>
+            <artifactId>jf-redis</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-all</artifactId>
+            <version>4.1.109.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.protobuf</groupId>
+            <artifactId>protobuf-java</artifactId>
+            <version>3.25.3</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
     <build>

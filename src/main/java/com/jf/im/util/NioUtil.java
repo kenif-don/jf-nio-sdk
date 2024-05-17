@@ -11,9 +11,7 @@ import io.netty.channel.ChannelHandlerContext;
 
 import java.nio.charset.StandardCharsets;
 
-/**
- * 统一工具类
- */
+/**统一工具类*/
 public class NioUtil {
     public static void channelRead(ChannelHandlerContext ctx, CoreHandler coreHandler, ByteBuf content) {
         switch (ChannelConst.DATA_PROTO_TYPE){

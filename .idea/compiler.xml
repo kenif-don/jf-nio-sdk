@@ -8,12 +8,13 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="hicom-im-sdk" />
-        <module name="cluster" />
         <module name="villa_im_sdk" />
         <module name="nio" />
+        <module name="cluster (1)" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel target="16">
+      <module name="cluster" target="1.8" />
       <module name="jf-nio-sdk" target="1.8" />
       <module name="untitled" target="1.8" />
       <module name="villa_im_sdk" target="1.8" />
