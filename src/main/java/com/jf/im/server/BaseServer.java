@@ -10,9 +10,7 @@ import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 
-/**
- * TCP/UDP/WS的抽象父类 将一些公共属性和方法进行抽取
- */
+/**TCP/UDP/WS的抽象父类 将一些公共属性和方法进行抽取*/
 public abstract class BaseServer {
     //协议类型
     private ProtoType protoType;

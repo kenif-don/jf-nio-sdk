@@ -9,15 +9,10 @@
         <outputRelativeToContentRoot value="true" />
         <module name="hicom-im-sdk" />
         <module name="villa_im_sdk" />
-        <module name="nio" />
         <module name="cluster (1)" />
+        <module name="jf-nio-sdk" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel target="16">
-      <module name="cluster" target="1.8" />
-      <module name="jf-nio-sdk" target="1.8" />
-      <module name="untitled" target="1.8" />
-      <module name="villa_im_sdk" target="1.8" />
-    </bytecodeTargetLevel>
+    <bytecodeTargetLevel target="8" />
   </component>
 </project>
