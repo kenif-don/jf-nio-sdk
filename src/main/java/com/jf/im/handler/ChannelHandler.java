@@ -1,9 +1,9 @@
 package com.jf.im.handler;
 
-import com.jf.comm.util.Util;
 import com.jf.im.model.ChannelDTO;
 import com.jf.im.util.NioUtil;
 import io.netty.channel.Channel;
+import io.netty.util.internal.StringUtil;
 
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -56,7 +56,7 @@ public class ChannelHandler {
     public void kickChannel(Channel channel){
         String channelId = NioUtil.getChannelId(channel);
         //登录过的才从集合中删除 未登录的 直接关闭链接即可
-        if(Util.isNotNullOrEmpty(channelId)&&channels.get(channelId)!=null){
+        if(!StringUtil.isNullOrEmpty(channelId)&&channels.get(channelId)!=null){
             //下面两句代码有线程安全问题 将HashMap换成ConcurrentHashMap
             channels.get(channelId).removeChannel(NioUtil.getChannelDevice(channel));
             //也就是这个标识符对应的连接全部没有了
@@ -94,7 +94,7 @@ public class ChannelHandler {
      */
     public boolean isOnline(Channel channel){
         String channelId = NioUtil.getChannelId(channel);
-        if(Util.isNullOrEmpty(channelId)){
+        if(StringUtil.isNullOrEmpty(channelId)){
             return false;
         }
         ChannelDTO channelDTO = channels.get(channelId);
@@ -112,7 +112,7 @@ public class ChannelHandler {
      */
     public boolean isOnline(String channelId){
         ChannelDTO channelDTO = channels.get(channelId);
-        return Util.isNotNullOrEmpty(channelId)&&channelDTO!=null&& !channelDTO.getChannels().isEmpty();
+        return !StringUtil.isNullOrEmpty(channelId)&&channelDTO!=null&& !channelDTO.getChannels().isEmpty();
     }
     private ChannelHandler(){
 

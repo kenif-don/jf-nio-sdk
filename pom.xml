@@ -13,14 +13,9 @@
     </properties>
     <dependencies>
         <dependency>
-            <groupId>com.jf</groupId>
-            <artifactId>jf-comm</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.jf</groupId>
-            <artifactId>jf-redis</artifactId>
-            <version>1.0</version>
+            <groupId>com.alibaba.fastjson2</groupId>
+            <artifactId>fastjson2</artifactId>
+            <version>2.0.47</version>
         </dependency>
         <dependency>
             <groupId>io.netty</groupId>
@@ -32,6 +27,12 @@
             <artifactId>protobuf-java</artifactId>
             <version>3.25.3</version>
             <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>RELEASE</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
     <build>

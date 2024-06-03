@@ -1,6 +1,5 @@
 package com.jf.im.handler;
 
-import com.jf.comm.util.Util;
 import com.jf.im.manager.ProtocolManager;
 import com.jf.im.manager.SendManager;
 import com.jf.im.model.ChannelConst;
@@ -9,6 +8,7 @@ import com.jf.im.model.LoginInfo;
 import com.jf.im.model.Protocol;
 import com.jf.im.util.NioUtil;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.util.internal.StringUtil;
 
 /**TCP/UDP/WS 统一的处理器*/
 public class CoreHandler {
@@ -38,7 +38,7 @@ public class CoreHandler {
                 }
                 //获取登录信息
                 LoginInfo loginInfo = ChannelConst.LOGIC_PROCESS.getLoginInfo(ctx.channel(), protocol);
-                if(loginInfo==null|| Util.isNullOrEmpty(loginInfo.getId())|| Util.isNullOrEmpty(loginInfo.getDevice())){
+                if(loginInfo==null|| StringUtil.isNullOrEmpty(loginInfo.getId())|| StringUtil.isNullOrEmpty(loginInfo.getDevice())){
                     //发送消息给客户端,需要连接标识符
                     SendManager.sendErr(ctx.channel(), protocol.getType(), IMErrCodeDTO.ox90002);
                     return;
@@ -103,7 +103,7 @@ public class CoreHandler {
      */
     public void handlerRemoved(ChannelHandlerContext ctx) {
         String channelId = NioUtil.getChannelId(ctx.channel());
-        if(Util.isNotNullOrEmpty(channelId)){
+        if(!StringUtil.isNullOrEmpty(channelId)){
             //触发事件
             ChannelConst.LOGIC_PROCESS.sessionClosed(NioUtil.getChannelId(ctx.channel()),ctx.channel());
         }
@@ -121,7 +121,7 @@ public class CoreHandler {
                 cause.getMessage().contains("Connection reset")||
                 cause.getMessage().contains("远程主机强迫关闭了一个现有的连接")//客户端进程突然被杀
         ){return;}
-        if(Util.isNotNullOrEmpty((channelId))){
+        if(!StringUtil.isNullOrEmpty(channelId)){
             throw new RuntimeException(String.format("【IM】[%s]连接发生异常：%s",channelId,cause.getMessage()));
         }else{
             throw new RuntimeException(String.format("【IM】未登录的连接发生异常：%s",cause.getMessage()));

@@ -1,12 +1,12 @@
 package com.jf.im.process;
 
 import com.alibaba.fastjson2.JSON;
-import com.jf.comm.util.Util;
 import com.jf.im.manager.ProtocolManager;
 import com.jf.im.model.LoginInfo;
 import com.jf.im.model.Protocol;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.util.internal.StringUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,7 +63,7 @@ public interface LogicProcess {
      */
     default LoginInfo getLoginInfo(Channel channel, Protocol protocol){
         LoginInfo loginInfo = JSON.parseObject(protocol.getData(), LoginInfo.class);
-        if(Util.isNullOrEmpty(loginInfo.getId())|| Util.isNullOrEmpty(loginInfo.getDevice())|| Util.isNullOrEmpty(loginInfo.getToken())){
+        if(StringUtil.isNullOrEmpty(loginInfo.getId())|| StringUtil.isNullOrEmpty(loginInfo.getDevice())|| StringUtil.isNullOrEmpty(loginInfo.getToken())){
             return null;
         }
         return loginInfo;

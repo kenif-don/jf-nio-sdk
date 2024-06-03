@@ -1,6 +1,5 @@
 package com.jf.im.manager;
 
-import com.jf.comm.util.Util;
 import com.jf.im.handler.ChannelHandler;
 import com.jf.im.model.ChannelConst;
 import com.jf.im.model.IMErrCodeDTO;
@@ -8,6 +7,7 @@ import com.jf.im.model.MsgDTO;
 import com.jf.im.model.Protocol;
 import com.jf.im.util.NioUtil;
 import io.netty.channel.Channel;
+import io.netty.util.internal.StringUtil;
 
 import java.util.List;
 
@@ -20,7 +20,7 @@ public class ProtocolManager {
      */
     public static void ack(Channel channel,Protocol protocol) {
         //只需要删除对应的待发消息就行了--消息补偿流程就结束了
-        if(Util.isNotNullOrEmpty(protocol.getNo())){
+        if(!StringUtil.isNullOrEmpty(protocol.getNo())){
             MsgDTO msgDTO = QosManager.removeQosMessage(channel,protocol);
             /**
              * 可能会因为网络问题导致 qos发送多次给前端 前端也会回复多次ack到后台
@@ -40,7 +40,7 @@ public class ProtocolManager {
         //开启了qos 客户端需要一个回执
         if(protocol.getAck()==100){
             //聊天消息必须携带一个消息ID 如果没有就回执报错
-            if(!Util.isNotNullOrEmpty(protocol.getNo())){
+            if(StringUtil.isNullOrEmpty(protocol.getNo())){
                 SendManager.sendErr(channel, protocol.getType(),IMErrCodeDTO.ox90003);
                 return;
             }
