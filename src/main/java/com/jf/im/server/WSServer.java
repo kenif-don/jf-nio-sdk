@@ -2,6 +2,8 @@ package com.jf.im.server;
 
 import com.jf.im.handler.CoreHandler;
 import com.jf.im.handler.WebSocketHandler;
+import com.jf.im.model.ChannelConst;
+import com.jf.im.model.DataProtoType;
 import com.jf.im.model.ProtoType;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelInitializer;
@@ -25,10 +27,11 @@ public class WSServer extends BaseServer{
     public static WSServer getInstance(){
         return server;
     }
-    protected void init(){
-        super.init();
+    protected void init(DataProtoType dataProtoType){
+        super.init(dataProtoType);
         //异步的服务器端 UDP Socket 连接
         getBootstrap().channel(NioServerSocketChannel.class);
+        ChannelConst.DATA_PROTO_TYPE_MAP.put(ProtoType.WS,dataProtoType);
     }
     protected void initChildChannelHandler() {
         ((ServerBootstrap)getBootstrap()).childHandler(new ChannelInitializer<SocketChannel>() {

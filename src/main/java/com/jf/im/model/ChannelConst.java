@@ -3,6 +3,9 @@ package com.jf.im.model;
 import com.jf.im.process.LogicProcess;
 import io.netty.util.AttributeKey;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class ChannelConst {
     //qos 重试次数最大值
     public static int QOS_MAX_COUNT = 1;
@@ -10,8 +13,8 @@ public class ChannelConst {
     public static int QOS_DELAY = 3*1000;
     //需要业务处定义的业务处理器 --默认实现
     public static LogicProcess LOGIC_PROCESS = new LogicProcess() {};
-    //消息类型的协议类型 --默认json格式
-    public static DataProtoType DATA_PROTO_TYPE = DataProtoType.JSON;
+    //通讯协议绑定的数据协议
+    public static Map<ProtoType,DataProtoType>  DATA_PROTO_TYPE_MAP = new HashMap<>();
     //协议类型key  值有tcp/udp/ws枚举
     public static AttributeKey<ProtoType> PROTO_TYPE = AttributeKey.newInstance("proto_type");
     /**

@@ -1,14 +1,11 @@
 package com.jf.im.server;
 
-import com.alibaba.fastjson2.JSON;
 import com.jf.im.handler.CoreHandler;
 import com.jf.im.handler.TCPHandler;
 import com.jf.im.model.ChannelConst;
-import com.jf.im.model.ProtoBuf;
+import com.jf.im.model.DataProtoType;
 import com.jf.im.model.ProtoType;
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.buffer.ByteBuf;
-import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.ChannelPipeline;
@@ -16,7 +13,6 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.codec.LengthFieldPrepender;
-import io.netty.handler.codec.MessageToByteEncoder;
 import io.netty.handler.timeout.IdleStateHandler;
 
 /**
@@ -32,8 +28,8 @@ public class TCPServer extends BaseServer{
     public static TCPServer getInstance(){
         return server;
     }
-    public void init() {
-        super.init();
+    public void init(DataProtoType dataProtoType) {
+        super.init(dataProtoType);
         //child channel 禁用nagle算法  nagle算法：tcp内置缓冲区,这个缓存区需要被写满才能进行发送。对于数据量太小的交互，会出现高延迟，所以需要关闭
         ((ServerBootstrap)getBootstrap()).childOption(ChannelOption.TCP_NODELAY, true);
         //child channel 关闭默认心跳 自己管理
@@ -52,6 +48,7 @@ public class TCPServer extends BaseServer{
          *  要注意的是，backlog对程序支持的连接数并无影响，backlog影响的只是还没有被accept 取出的连接
          */
         getBootstrap().option(ChannelOption.SO_BACKLOG, 4096);
+        ChannelConst.DATA_PROTO_TYPE_MAP.put(ProtoType.TCP,dataProtoType);
     }
     @Override
     protected void initChildChannelHandler() {
@@ -63,24 +60,8 @@ public class TCPServer extends BaseServer{
                 //通过将消息分为消息头和消息体来处理沾包半包问题
                 pipeline.addLast("frameDecoder", new LengthFieldBasedFrameDecoder(1024*1024*10+4, 0, 4, 0, 4));
                 pipeline.addLast("frameEncoder", new LengthFieldPrepender(4));
-                switch (ChannelConst.DATA_PROTO_TYPE){
-                    case JSON://如果使用json协议的编解码器
-                        //JSON编码器--客户端以JSON字符串方式接收
-                        pipeline.addLast(new MessageToByteEncoder<Object>() {
-                            protected void encode(ChannelHandlerContext channel, Object in, ByteBuf out) throws Exception {
-                                out.writeBytes(JSON.toJSONBytes(in));
-                            }
-                        });
-                        break;
-                    case PROTOBUF://如果使用protobuf的编解码器
-                        pipeline.addLast(new MessageToByteEncoder<ProtoBuf.proto_my>() {
-                            //编码器
-                            protected void encode(ChannelHandlerContext channelHandlerContext, ProtoBuf.proto_my in, ByteBuf out) throws Exception {
-                                out.writeBytes(in.toByteArray());
-                            }
-                        });
-                        break;
-                }
+                DataProtoType dataProtoType = ChannelConst.DATA_PROTO_TYPE_MAP.get(ProtoType.TCP);
+                initEncoder(pipeline, dataProtoType);
                 //装载核心处理器
                 pipeline.addLast(new TCPHandler(CoreHandler.newInstance()));
             }
