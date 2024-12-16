@@ -10,16 +10,19 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.util.internal.StringUtil;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 
 /**统一工具类*/
 public class NioUtil {
     public static void channelRead(ChannelHandlerContext ctx, CoreHandler coreHandler, ByteBuf content) {
-        switch (ChannelConst.DATA_PROTO_TYPE){
+        ProtoType protoType = NioUtil.getChannelProtoType(ctx.channel());
+        DataProtoType dataProtoType = ChannelConst.DATA_PROTO_TYPE_MAP.get(protoType);
+        switch (dataProtoType){
             case JSON:
                 coreHandler.channelRead0(ctx, NioUtil.byteBuf2ProtocolByJson(content));
                 break;
             case PROTOBUF:
-                coreHandler.channelRead0(ctx, NioUtil.byteBuf2ProtocolByProtoBuf(content));
+                coreHandler.channelRead0(ctx, Objects.requireNonNull(NioUtil.byteBuf2ProtocolByProtoBuf(content)));
                 break;
         }
     }
@@ -57,6 +60,12 @@ public class NioUtil {
         channel.attr(ChannelConst.PROTO_TYPE).set(protoType);
     }
     /**
+     * 简单的封装 从客户端连接中获取客户端协议类型
+     */
+    public static ProtoType getChannelProtoType(Channel channel){
+        return channel.attr(ChannelConst.PROTO_TYPE).get();
+    }
+    /**
      * 简单的封装 从客户端连接中获取客户端的标识符
      */
     public static String getChannelId(Channel channel){
@@ -75,12 +84,6 @@ public class NioUtil {
             return null;
         }
         return attr.getDevice();
-    }
-    /**
-     * 简单的封装 从客户端连接中获取客户端协议类型
-     */
-    public static ProtoType getChannelProtoType(Channel channel){
-        return channel.attr(ChannelConst.PROTO_TYPE).get();
     }
     /** 客户端链接超时处理 */
     public static void userEventTriggered(ChannelHandlerContext ctx){

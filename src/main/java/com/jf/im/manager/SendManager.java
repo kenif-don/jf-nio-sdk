@@ -1,9 +1,7 @@
 package com.jf.im.manager;
 
 import com.alibaba.fastjson2.JSON;
-import com.jf.im.model.ChannelConst;
-import com.jf.im.model.ProtoBuf;
-import com.jf.im.model.Protocol;
+import com.jf.im.model.*;
 import com.jf.im.util.NioUtil;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -28,12 +26,14 @@ public class SendManager {
     }
 
     private static ChannelFuture baseSend(Channel channel, Protocol protocol) {
-        switch (NioUtil.getChannelProtoType(channel)){
+        ProtoType protoType = NioUtil.getChannelProtoType(channel);
+        switch (protoType){
             case WS:
                 return channel.writeAndFlush(new TextWebSocketFrame(JSON.toJSONString(protocol)));
             case TCP:
             case UDP:
-                switch (ChannelConst.DATA_PROTO_TYPE){
+                DataProtoType dataProtoType = ChannelConst.DATA_PROTO_TYPE_MAP.get(protoType);
+                switch (dataProtoType){
                     case JSON://如果使用json协议的编解码器
                         return channel.writeAndFlush(protocol);
                     case PROTOBUF://如果使用protobuf的编解码器

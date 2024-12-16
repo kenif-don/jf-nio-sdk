@@ -13,45 +13,27 @@ public class IMServer {
         ChannelConst.LOGIC_PROCESS = logicProcess;
         return server;
     }
-    public IMServer initDataProtoType(DataProtoType dataProtoType){
-        ChannelConst.DATA_PROTO_TYPE = dataProtoType;
-        return server;
-    }
     private IMServer(){
     }
     public static IMServer getInstance(){
         return server;
     }
-    //启动三种协议
-    public void startupAll(int tcp_port,int udp_port,int ws_port){
-        startupTCP(tcp_port);
-        startupUDP(udp_port);
-        startupWS(ws_port);
+
+    /**
+     * 启动TCP协议 并绑定数据协议
+     * */
+    public void startupTCP(int port,DataProtoType dataProtoType) throws InterruptedException {
+        //初始化tcp协议/消息协议类型
+        TCPServer tcpServer = TCPServer.getInstance();
+        tcpServer.startup(port,dataProtoType);
     }
-    public void startupTCP(int port){
-        try {
-            //初始化tcp协议/消息协议类型
-            TCPServer tcpServer = TCPServer.getInstance();
-            tcpServer.startup(port);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+    public void startupUDP(int port,DataProtoType dataProtoType) throws InterruptedException {
+        UDPServer udpServer = UDPServer.getInstance();
+        udpServer.startup(port,dataProtoType);
     }
-    public void startupUDP(int port){
-        try {
-            UDPServer udpServer = UDPServer.getInstance();
-            udpServer.startup(port);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-    public void startupWS(int port){
-        try {
-            WSServer wsServer = WSServer.getInstance();
-            wsServer.startup(port);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+    public void startupWS(int port,DataProtoType dataProtoType) throws InterruptedException {
+        WSServer wsServer = WSServer.getInstance();
+        wsServer.startup(port,dataProtoType);
     }
 
     /**

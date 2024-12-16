@@ -1,4 +1,3 @@
-com\jf\im\server\TCPServer$1$2.class
 com\jf\im\server\WSServer.class
 com\jf\im\model\ProtoBuf$proto_my$1.class
 com\jf\im\model\MsgDTO.class
@@ -10,12 +9,10 @@ com\jf\im\manager\QosManager$1.class
 com\jf\im\manager\SendManager.class
 com\jf\im\IMServer.class
 com\jf\im\model\ProtoType.class
+com\jf\im\server\BaseServer$2.class
 com\jf\im\model\ProtoBuf$proto_myOrBuilder.class
 com\jf\im\server\UDPServer$1.class
-com\jf\im\server\TCPServer$2.class
-com\jf\im\server\UDPServer$1$2.class
 com\jf\im\handler\UDPHandler.class
-com\jf\im\server\TCPServer$1$1.class
 com\jf\im\server\TCPServer.class
 com\jf\im\handler\TCPHandler.class
 com\jf\im\model\DataProtoType.class
@@ -28,7 +25,6 @@ com\jf\im\model\ProtoBuf$proto_my.class
 com\jf\im\model\ChannelConst$1.class
 com\jf\im\util\NioUtil$1.class
 com\jf\im\manager\ProtocolManager.class
-com\jf\im\server\UDPServer$2.class
 com\jf\im\model\LoginInfo.class
 com\jf\im\server\TCPServer$1.class
 com\jf\im\handler\CoreHandler.class
@@ -37,7 +33,7 @@ com\jf\im\util\NioUtil.class
 com\jf\im\model\ChannelConst.class
 com\jf\im\server\WSServer$1.class
 com\jf\im\manager\QosManager.class
-com\jf\im\server\UDPServer$1$1.class
+com\jf\im\server\BaseServer$3.class
 com\jf\im\manager\SendManager$1.class
 com\jf\im\model\ChannelDTO.class
 com\jf\im\model\IMErrCodeDTO.class

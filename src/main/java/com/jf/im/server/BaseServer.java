@@ -1,20 +1,28 @@
 package com.jf.im.server;
 
+import com.alibaba.fastjson2.JSON;
+import com.jf.im.model.DataProtoType;
+import com.jf.im.model.ProtoBuf;
 import com.jf.im.model.ProtoType;
 import io.netty.bootstrap.AbstractBootstrap;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelFutureListener;
-import io.netty.channel.EventLoopGroup;
+import io.netty.buffer.ByteBuf;
+import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.handler.codec.MessageToByteEncoder;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.Objects;
 
 /**TCP/UDP/WS的抽象父类 将一些公共属性和方法进行抽取*/
 public abstract class BaseServer {
     //协议类型
+    @Getter@Setter
     private ProtoType protoType;
     //协议服务器启动状态
+    @Getter@Setter
     private volatile boolean isRunning = false;
     //netty的核心工厂  引导器
     private AbstractBootstrap bootstrap;
@@ -24,15 +32,12 @@ public abstract class BaseServer {
     private final EventLoopGroup workGroup = new NioEventLoopGroup();
     //服务端
     protected Channel serverChannel;
-    protected void init(){
+    protected void init(DataProtoType dataProtoType){
         //设置reactor线程
-        switch (protoType){
-            case UDP:
-                getBootstrap().group(workGroup);
-                break;
-            default:
-                ((ServerBootstrap)getBootstrap()).group(bossGroup,workGroup);
-                break;
+        if (Objects.requireNonNull(protoType) == ProtoType.UDP) {
+            getBootstrap().group(workGroup);
+        } else {
+            ((ServerBootstrap) getBootstrap()).group(bossGroup, workGroup);
         }
         //流水线装配
         initChildChannelHandler();
@@ -53,10 +58,10 @@ public abstract class BaseServer {
     /**
      * 服务器启动
      */
-    public void startup(int port) throws InterruptedException{
+    public void startup(int port, DataProtoType dataProtoType) throws InterruptedException{
         if(isRunning())return;
         //初始化
-        init();
+        init(dataProtoType);
         //同步阻塞  知道绑定成功
         ChannelFuture cf = getBootstrap().bind(port).sync();
         serverChannel = cf.channel();
@@ -86,14 +91,6 @@ public abstract class BaseServer {
      */
     protected abstract void initChildChannelHandler();
 
-    public boolean isRunning() {
-        return isRunning;
-    }
-
-    public void setRunning(boolean running) {
-        isRunning = running;
-    }
-
     public AbstractBootstrap getBootstrap() {
         if(bootstrap!=null)return bootstrap;
         switch (protoType){
@@ -107,12 +104,24 @@ public abstract class BaseServer {
         }
         return bootstrap;
     }
-
-    public ProtoType getProtoType() {
-        return protoType;
-    }
-
-    public void setProtoType(ProtoType protoType) {
-        this.protoType = protoType;
+    protected void initEncoder(ChannelPipeline pipeline, DataProtoType dataProtoType) {
+        switch (dataProtoType){
+            case JSON://如果使用json协议的编解码器
+                //JSON编码器--客户端以JSON字符串方式接收
+                pipeline.addLast(new MessageToByteEncoder<Object>() {
+                    protected void encode(ChannelHandlerContext channel, Object in, ByteBuf out) throws Exception {
+                        out.writeBytes(JSON.toJSONBytes(in));
+                    }
+                });
+                break;
+            case PROTOBUF://如果使用protobuf的编解码器
+                pipeline.addLast(new MessageToByteEncoder<ProtoBuf.proto_my>() {
+                    //编码器
+                    protected void encode(ChannelHandlerContext channelHandlerContext, ProtoBuf.proto_my in, ByteBuf out) throws Exception {
+                        out.writeBytes(in.toByteArray());
+                    }
+                });
+                break;
+        }
     }
 }

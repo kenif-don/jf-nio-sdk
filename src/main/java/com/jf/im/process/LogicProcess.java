@@ -6,7 +6,6 @@ import com.jf.im.model.LoginInfo;
 import com.jf.im.model.Protocol;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.util.internal.StringUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,11 +61,7 @@ public interface LogicProcess {
      * ---demo实现 默认在protocol模型的data属性为loginInfo的json对象串
      */
     default LoginInfo getLoginInfo(Channel channel, Protocol protocol){
-        LoginInfo loginInfo = JSON.parseObject(protocol.getData(), LoginInfo.class);
-        if(StringUtil.isNullOrEmpty(loginInfo.getId())|| StringUtil.isNullOrEmpty(loginInfo.getDevice())|| StringUtil.isNullOrEmpty(loginInfo.getToken())){
-            return null;
-        }
-        return loginInfo;
+        return JSON.parseObject(protocol.getData(), LoginInfo.class);
     }
     /**
      * 长连接的退出登录请求前置方法,如果返回false 则不会执行长连接登出功能
