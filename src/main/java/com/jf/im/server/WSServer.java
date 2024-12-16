@@ -37,8 +37,8 @@ public class WSServer extends BaseServer{
                 channel.pipeline()
                 .addLast(new IdleStateHandler(0,0,10))
                 .addLast(new HttpServerCodec())
-                .addLast(new HttpObjectAggregator(1024*1024*10))
-                .addLast(new WebSocketServerProtocolHandler("/",null,false,1024*1024*10,false))
+                .addLast(new HttpObjectAggregator(1024 * 1024))
+                .addLast(new WebSocketServerProtocolHandler("/",null,false,1024*1024,false))
                 //装载核心处理器
                 .addLast(new WebSocketHandler(CoreHandler.newInstance()));
             }
