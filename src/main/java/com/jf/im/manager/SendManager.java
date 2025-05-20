@@ -13,7 +13,7 @@ import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
  */
 public class SendManager {
     public static void send(String channelId, Protocol protocol){
-
+        NioUtil.getChannels(channelId).forEach(channel->send(channel,protocol));
     }
     /**
      * 通用的发送数据方法
