@@ -12,6 +12,9 @@ import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
  * 专门处理发送的类
  */
 public class SendManager {
+    public static void send(String channelId, Protocol protocol){
+
+    }
     /**
      * 通用的发送数据方法
      * @param channel   客户端连接

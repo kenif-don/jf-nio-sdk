@@ -28,7 +28,6 @@ public class ChannelDTO {
     public Channel removeChannel(String device){
         return channels.remove(device);
     }
-
     public List<Channel> getChannelsButMe(String device) {
         List<Channel> butMeChannels = new ArrayList<>();
         channels.keySet().forEach(key->{

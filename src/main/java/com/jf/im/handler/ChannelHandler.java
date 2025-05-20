@@ -74,11 +74,13 @@ public class ChannelHandler {
     public List<Channel> getChannels(String channelId){
         return channels.get(channelId).getChannels();
     }
-
+    public Channel getChannel(String channelId,String device){
+        return channels.get(channelId).getChannel(device);
+    }
     /**
-     * 获取指定用户的所有链接 不包括自己
+     * 获取指定用户的所有链接 不包括指定设备
      */
-    public List<Channel> getChannels(String channelId,String device){
+    public List<Channel> getChannelsButDevice(String channelId,String device){
         return channels.get(channelId).getChannelsButMe(device);
     }
     /**

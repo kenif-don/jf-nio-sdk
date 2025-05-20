@@ -2,6 +2,7 @@ package com.jf.im.util;
 
 import com.alibaba.fastjson2.JSON;
 import com.google.protobuf.InvalidProtocolBufferException;
+import com.jf.im.handler.ChannelHandler;
 import com.jf.im.handler.CoreHandler;
 import com.jf.im.model.*;
 import io.netty.buffer.ByteBuf;
@@ -10,6 +11,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.util.internal.StringUtil;
 
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Objects;
 
 /**统一工具类*/
@@ -84,6 +86,12 @@ public class NioUtil {
             return null;
         }
         return attr.getDevice();
+    }
+    public static List<Channel> getChannels(String channelId){
+        return ChannelHandler.getInstance().getChannels(channelId);
+    }
+    public static Channel getChannels(String channelId,String device){
+        return ChannelHandler.getInstance().getChannel(channelId,device);
     }
     /** 客户端链接超时处理 */
     public static void userEventTriggered(ChannelHandlerContext ctx){

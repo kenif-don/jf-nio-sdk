@@ -78,7 +78,7 @@ public class ProtocolManager {
             /**
              * 这里同时需要转发给"自己"的其他设备,其实与其他人是一样的操作
              */
-            List<Channel> channels = ChannelHandler.getInstance().getChannels(NioUtil.getChannelId(channel), NioUtil.getChannelDevice(channel));
+            List<Channel> channels = ChannelHandler.getInstance().getChannelsButDevice(NioUtil.getChannelId(channel), NioUtil.getChannelDevice(channel));
             channels.forEach(myChannel->{
                 if(protocol.getAck()==100) {
                     //需要qos 才加入到qos队列,否则就不加入
